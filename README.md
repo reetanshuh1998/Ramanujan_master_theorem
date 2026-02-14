@@ -51,6 +51,16 @@ This will run multiple test cases comparing RMT against:
 - Simpson's Rule  
 - Scipy QUAD (Adaptive Quadrature)
 
+### Running Tests
+
+Run the unit tests to validate the implementation:
+
+```bash
+python -m unittest test_rmt -v
+```
+
+All tests should pass, demonstrating the correctness of the RMT implementation.
+
 ## Example Output
 
 ```

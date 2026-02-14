@@ -32,10 +32,6 @@ env/
 *.swo
 *~
 
-# Test files
-test_simple.py
-test_*.py
-
 # OS
 .DS_Store
 Thumbs.db
