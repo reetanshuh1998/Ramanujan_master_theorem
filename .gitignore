@@ -32,6 +32,11 @@ env/
 *.swo
 *~
 
+# Generated files
+*.png
+*.jpg
+*.pdf
+
 # OS
 .DS_Store
 Thumbs.db

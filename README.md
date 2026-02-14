@@ -61,6 +61,16 @@ python -m unittest test_rmt -v
 
 All tests should pass, demonstrating the correctness of the RMT implementation.
 
+### Creating Visualizations
+
+Generate comparison plots showing speed and accuracy:
+
+```bash
+python visualize.py
+```
+
+This creates `rmt_comparison.png` with visual comparisons of RMT vs numerical methods.
+
 ## Example Output
 
 ```
@@ -87,7 +97,10 @@ Ramanujan_master_theorem/
 ├── numerical_methods.py             # Classical numerical methods
 ├── comparison.py                    # Comparison framework
 ├── examples.py                      # Test cases
+├── visualize.py                     # Visualization script
+├── test_rmt.py                      # Unit tests
 ├── requirements.txt                 # Python dependencies
+├── .gitignore                       # Git ignore file
 └── README.md                        # Documentation
 ```
 
