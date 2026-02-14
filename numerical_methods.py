@@ -108,8 +108,8 @@ class NumericalIntegration:
         Returns:
             Tuple of (result, method_name)
         """
-        np.random.seed(42)  # For reproducibility
-        x_random = np.random.uniform(a, b, n)
+        rng = np.random.default_rng(42)  # Create generator for reproducibility
+        x_random = rng.uniform(a, b, n)
         y_values = np.array([self.f(x) for x in x_random])
         result = (b - a) * np.mean(y_values)
         return result, "Monte Carlo"

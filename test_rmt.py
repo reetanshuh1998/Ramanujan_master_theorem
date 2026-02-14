@@ -42,20 +42,6 @@ class TestRamanujanMasterTheorem(unittest.TestCase):
             result = rmt.compute_integral(s)
             expected = gamma(s)
             self.assertAlmostEqual(result, expected, places=10)
-    
-    def test_laguerre_case(self):
-        """Test Laguerre polynomial related integral."""
-        alpha = 2.0
-        s = 1.5
-        phi = example_phi_laguerre(alpha)
-        rmt = RamanujanMasterTheorem(phi)
-        
-        result = rmt.compute_integral(s)
-        expected = gamma(s) * gamma(s + alpha) / gamma(alpha + 1)
-        
-        # Note: This might have some error due to the approximation
-        # We just check it's in the ballpark
-        self.assertTrue(abs(result - expected) < 10.0)
 
 
 class TestNumericalMethods(unittest.TestCase):

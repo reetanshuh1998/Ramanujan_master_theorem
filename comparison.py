@@ -238,9 +238,24 @@ class IntegralComparison:
                 print(f"  Best Numerical Time: {best_numerical['time']:.6f} seconds")
                 
                 speedup = best_numerical['time'] / rmt['time']
-                accuracy_ratio = best_numerical['error'] / rmt['error'] if rmt['error'] > 0 else float('inf')
+                
+                # Calculate accuracy ratio, handling machine precision limits
+                if rmt['error'] > 1e-15:
+                    # Both have measurable error
+                    accuracy_ratio = best_numerical['error'] / rmt['error']
+                elif best_numerical['error'] < 1e-15:
+                    # Both at machine precision
+                    accuracy_ratio = 1.0
+                else:
+                    # RMT at machine precision, numerical has measurable error
+                    accuracy_ratio = float('inf')
                 
                 print(f"\n  RMT is {speedup:.2f}x FASTER than best numerical method")
-                print(f"  RMT is {accuracy_ratio:.2f}x MORE ACCURATE than best numerical method")
+                if accuracy_ratio == float('inf'):
+                    print(f"  RMT is infinitely MORE ACCURATE (machine precision vs {best_numerical['error']:.2e})")
+                elif accuracy_ratio > 1.0:
+                    print(f"  RMT is {accuracy_ratio:.2f}x MORE ACCURATE than best numerical method")
+                else:
+                    print(f"  Both methods achieve similar accuracy at machine precision")
         
         print("="*80 + "\n")
