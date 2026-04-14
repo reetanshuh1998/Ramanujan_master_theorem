@@ -1,0 +1,10 @@
+momlist={k1};
+proplist={k1^2-msq};
+powerlist={1};
+ExternalMomenta={};
+externallegs=0;
+prefactor=1;
+KinematicInvariants = {};
+Masses={msq};
+ScalarProductRules = {};
+Dim=4-2*eps;

@@ -1,0 +1,7 @@
+This is a list of timings for the demos, run on a 64 bit machine 
+with a i7-4770 (3.4GHz) processor.
+
+	Hyp5F4:	 50 seconds
+	s14:	  1.5 seconds
+	s23s35:	 31 seconds
+  dummy:    3 seconds

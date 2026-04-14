@@ -1,0 +1,103 @@
+(* Populated by makeFU.pl and decomposeloop.pl *)
+(*
+   Contains variables:
+   $cutconstruct
+   $dirbase
+   $graph
+   $externallegs
+   $loops
+   $currentdir
+   $normaliz
+   $userdefined
+   $feynpars
+   $rescaleflag
+   $ibpflag
+   $nbofkernels
+   $strategy
+*)
+
+(* ********* inserted after end of user input ************* *)
+
+userdefined=(*{$userdefined}*);
+ 
+If[Not[ValueQ[Dim]], Dim=4-2*eps];
+If[Not[ValueQ[threshold]], threshold=none];
+If[Not[MatchQ[Head[splitlist],List]], splitlist={}];
+If[Not[ValueQ[numerator]], numerator = {1}];
+
+If[userdefined==0,
+   cutconstruct=(*{$cutconstruct}*);
+   
+   (* Filter out non-positive propagator powers *)
+   nonpospositions = Position[powerlist, _Integer?NonPositive,1];
+   nonnegpositions = Position[powerlist, _Integer?Negative,1];
+
+   If[nonnegpositions!={},invprops=True,invprops=False];
+   
+   If[invprops && cutconstruct != True,
+      nonpospowerlist = Extract[powerlist, nonpospositions];
+      nonposproplist = Extract[proplist, nonpospositions];
+      powerlist = Delete[powerlist,nonpospositions];
+      proplist = Delete[proplist,nonpospositions];
+      ]
+   ,
+   If[MatchQ[functionlist,{}],
+      Print["Warning: No user functions for iterated sector decomposition\n"]; 
+      Print["defined in templatefile. Verify your input."];
+      ];
+   ];
+
+
+(* the following will be adjusted by perl script decomposeloop.pl according to input given in param.input *)
+
+
+(* primary sectors to be calculated:  selection is via param.input) *)
+If[userdefined==0, 
+   npmax=Length[powerlist]
+   , 
+   npmax=Length[functionlist]
+   ];
+lengthprimseclist=npmax; (* MK: if powerlist is not defined, npmax will be set by decomposeloop.pl *)
+
+
+(* path to main secdec directory tree *)
+path="(*{$dirbase}*)";
+normaliz="(*{$normaliz}*)";
+
+
+graphstring="(*{$graph}*)";
+currentdir="(*{$currentdir}*)";
+
+
+externallegs=(*{$externallegs}*);
+
+rescaleflag=(*{$rescaleflag}*);
+ibpflag=(*{$ibpflag}*);
+nbkernels=(*{$nbofkernels}*);
+
+strategy=(*{$strategy}*);
+
+If[userdefined==0, 
+   loops=(*{$loops}*);
+   (*  calculate F and U  *)
+   Get[StringJoin[path,ToString["loop/src/math/util/miscel.m"]]];
+   If[cutconstruct==False,
+      xl=Length[momlist];
+      Nn=Length[proplist];
+      If[Not[ListQ[powerlist]],powerlist=Table[1,{ii,Nn}]];
+      proplist=Flatten[MapThread[recast,{proplist,powerlist}]];
+      Nn=Length[proplist];
+      powerlist=Flatten[recast2/@powerlist];
+      ,
+      (*xl=loops;*)
+      Nn=Length[proplist];
+      If[Not[ListQ[powerlist]],powerlist=Table[1,{ii,Nn}]];
+      ];
+   sumpow=Sum[powerlist[[ii]],{ii,Nn}];
+   feynpars=Nn-1;
+   , (* else userdefined: *)
+   feynpars=(*{$feynpars}*);
+   Nn=feynpars+1; (* added by GH 28.5.15 as Nn is needed by split routine *)
+   ];
+
+Get[StringJoin[path,ToString["loop/src/math/deco/calcFU.m"]]]; (* sj - should we move this line into templatetailFU ? *)

@@ -1,0 +1,8 @@
+graph=NPbox_massive
+
+epsord=0
+
+contourdef=True
+integrator=3
+epsrel=0.5e-3
+epsabs=1.e-14

@@ -1,0 +1,105 @@
+#!/bin/sh
+#****l* SecDec/general/launch
+# NAME
+#  launch
+# USAGE
+#  ./launch
+# USES
+#  decompose.pl, subexp.pl, results.pl
+# PURPOSE
+#  launches the calculation. Calculation runs until it hits an error, or completes to the
+#  level specified with the 'exe' flag in paramfile
+# OPTIONS
+#  "-d workingdirectory" specifies a different directory to work in.
+#  This option can also be replicated by running launch
+#  from the workingdirectory you sish to specify
+#  "-p paramfile" specifies which parameter file to use
+#  "-t templatefile" specifies which template file to use
+#****
+pflag=
+tflag=
+dflag=
+while getopts 'p:d:t:m' OPTION
+do
+  case $OPTION in
+  p)	pflag=1
+		paramfile="$OPTARG"
+		;;
+
+  m|t)	tflag=1
+		templatefile="$OPTARG"
+		;;
+  d)	dflag=1
+  		workdir="$OPTARG"
+		;;
+  ?)	printf "Usage: %s: [-d workingdirectory] [-p paramfile] [-t templatefile]\n" $(basename $0) >&2
+		exit 2
+		;;
+  esac
+done
+shift $(($OPTIND - 1))
+if [ "$pflag" ]
+then
+  param="-p=$paramfile"
+else
+  param="-p=param.input"
+fi
+if [ "$tflag" ]
+then
+ template="-t=$templatefile" 
+else
+  template="-t=Template.m"
+fi
+if [ "$dflag" ]
+then
+ dir="-d=$workdir"
+else
+ dir=""
+fi
+SECDEC_PATH=`dirname $(cd ${0%/*} && echo $PWD/${0##*/})`
+RUN_PATH=$PWD
+if [ "$SECDEC_PATH" != "$RUN_PATH" ]
+then
+ if [ "$dflag" ]
+ then
+  echo You cannot specify a different directory unless you run launch from
+  echo $SECDEC_PATH
+  exit
+ else
+  dir="-d=$RUN_PATH"
+  cd $SECDEC_PATH
+ fi
+fi
+perl decompose.pl $param $template $dir "launch"
+err=$?
+if [ $err -eq 10 ]
+then
+ echo Calculation failed at the decomposition stage
+ exit
+elif [ $err -gt 0 ]
+then
+ echo decompose.pl failed
+ exit
+fi
+perl subexp.pl $param $template $dir "launch"
+err=$?
+if [ $err -eq 91 ]
+then
+ echo Calculation terminated upon finding NaN for numerical integration
+ exit
+elif [ $err -eq 90 ]
+then
+ echo Calculation terminated upon finding non-integrable function
+ exit
+elif [ $err -eq 89 ]
+then
+ echo Calculation terminated upon finding integration with result greater than 1E17
+ exit
+elif [ $err -gt 0 ]
+then
+ echo Calculation failed during subexp.pl
+ exit
+fi
+ perl results.pl $param $template $dir "launch"
+
+cd $RUN_PATH

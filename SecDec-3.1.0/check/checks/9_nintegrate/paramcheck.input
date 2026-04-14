@@ -1,0 +1,6 @@
+graph=temp
+epsord=0
+contourdef=False
+integrator=5
+NIntegrateOptions=AccuracyGoal->10
+

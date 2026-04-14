@@ -1,0 +1,37 @@
+#!/bin/sh
+#****t* SecDec/general/perlsrc/batch
+  #  NAME
+  #    batch
+  #
+  #  USAGE
+  #  ./batch[polestructure]
+  # 
+  #  USES  
+  #   polenumerics.pl
+  #
+  #  USED BY 
+  #  subexp.pl, justnumerics.pl, job[polesturcture]
+  #
+  #  PURPOSE
+  #  the file 'batch' acts as a template for subexp.pl to create files
+  #  subdir/graph/batch[polestructure], which are run/submitted to perform
+  #  subtraction & eps expansion via subandexpand[polestructure].m, and 
+  #  the creation, compilation and execution of all files needed for numerical
+  #  integration via polenumerics.pl. From justnumerics.pl, batch[polestructure]
+  #  only does the creation, compilation and execution of all files needed for 
+  #  numerical integration via polenumerics.pl.
+  #  SEE ALSO
+  #  subexp.pl, polenumerics.pl, justnumerics.pl
+  #   
+  #****
+perl dirbaseperlsrc/mathlaunch.pl mathfile dumpfile
+runcheck=`fgrep "Total time taken to produce fortran files" dumpfile`
+if [ "$runcheck" ]
+then
+ echo "fortran functions created for pole structure polestruct"
+# rm mathfile
+ cd dirbase
+ perl perlsrc/polenumerics.pl polestruct basespath compiler makefile -p=paramfile
+else
+ echo program failed when attempting to run mathfile, for more information read dumpfile
+fi

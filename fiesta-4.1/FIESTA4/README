@@ -1,0 +1,100 @@
+FIESTA 4.0 - Feynman Integral Evaluation by a Sector decomposiTion Approach
+Copyright (C) 2015 A. Smirnov
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+--------------------------------------------------------------------------
+
+
+The main file FIESTA4.m should be loaded from Wolfram Mathematica, version 7-9
+
+First set FIESTAPath equal to the folder with FIESTA and then load FIESTA3.m 
+
+Then you can run, for example,
+SDEvaluate[UF[{k},{-k^2,-(k+p1)^2,-(k+p1+p2)^2,-(k+p1+p2+p4)^2},{p1^2->0,p2^2->0,p4^2->0,p1 p2->-S/2,p2 p4->-T/2,p1 p4->(S+T)/2,S->3,T->1}],{1,1,1,1},0]
+
+With UsingC=False and UsingQLink=False it does not need anything else.
+
+UsingQLink=True makes the program use the KLink binary to store files in the kyotocabinet database.
+
+UsingC=True (works only with UsingQLink=True) makes the program use external C integration.
+It uses the following sequence:
+
+1) prepares database 1 with integrands
+2) launches CIntegratePool
+------- CIntegratePool distributes task between threads running CIntegrateMP or CIntegrateMPC
+------- Mathematica communicates with CIntegratePool via file exchange and fills database 2 with results
+3) runs GenerateAnswer[] in order to produce a result
+
+If you run SDEvaluate (or any other similar command) with OnlyPrepare=True then Mathematica stops after stage 1 and prints out a command
+
+Then you can perform stage 2 your self:
+2) you launch CIntegratePool or CIntegratePoolMPI with the provided command
+------- the binary launched distributes task between threads running CIntegrateMP or CIntegrateMPC
+------- the results are saved by the binary in database 2
+------- the results are also printed out
+
+In case the printed results are formatted not really well, you can repeat stage 3:
+
+3) launch Mathematica, provide correct path to database 2 and run GenerateAnswer[] to produce your result
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Other informative files in the package:
+
+VERSION - version information
+INSTALL - install instructions on how to build the binaries
+INFO - detailed description of internal database and communication structure
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The package comes with the following examples:
+
+examples/PolyGamma.int - sample integral input containing a non-evaluated PolyGamma. This example demonstrates how CIntegrateMP can call math in order to evaluate it
+simply run bin/CIntegrateMP < examples/PolyGamma.int or examples/RunCIntegrateMP or examples/RunCIntegrate - the results should be identical
+examples/in.kch - sample database for tests
+examples/RunCIntegratePool (just run it from this folder) - it will run CIntegratePool and perform integration based on sample database examples/in.kch
+examples/RunCIntegratePoolMPI - same for MPI
+examples/examples.nb - mathematica notebook with examples
+
+a number of examples to be loaded by math
+(for example, math < examples/SDEvaluate.m):
+
+examples/SDEvaluate.m - basic integration
+examples/SDEvaluateG.m - demonstrates Speer sectors approach
+examples/SDExpand.m - expanding
+examples/SDExpandNoC.m - expanding purely by Mathematica
+examples/SDExpandNoCNoDatabase.m - same but not storing data to disk
+examples/SDExpandAsy.m - asymptotics with the new regions approach; in order
+	for it to work we added the asy code to the package (extra/asy2.1.1.m)
+	however, to test it you would need to have qhull installed on your system
+	You can download it from http://www.qhull.org/
+	If you fo not want to install it system-wide, edit the example and set QHullPath to point at QHull
+examples/SDExpandAsyRegVar.m - an example where one has to introduce an
+	additional regularization. This example also demonstrates how
+	in some special cases Mathematica can integrate everything out analytically
+examples/SDEvaluateKU.m - example demonstrating strategy KU. 
+	WARNING: this strategy now also needs asy to be loaded and QHull to exist in the system
+
+examples/NoMathIntegration - run this file to see how Mathematica first
+prepares an integration database, then CIntegratePool is called to
+integrate, them Mathematica is again calls to produce results
+in a better format
+
+
+The binary simlink bin/OutputIntegrand might be used to retrieve a certain integrand from a database.
+If the integration fails on a certain integral, it prints put a command with the use of OutputIntegrand.
+The output might be directed to a file and studied separately.
+
+For details see 2 papers on FIESTA published in CPC, one more paper currently submitted to CPC and the webpage http://science.sander.su/

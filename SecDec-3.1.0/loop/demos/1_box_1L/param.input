@@ -1,0 +1,6 @@
+graph=box1L
+epsord=0
+contourdef=True
+integrator=3
+epsrel=1.e-4,1.e-4,1.e-4
+epsabs=1.e-8,1.e-8,1.e-8

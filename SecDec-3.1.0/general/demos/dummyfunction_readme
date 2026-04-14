@@ -1,0 +1,35 @@
+1) - edit the parameter file (example dummyfunction.input)
+     and the Mathematica template (example dummyfunction.m)
+   - in the parameter file specify the names of implicit functions
+     via the input eg. 'dummys=dum1,dum2'
+   - NEW since Jan 2015: you can also have epsilon-dependent dummy functions:
+     in the parameter file specify the list "dummyorder", which should indicate 
+     the highest power of eps contained in each dummy function. 
+     The expansion is then done to the overall eps^epsord as usual.
+   - in the template file, include any implicit functions with their
+     arguments in the factorlist
+   - in the output directory (you will have to create this manually) put
+     files with the names of those functions you specified in the parameter
+     file. These should contain a list of the arguments of the function,
+     and the definition of the function in Mathematica syntax, via eg.
+     intvars={a,b,c,d};
+     dum1=a^2 + b^2 +c^2 +d^2 + 4 a b c d +2;
+     cf dummyfunction/dum1.m
+     
+2) - from the 'general' directory, use the command
+     './createdummyfortran.pl -d workingdir -p paramfile'
+     this will write the optimized fortran code for the functions specified
+     in the output directory.
+   - if you wish to define a fortran function manually, you still need to 
+     have a file in the output directory with the correct syntax so that the
+     fortran header will be written for you, but you can then edit the fortran
+     code yourself (eg testdummy/cut.m and testdummy/cut_edited.f)
+     
+3) - the program can now be used exactly as before.
+   - if you wish to change the definition of an implicit function, just edit 
+     the function and rerun createdummyfortran.pl. The algebraic part does not
+     need to be redone. (NB that rerunning createdummyfortran.pl will overwrite
+     any fortran functions edited manually, so a copy of these should be made if
+     they are to be reused)
+
+NB any function left implicit must be integrable within the integration domain

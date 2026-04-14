@@ -1,0 +1,9 @@
+#ifndef pysecdec_sunset_lib_integral_codegen_contour_deformation_sector_6_order_0_hpp_included
+#define pysecdec_sunset_lib_integral_codegen_contour_deformation_sector_6_order_0_hpp_included
+#include "pysecdec_sunset_lib_integral.hpp"
+#include "functions.hpp"
+namespace pysecdec_sunset_lib_integral
+{
+secdecutil::SectorContainerWithDeformation<real_t, complex_t>::DeformedIntegrandFunction sector_6_order_0_contour_deformation_polynomial;
+};
+#endif

@@ -1,0 +1,5 @@
+graph=box1L_NInt
+epsord=0
+contourdef=True
+integrator=5
+NIntegrateOptions=AccuracyGoal->4

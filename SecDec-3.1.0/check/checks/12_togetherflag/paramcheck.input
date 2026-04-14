@@ -1,0 +1,6 @@
+graph=temp
+epsord=0
+contourdef=True
+togetherflag=1
+cubacores=1
+epsrel=2e-3,2e-3,2e-3

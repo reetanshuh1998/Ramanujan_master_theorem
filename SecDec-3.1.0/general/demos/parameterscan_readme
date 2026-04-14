@@ -1,0 +1,71 @@
+1) - edit the parameter file (example parameterscan_settings.input)
+     and the Mathematica file (example parameterscan.m) as usual;
+   - in the parameter file specify some values for the symbols 
+     defining your numerical constants;
+   - set "exeflag=1" in the parameter file
+   - changing the name of the point according to the value for the 
+     numerical constants will be done automatically
+   
+2) edit multiparam.input to specify the name of your parameter file,
+   and the prefix you would like to use for the names of the points
+   to be calculated, eg
+   paramfile=parameterscan_settings.input
+   pointname=mpp
+   note: parameterscan_settings.input, parameterscan.m, parameterscan_scan.input
+   should be in the same directory, can be any of your working directories.
+   
+   next define sets of parameter values you wish to calculate:
+   
+   If you wish to specify particular numerical points this can also be
+   done by listing them in the parameterscan_scan.input file via the syntax:
+   0.3,0.2,1
+   0.6,0.9,0.5
+   etc.
+   If you don't wish to calculated all points specified in parameterscan_scan.input,
+   and instead only want the first N points, you can specifie this with the
+   statement:
+   lines=N
+   in the parameterscan_scan.input file.
+
+   One can also define min values, maxvalues, steps for each parameter
+
+   The syntax for this is:                                  
+   minvals=                                                                        
+   maxvals=                                                                        
+   stepvals= 
+   
+   (lists of values matching the list of symbols defined in paramfile)                                                                      
+
+   If you wish to specify a set of values for each parameter which are not
+   equally spaced, this is done by using the syntax:
+   paramfile=
+   values1=v11,v12,...
+   values2=v21,v22,...
+   ...
+   valuesk=vk1,vk2,...   
+
+   
+   These different types of syntax can be used alongside each other, for
+   an example see demos/parameterscan_scan.input
+
+3) run secdec
+  'secdec -g -d workingdir -m parameterscan_scan.m -p parameterscan_settings.input -k parameterscan_scan.input ' 
+  This command will run:
+  './launch -d workingdir -m parameterscan_scan.m -p parameterscan_settings.input ' and
+  './multinumerics.pl  -d workingdir -p parameterscan_scan.input ' 
+
+                   
+================================================================                                                                                
+when running on a batch system:                                                        
+                                                                                
+the syntax is as before: 
+to start the algebraic part type 
+'secdec -g -d workingdir -m parameterscan_scan.m -p parameterscan_settings.input --algebraic' 
+
+set clusterflag=1 in the parameterfile file and run
+'secdec -g -d workingdir -p parameterscan_settings.input -k parameterscan_scan.input --numerics' 
+to start the numeric part
+
+when all jobs finished, run 
+'secdec -g -d workingdir -p parameterscan_settings.input -k parameterscan_scan.input --collectresults' 
+to collect the results

@@ -1,0 +1,184 @@
+#!/bin/bash
+
+secdecPath=`pwd .`
+checkDir=check/checks
+regExpNum="\-?[0-9]+\.?[0-9]*([eE][+-]?[0-9]+)?"
+mode=2
+shortrun="maxeval=20000,20000,20000"
+
+if [ $# -ne 0 ]
+then
+  mode=$1
+fi
+
+#runcheck dir mode=1/2 msg optSecDecArg
+#mode 1: do low statistic run -> might fail if algorithm changes
+#mode 2: run with higher statistics and allow for statistical fluctuations of results
+#mode 0: don't run check, but generate files with reference values
+runcheck () {
+  echo $3
+  path=$checkDir/$1
+  cp $path/paramcheck.input $path/tempparam
+#   cd $path
+#   path=.
+  
+  if [ $2 -eq 0 ]
+  then
+    $secdecPath/secdec -d $path -p tempparam -m mathcheck.m -k kinemcheck.input $4 > $path/temp.log
+    if [ $? -ne 0 ]
+    then
+      cat $path/temp.log
+      echo "failed -- see program output"
+      exit 1
+    fi
+    grepres $path > $path/res.long
+    
+    
+    echo $shortrun >> $path/tempparam
+    $secdecPath/secdec -d $path -p tempparam -m mathcheck.m -k kinemcheck.input $4 > $path/temp.log
+    if [ $? -ne 0 ]
+    then
+      cat $path/temp.log
+      echo "failed -- see program output"
+      exit 1
+    fi
+    grepres $path > $path/res.short 
+    
+  else # mode !=0
+  
+  
+  file1=$path/tempres
+  if [ $2 -eq 1 ]
+  then
+    file2=$path/res.short
+    echo $shortrun >> $path/tempparam
+  else
+    file2=$path/res.long
+  fi
+  $secdecPath/secdec -d $path -p tempparam -m mathcheck.m -k kinemcheck.input $4 > $path/temp.log
+  if [ $? -ne 0 ]
+  then
+    cat $path/temp.log
+    echo "failed -- see program output"
+    exit 1
+  fi
+  grepres $path > $file1
+  if ! checknumLines $file1 $file2 
+  then
+   echo "Number of results differs"
+   exit 1
+  fi
+  
+  if [ $2 -eq 1 ]
+  then
+    compare1 $file1 $file2 1e-10
+  else
+    compare2 $file1 $file2 2
+  fi
+  
+  if [ $? -eq 0 ]
+  then
+    echo " -- OK --"
+  else
+    echo "failed!"
+  fi
+  
+  fi # mode
+  
+}
+
+grepres () {
+# group into real and im parts
+  files=`ls $1/temp/{,results/}temp_p?{full,}.res 2> /dev/null` # workaround for different conventions in loop/general
+  for file in $files
+  do
+    grep -e "^err" -e "^res" -e "^  "  $file | grep -v "I" | grep  -E -o $regExpNum
+    grep -e "^err" -e "^res" -e "^  "  $file | grep -e "I" | grep  -E -o $regExpNum
+  done
+}
+  
+
+checknumLines () {
+  if [ `wc $1 | awk '{print $1}'` -ne `wc $2 | awk '{print $1}'`  ]
+  then
+    return 1
+  fi
+}
+
+# compare file1 file2 precision
+compare1 () {
+  paste $1 $2 | awk """
+    function abs(x)
+    {
+      return x<0?-x:x
+    }
+    BEGIN {
+      test = 0
+    }
+    { 
+      d=abs(\$1 - \$2);
+      if (d>0 ) d= (d>$3*abs(\$1 + \$2))  # avoid division by 0
+      if (d>0) {
+	print \$1,\" != \",\$2
+	test=1
+      }
+    }
+    END {
+      exit test
+    }
+  """
+}
+
+# compare file1 file2 nSDdeviation
+compare2 () {
+  paste $1 $2 | awk """
+    function abs(x)
+    {
+      return x<0?-x:x
+    }
+    BEGIN {
+      test = 0
+    }
+    (NR%2==1) {
+      d=abs(\$1 - \$2);
+    } 
+    (NR%2==0) {
+      s=sqrt(\$1*\$1 + \$2*\$2)
+      if (d>$3*s){
+	print \$1,\" != \",\$2
+	test=1
+      }
+    }
+    END {
+      exit test
+    }
+  """
+}
+
+runcheck 1_tri $mode "testing 1-loop triangle"
+runcheck 2_tri_contour $mode "testing contour deformation"
+runcheck 3_multinumerics $mode "testing kinem.input with several lines"
+runcheck 4_nocutconst $mode "testing input without cutconstruct"
+runcheck 5_tensor $mode "testing tensor integral"
+runcheck 6_vegas $mode "testing vegas"
+runcheck 7_suave $mode "testing suave"
+runcheck 8_cuhre $mode "testing cuhre"
+runcheck 9_nintegrate $mode "testing nintegrate"
+runcheck 10_exponents $mode "testing modified propagator powers"
+if [ -n "`command -v icc`" ]; then runcheck 11_icc $mode "testing compilation with icc"; fi
+runcheck 12_togetherflag $mode "testing togetherflag"
+runcheck 13_primseclist $mode "testing primseclist/multlist"
+if [ -e $secdecPath/src/normaliz ]; then runcheck 14_geo $mode "testing geometric method"; fi
+runcheck 15_rescale $mode "testing rescale option"
+runcheck 16_invprop $mode "testing inverse propagator powers"
+runcheck 17_tadpole $mode "testing massive tadpole"
+runcheck 18_longprefactor $mode "testing 1-loop triangle with a long prefactor"
+runcheck 19_zeroproppower $mode "testing zero propagator power with cutconstruct"
+
+runcheck 40_userdefined $mode "testing userdefined function" -u
+runcheck 50_general $mode "testing general function" -g
+
+cp -r $checkDir/51_dummy/{functions,temp}
+runcheck 51_dummy $mode "testing general function with dummy" -g
+
+rm -rf $checkDir/*/{temp,backup}*

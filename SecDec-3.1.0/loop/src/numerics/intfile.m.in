@@ -1,0 +1,85 @@
+(* ::Package:: *)
+
+(**** infile.m.in ****)
+(**** Template file for use of NIntegrate ****)
+
+Get["(*{$paths{"apf_writeM"}}*)"];
+StrToNum = ToExpression[StringReplace[#, {"E" -> "*10^", "e" -> "*10^"}]] &;
+
+myLog[x_] := Conjugate[Log[Conjugate[x]]];
+
+epsord=(*{$epsord}*);
+numvar=(*{$numvar}*);
+dir="(*{$dir}*)";
+groupnumber=(*{$groupnumber}*);
+suffix="(*{$params{"language_suffix"}}*)";
+funcname="(*{$paths{"rp_out_f"}}*)";
+minfuncno=(*{$minfuncno}*);
+maxfuncno=(*{$maxfuncno}*);
+psqlen = (*{ scalar @{$varmath{"array_lorentzlist"}} }*);
+msqlen = (*{ scalar @{$varmath{"array_masslist"}} }*);
+NIntopts = {(*{ $params{"NIntegrateOptions"} }*)};
+
+args=Drop[$CommandLine,1];
+pointname=args[[1]];
+
+If[(*{$params{"rescaleflag"}}*)==1,
+  bi=0; (* biggest invariant, only relevant if rescaleflag is set *)
+  Do[ esx[i] = StrToNum[args[[i+2]]];
+      If[Abs[esx[i]]>bi,bi=Abs[esx[i]]], {i,0,psqlen-1}];
+  If[(*{$params{"complexmasses"}}*)==1,
+    Do[ emreal[i] = StrToNum[args[[2*i+2+psqlen]]];
+        emimag[i] = StrToNum[args[[2*i+3+psqlen]]];
+        If["(*{$params{"contourdef"}}*)"=="True",
+	  If[emimag[i]>0,
+	     Print["ERROR: Positive imaginary part of mass squared detected!\n",
+	     "This is incompatible with the +i*eps prescription.\n"];
+	     Exit[];];
+	];
+	If[Abs[emreal[i]]>bi,bi=Abs[emreal[i]]];
+	If[Abs[emimag[i]]>bi,bi=Abs[emimag[i]]];
+     	, {i,0,msqlen-1}];
+     ,
+      Do[ em[i] = StrToNum[args[[i+2+psqlen]]];
+      If[Abs[em[i]]>bi,bi=Abs[em[i]]], {i,0,msqlen-1}]
+  ];
+  ,
+  bi=1; 
+  Do[ esx[i] = StrToNum[args[[i+2]]], {i,0,psqlen-1}];
+  If[(*{$params{"complexmasses"}}*)==1,
+    Do[ emreal[i] = StrToNum[args[[2*i+2+psqlen]]];
+        emimag[i] = StrToNum[args[[2*i+3+psqlen]]];
+        If["(*{$params{"contourdef"}}*)"=="True",
+	  If[emimag[i]>0,
+	     Print["ERROR: Positive imaginary part of mass squared detected!\n",
+	     "This is incompatible with the +i*eps prescription.\n"];
+	     Exit[];];
+	];
+     , {i,0,msqlen-1}];
+    ,
+    Do[ em[i] = StrToNum[args[[i+2+psqlen]]], {i,0,msqlen-1}];
+  ];
+];
+
+(* Print["pointname=",pointname]; *)
+(* Do[ Print["esx[",i,"]=",esx[i]], {i,0,psqlen-1}]; *)
+(* Do[ Print["em[",i,"]=",emreal[i]+I*emimag[i]], {i,0,msqlen-1}]; *)
+(* Print["bi=",bi]; *)
+
+Do[Get[StringJoin[dir,funcname,ToString[i],suffix]],{i,minfuncno,maxfuncno}];
+sum=Sum[ToExpression[StringJoin[funcname,ToString[i]]],{i,minfuncno,maxfuncno}];
+(* Print[sum]; *)
+nintegtime=AbsoluteTiming[
+  If[numvar==0,
+    result=sum,
+    result=NIntegrate[sum,
+	Evaluate[Sequence@@Table[{ToExpression[StringJoin["x",ToString[i]]],0,1},{i,0,numvar}]],
+    	Evaluate[NIntopts]]
+  ];
+][[1]];
+
+resoutfile=StringJoin[dir,ToString[groupnumber],"x",pointname,ToString[epsord],".out"];
+If[(*{$params{"contourdef"}}*),
+  writeM[result,resoutfile,nintegtime],
+  writeMreal[result,resoutfile,nintegtime]
+];

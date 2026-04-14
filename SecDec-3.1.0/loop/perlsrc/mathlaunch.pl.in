@@ -1,0 +1,63 @@
+  #****
+  #  NAME
+  #    mathlaunch.pl
+  #
+  #  USAGE
+  #  'perl mathlaunch.pl inputfile.m outputfile'
+  # 
+  #  USED BY 
+  #  makeFU.pl, decomposeloop.pl, decomposeuserdefined.pl, batch*l*h*, resultsloop.pl, resultsuserdefined.pl
+  #  
+  #  PURPOSE
+  #  finds the path for Mathematica, and then runs the inputfile.m,
+  #  with any output directed to outputfile
+  #  
+  #  INPUTS
+  #  parameters parsed via ARGV:
+  #  @ARGV=(inputfile.m, outputfile)
+  #
+  #  RESULT
+  #  inputfile.m is run, output directed to outputfile
+  #    
+  #****
+use strict;
+use warnings;
+
+my $arg1=shift @ARGV;
+my $arg2=shift @ARGV;
+
+unless (-e $arg1)
+{
+    print "Error - mathlaunch could not find input file " . $arg1 . "\n";
+    exit 1;
+}
+
+# Prepend (error) message redirection (to stderr) to math file, append Exit code
+open my $in,  '<',  $arg1      or die "Can't read old file: $!";
+open my $out, '>', "$arg1.new" or die "Can't write new file: $!";
+print $out "AppendTo[\$Messages,\"stderr\"];\n"; # print messages to stderr
+while( <$in> ) {
+    print $out $_;
+}
+print $out "Exit[Length[DeleteCases[Map[MessageList, Range[\$Line - 1]],{}|HoldPattern[MessageList[_]]]]];\n"; # non-zero exit code if messages were printed
+close $out;
+close $in;
+unlink($arg1);
+rename("$arg1.new", $arg1);
+
+# Run mathematica on math file
+my $flag=1; my $iteration=0;
+while ( ($flag == 1) && ($iteration < 15) ) {
+  system("MATH_EXEC  <$arg1 >$arg2 @ARGV") == 0
+    or die "Mathematica emitted messages whilst parsing $arg1";
+  my $mathcheck=`fgrep "You will" $arg2`;
+  if ( "$mathcheck" ne "" ) {
+    $iteration=$iteration+1;
+    print "Could not acquire a Mathematica licence: Retry number $iteration\n";
+    system("sleep 30");
+    if ($iteration == 15) { print "Error - Could not acquire a Mathematica licence. Try again later.\n"; exit 2;}
+  } else { $flag=0; }
+}
+my $exer=$?>>8;
+if($exer==127){print "Error - Path for Mathematica was not determined";exit 127};
+exit $flag;

@@ -1,0 +1,8 @@
+graph=cpentagon
+epsord=0
+contourdef=True
+togetherflag=1
+maxeval=3000000
+epsrel=1.e-3
+epsabs=1.e-8
+complexmasses=1

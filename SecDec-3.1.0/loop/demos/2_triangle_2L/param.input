@@ -1,0 +1,12 @@
+graph=P126
+
+epsord=0
+
+contourdef=True
+lambda=2.0
+
+maxeval=1000000,10000000,15000000
+
+epsrel=1.e-3,1.e-2,1.e-2
+epsabs=1.e-7
+

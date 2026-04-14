@@ -1,0 +1,1 @@
+OBJ = collectstr.o scanner.o runline.o hash.o integrators.o CIntegrate.o

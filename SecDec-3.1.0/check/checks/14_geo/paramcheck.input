@@ -1,0 +1,7 @@
+strategy=G2
+graph=temp
+epsord=0
+contourdef=False
+cubacores=1
+epsrel=2e-3,2e-3,2e-3
+nbmathsubkrnls=0

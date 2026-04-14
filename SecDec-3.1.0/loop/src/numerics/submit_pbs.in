@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+### submit_pbs.in --- template for submit_pbs[polestruct].[epsord]
+
+OPTSCOMPILE='<%$params{"clusteroptscompile"}%>'
+OPTSRUN='<% $params{"clusteroptsrun"}%>'
+PBSWORKDIR="$PWD/<%File::Spec->abs2rel($currentdir, $paths{"ap_out_cluster"}) . "/"%>"
+cd $PBSWORKDIR
+<%
+    $errpath= File::Spec->abs2rel($paths{"ap_out_clustererr"}, $currentdir) . "/";
+    $logpath= File::Spec->abs2rel($paths{"ap_out_clusterlog"}, $currentdir) . "/";
+    for ($kk=1;$kk<= $groupcount;$kk++) {
+#       $jobdep="";
+#        for ($i=$fmax[$kk-1]+1; $i <= $fmax[$kk]; $i++) {
+#	    $OUT .= "qsub -N JOB_ID_f${i} \$OPTSCOMPILE -cwd -b y -e ${errpath}${filename}.f${i}.err -o ${logpath}${filename}.f${i}.log make -f make${kk}file f${i}.o\n";
+#            $jobdep = $jobdep . "\$JOB_ID_f$i";
+#	    if ($params{"contourdef"} eq True) {
+#	        $OUT .= "qsub -N JOB_ID_g${i} \$OPTSCOMPILE -cwd -b y -e ${errpath}${filename}.g${i}.err -o ${logpath}${filename}.g${i}.log make -f make${kk}file g${i}.o\n";
+#                $jobdep = $jobdep . ":" . "\$JOB_ID_g$i";
+#	    }
+#	}
+	$OUT .= "qsub -N JOB_ID_${kk}  \$OPTSCOMPILE -cwd -e ${errpath}${filename}.c${kk}.err -o ${logpath}${filename}.c${kk}.log -b y make -f make${kk}file\n";
+    }
+%>
+KINEMFILE=$PBSWORKDIR/<%File::Spec->abs2rel($paths{"apf_out_kinemfile"}, $currentdir)%>
+while read kinem || [ -n "$kinem" ];
+do
+    [ -z "$kinem" ] && continue
+    [[ "$kinem" =~ \#.* ]] && continue
+<%
+    for ($kk=1;$kk<= $groupcount;$kk++) {
+	$OUT .= "qsub \$OPTSRUN -cwd -hold_jid JOB_ID_${kk} -e ${errpath}${filename}.i${kk}.err -o ${logpath}${filename}.i${kk}.log  -b y  ./intfile${kk}.exe \$kinem\n";
+    }
+%>
+done < $KINEMFILE
+
+

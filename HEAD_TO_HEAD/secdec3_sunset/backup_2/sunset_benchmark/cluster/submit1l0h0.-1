@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+### submit_pbs.in --- template for submit_pbs[polestruct].[epsord]
+
+OPTSCOMPILE=''
+OPTSRUN=''
+PBSWORKDIR="$PWD/../numerics/1l0h0/epstothe-1/"
+cd $PBSWORKDIR
+qsub -N JOB_ID_1  $OPTSCOMPILE -cwd -e ../../../cluster/err/submit1l0h0.-1.c1.err -o ../../../cluster/log/submit1l0h0.-1.c1.log -b y make -f make1file
+
+KINEMFILE=$PBSWORKDIR/../../../kinematics.input
+while read kinem || [ -n "$kinem" ];
+do
+    [ -z "$kinem" ] && continue
+    [[ "$kinem" =~ \#.* ]] && continue
+qsub $OPTSRUN -cwd -hold_jid JOB_ID_1 -e ../../../cluster/err/submit1l0h0.-1.i1.err -o ../../../cluster/log/submit1l0h0.-1.i1.log  -b y  ./intfile1.exe $kinem
+
+done < $KINEMFILE
+
+

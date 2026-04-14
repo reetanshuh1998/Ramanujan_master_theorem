@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# prepend pointname "p<number>" unless:
+# 1) line is a comment (begins with #)
+# 2) line is blank
+
+perl -pe '$_ = "p" . ++$a . " $_" unless( (/^#/) or (/^\s*$/) )' $1 > 'pn'$1

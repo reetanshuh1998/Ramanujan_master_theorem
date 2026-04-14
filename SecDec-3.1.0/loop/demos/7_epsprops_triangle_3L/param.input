@@ -1,0 +1,6 @@
+graph=A61
+epsord=2
+contourdef=False
+integrator=3
+epsrel=1.e-4
+epsabs=1.e-8,1.e-7,1.e-7,1.e-7,1.e-7,1.e-7

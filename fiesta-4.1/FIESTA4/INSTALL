@@ -1,0 +1,40 @@
+The directory bin contains relative sim links to binaries placed in other directories.
+It also has a bash script OutputIntegrand - see README for details
+
+The full package has the following binaries:
+
+- CIntegrateMP: multiple-precision command-line integrator
+- CIntegrateMPC: multiple-precision command-line integrator with complex numbers support
+- CIntegrateMPG: multiple-precision command-line integrator with GPU suppurt
+- CIntegrateMPCG: multiple-precision command-line integrator with complex numbers support and GPU support
+
+- CIntegratePool: used command-line option, opens database, integrates (communicating with integrators), writes results in other database
+- CIntegratePoolMPI: MPI version of CIntegratePool
+- KLink: mathlink program called from Mathematica and used to create the database
+- OutputIntegrand: helps to debug some cases when CIntegrateMP crashes
+
+In order to compile FIESTA one normally needs to build the libraries shipped with FIESTA: cuba and kyotocabinet.
+This is done with the 
+make dep command
+
+If the mpfr and gmp libraries are not on system paths, 
+one needs to edit paths.inc and provide proper paths to those libraries.
+Please do not forget to add those paths with -I and -L for include and link paths correspondingly.
+
+In rare cases you need also to edit libs.inc to tune library linking.
+If you want it static as much as possible, replace libs.inc with libs-static.inc
+
+Normally you won't need to edit the Makefile, her or in subfolders.
+
+Then run "make" in order to build everything but the MPI version of IntegratePool
+The MPI version is build with "make mpi" or together with other packages with "make all"
+
+There is no "make install" in package. Just provide the paths to files in the bin directory.
+
+In order to build KLink you need to have Mathematica installed on your system. The paths should be detected automatically.
+If you do not want to build KLink (the database will be prepared elsewhere) and wish to avoid compilation errors, use "make noklink".
+
+You build results might be verified with "make test" or "make testall" (to test also MPI). No errors should be produced.
+These simple tests mainly test whether the binaries are functional.
+For other tests see the README file and the examples directory.
+Please note that all paths in inputs there are relative - the executables are supposed to be loaded from this directory as examples/<something>

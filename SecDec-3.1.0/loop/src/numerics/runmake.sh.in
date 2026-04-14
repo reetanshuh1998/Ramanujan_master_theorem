@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+CURRDIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd $CURRDIR
+<%
+    for ($kk=1;$kk<= $groupcount;$kk++) {
+	    $OUT .=  "make -f  \$CURRDIR/make${kk}file\n";
+     }
+%>

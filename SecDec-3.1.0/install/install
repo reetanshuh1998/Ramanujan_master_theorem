@@ -1,0 +1,90 @@
+#! /bin/bash
+
+test -z "$PERL_EXEC" && {
+  PERL_EXEC=`which perl`
+  test -z "$PERL_EXEC" && {
+    echo "perl not found"
+    exit 1
+  }
+}
+echo "perl is at $PERL_EXEC"
+
+test -z "$MATH_EXEC" && {
+  case `uname -s` in
+  Darwin) set MathKernel \
+	/Applications/Mathematica*/Contents/MacOS \
+	$HOME/Desktop/Mathematica*/Contents/MacOS ;;
+  CYG*)	set math.exe \
+	"`cygpath '$ProgramW6432'`/Wolfram Research/Mathematica"/* \
+	"`cygpath '$PROGRAMFILES'`/Wolfram Research/Mathematica"/* \
+	"/cygdrive/c/Program Files/Wolfram Research/Mathematica"/* \
+	"/cygdrive/c/Program Files (x86)/Wolfram Research/Mathematica"/* ;;
+  *)	set math \
+	/usr/local/bin \
+	/usr/local/Wolfram/bin \
+	/usr/local/Wolfram/Mathematica/*/Executables \
+	/opt/Wolfram/bin \
+	/opt/Wolfram/Mathematica/*/Executables ;;
+  esac
+  MATH_EXEC="$1"  
+  shift
+  MATH_EXEC=`IFS=:
+    PATH="$PATH:$*" which $MATH_EXEC`
+  test -z "$MATH_EXEC" && {
+    echo "Mathematica not found"
+    exit 1
+  }
+}
+echo "Mathematica is at $MATH_EXEC"
+
+
+for fin in `find . -name \mathlaunch.pl.in` ; do
+  f=${fin%.in}
+  perl -pe "s|MATH_EXEC|$MATH_EXEC|" $fin > $f
+  chmod 755 $f
+done
+
+echo "Compiling Cuba"
+( cd src/Cuba-4.1 &&
+  ./configure &&
+  make lib ) > install.log 2>&1
+
+echo "Compiling Cquad"
+( cd src/cquad &&
+  ./configure -prefix=$PWD --libdir=$PWD/lib &&
+  make &&
+  make install ) > install.log 2>&1
+
+echo "Compiling Sobol random sampler"
+( set +x &&
+  cd src/sobol &&
+  ${CC:-gcc} -O -c sobol.cc ) >> install.log 2>&1 || echo "\
+Could not compile Sobol random sampler. \
+Retry manually in `pwd`/src/sobol directory."
+
+echo ""
+NORMALIZ=src/normaliz
+if [ -f $NORMALIZ ]
+then
+echo "Normaliz executable found"
+else
+echo "--------------------------------------------------"
+echo " To use the geometric strategies G1 and G2"
+echo " download the program Normaliz from"
+echo " http://www.math.uos.de/normaliz/Normaliz2.10.1/"
+echo " and move the executable to the directory"
+echo " ${PWD}/src"
+echo "--------------------------------------------------"
+fi
+
+SECDEC_PATH=`pwd`
+echo "--------------------------------------------------"
+echo "Please add secdec to your path"
+echo "For example, add to your ~/.bash_profile the line:"
+echo 'export PATH="'$SECDEC_PATH':$PATH"'
+echo "--------------------------------------------------"
+
+echo "--------------------------------------------------"
+echo "Install complete"
+echo "--------------------------------------------------"
+echo ""

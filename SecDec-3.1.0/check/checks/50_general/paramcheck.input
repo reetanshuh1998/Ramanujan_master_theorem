@@ -1,0 +1,10 @@
+integrand=temp
+epsord=0
+IBPflag=0
+exeflag=4
+symbols=beta
+values=0.75
+pointname=p1
+integrator=3
+epsrel=.03d-2,.05d-2,.05d-2,.08d-2,.1d-2
+epsabs=1d-12,1d-12,1d-12,1d-12,1d-12

@@ -1,0 +1,17 @@
+##############
+# Kinematics #
+##############
+#
+# Kinematic points for which the integral should be computed
+#
+# - Each line should contain (in the following order)
+#   * a pointname
+#   * a list of numeric values for each kinematic invariant
+#   * a list of numeric values for each mass
+# - Kinematic invariants should be listed in the order they are defined in the mathfile
+# - Masses should be listed in the order they are defined in the mathfile
+#
+# Example:
+# pointname invariant1 invariant2 invariant3 mass1
+  p1        4          -0.75      1.25       1
+  p2        1.2        0.2        0.3        1

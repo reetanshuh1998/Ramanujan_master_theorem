@@ -1,0 +1,267 @@
+################ input parameters for sector decomposition #################
+################# all lines beginning with # are comments ##################
+# 
+######################## mandatory input: ##################################
+#---------------------------------------------------------------------------
+# graphname (can contain underscores, numbers, but should not contain commas)
+graph=box1L
+#---------------------------------------------------------------------------
+# epsord: level up to which expansion in eps is desired 
+# (default is epsord=0: Laurent series is cut after finite part eps^0)
+# series will be calculated from eps^(-maxpole) to eps^epsord
+# note that epsord is negative if just some pole coeffs are required
+epsord=0
+#
+######################## optional input: ##################################
+#---------------------------------------------------------------------------
+# directory where the produced files will be written to
+# if left empty, a subdirectory of the current directory 
+# named by the graphname given below will be created 
+# if not left empty, please give the FULL path
+#outputdir=${HOME}/SecDec/loop/working/2loop
+outputdir=
+#---------------------------------------------------------------------------
+# Euclidean region (all SP[pi,pj] < 0, or single scale problems): contourdef=False (default)
+# Physical region (no sign restriction on SP[pi,pj]): contourdef=True
+contourdef=True
+#---------------------------------------------------------------------------
+# choose an initial contour deformation parameter lambda
+# note that lambda > 1 can be chosen, the program will automatically 
+# decrease lambda if the given lambda is found to be non-optimal
+lambda=1.0
+#---------------------------------------------------------------------------
+# choose a decomposition strategy
+# X: default, leads to minimal number of sectors, not guaranteed to stop
+# G1: based on geometrical algorithm of Kaneko/Ueda, guaranteed to stop
+# G2: similar to G1, but without primary sector decomposition
+strategy=X
+#---------------------------------------------------------------------------
+# flag to decide at which stage the program terminates: ('exe flag')
+# 0 - the iterated sector decomposition is done and 
+#       the scripts to do the subtraction and epsilon expansion and 
+#       to create the files f*.cc (resp. f*.m) for the finite functions are 
+#       created, but not run 
+# 1 - the subtraction and epsilon expansion are performed, and the 
+#      resulting functions are written to files f*.cc (f*.m); 
+#      in addition, all files needed for the numerical integration are created
+# 2 - compilation is launched and the executables are run
+#       (note that in cluster mode, the job submission files created in the previous 
+#       step need to be run by the user once the (locally) produced functions 
+#       are trnasferred to a cluster)
+# 3 -  the results are collected and written to files       
+exeflag=3
+#
+############################################################################
+# advanced options
+############################################################################
+#
+# flag to integrate subsets of functions for each pole order separately or
+# to sum all functions for a certain pole order and then integrate.
+# integrate first and then sum: 0
+# sum first and then integrate: 1
+# togetherflag=1 will allow cancellations between different functions at 
+# integrand level, and thus will give a more realistic error in cases where 
+# large cancellations between individual functions occur.
+# It should not be used for complicated diagrams
+# where the individual functions are very large
+togetherflag=0
+#---------------------------------------------------------------------------
+# the maximum size (in kilobytes) of the C++ functions to be grouped 
+# together for integration.
+# In contrast to togetherflag=1, this grouping will only group functions which 
+# are descendants of the same pole structure (e.g. within the folder 2l0h0), 
+# but will not combine e.g. eps^0 functions originating from the folders 
+# 2l0h0, 1l0h0 and 0l0h0, as togetherflag=1 does; (the first number indicates the 
+# maximal (logarithmic) pole in eps, the folders are named according to the 
+# pole structures)
+# If you would like to integrate each (finite) function individually,
+# choose a very low value for grouping 
+grouping=500
+#---------------------------------------------------------------------------
+# flag to use integration by parts (IBP) to deal with numerical instabilities 
+# in functions with many subtractions, so called "linear or higher 
+# divergences". In case these occur, choosing '0' does nothing and '1' 
+# turns the linear and higher divergences into logarithmic ones. 
+# Note that using IBP can increase the number of functions to be integrated.
+IBPflag=0
+#---------------------------------------------------------------------------
+# list of primary sectors to be redone with a variant of strategy X 
+# ("heuristic" strategy H) because they lead to infinite recursion. 
+# As soon as list is non-empty, strategy H will be applied 
+# (independent of strategy choice above)
+infinitesectors=
+#---------------------------------------------------------------------------
+# list of primary sectors to be calculated
+# (if blank, default is all, i.e. 1 to number of propagators will be taken); 
+# useful if a diagram has symmetries such that some primary sectors yield 
+# the same result, so don't have to be calculated
+primarysectors=
+#---------------------------------------------------------------------------
+# multiplicities of the primary sectors listed above
+# (list multiplicities in the same order as corresponding sectors above)
+# if blank, default multiplicities (=one) are set automatically
+multiplicities=
+#---------------------------------------------------------------------------
+# switch on the rescaling of invariants by setting rescale=1 
+# (or off by rescale=0, default is 0)
+# useful if invariants differ by orders of magnitude
+# note: if you choose rescaling you cannot assign numerical values to the 
+# invariants already in the conditions in ScalarProductRules in the {mathgraph}.m file
+rescale=0
+#
+#---------------------------------------------------------------------------
+# number of kernels Mathematica is allowed to use during the (parallelized) algebraic part
+nbmathsubkrnls=4
+#
+################ advanced CONTOUR DEFORMATION PARAMETERS ##########################
+#
+# smalldefs=1 minimizes the deformation of the contour, can be useful 
+# e.g. in the presence of oscillatory integrands
+# (default is 0)
+smalldefs=0
+#---------------------------------------------------------------------------
+# largedefs=1 will maximize the deformation of the contour;
+# can help in the case of spurious endpoint singularities;
+# note that largedefs/smalldefs do not mutually exclude each other 
+# (default is 0) 
+largedefs=0
+#---------------------------------------------------------------------------
+# set the number of pre-samplings to determine the optimal lambda 
+# (default is 4000). Increasing the value slows down the individual
+# integrations (bad if you need to integrate many functions), decreasing  
+# it might produce a non-optimal lambda.
+optlamevals=4000
+#
+##################################################onl##########################
+# parameters for the numerical integration
+############################################################################
+#
+# C-compiler (default is gcc)
+compiler=gcc
+#---------------------------------------------------------------------------
+# arguments passed to C compiler for compiling numerical integration files
+CCargs=-O
+#---------------------------------------------------------------------------
+# the path to the sobol quasi-random number generator can be specified here,
+# if different fom the default path [path_to_SecDec]/src/sobol
+sobolpath=
+#---------------------------------------------------------------------------
+# the path to the cquad integrator can be specified here,
+# if different fom the default path [path_to_SecDec]/src/cquad
+cquadpath=
+#---------------------------------------------------------------------------
+# Numerical integrator to use:
+# 0=BASES, 
+# 1=Vegas, 2=Suave, 3=Divonne(default), 4=Cuhre, (CUBA library)
+# 5=Mathematica,
+integrator=3
+#---------------------------------------------------------------------------
+# path to Cuba library
+# leave blank for default path=[path_to_SecDec]/src/Cuba-4.1, otherwise give full path
+cubapath=
+#---------------------------------------------------------------------------
+# to limit the maximal number of cores used by Cuba 
+# (default in clustermode is 1, in single machine mode 0, which means that all 
+#  available idle cores will be used)
+cubacores=
+# ############## NIntegrate options #########################################
+# Options for NIntegrate if Mathematica is used as integrator.
+# Example:
+# NIntegrateOptions=AccuracyGoal->2,WorkingPrecision->12,Method->"AdaptiveMonteCarlo"
+# NIntegrateOptions=AccuracyGoal->2,WorkingPrecision->12
+#
+######################### Cuba parameters ##################################
+# maximum number of function evaluations for leading pole, subleading pole,...
+maxeval=3000000,3000000,5000000
+#---------------------------------------------------------------------------
+# minimum number of function evaluations for leading pole, subleading pole,...
+mineval=0,0,0
+#---------------------------------------------------------------------------
+# relative accuraccy required (as decimal) for leading pole, subleading pole,...
+epsrel=1.e-3,1.e-3,1.e-3
+#---------------------------------------------------------------------------
+# absolute accuraccy required (as decimal) for leading pole, subleading pole,...
+epsabs=1.e-8,1.e-8,1.e-8
+#---------------------------------------------------------------------------
+# flag for Cuba (encodes verbosity, how samples are used, and how random 
+# numbers are generated)
+cubaflags=2
+#---------------------------------------------------------------------------
+# seed used to generate random numbers for the numerical integration (Cuba)
+# seed=0: Cuba will use the Sobol (quasi-)random number generator
+# seed non-zero: Cuba will use the Mersenne-Twister or Ranlux 
+# pseudo random number generator, depending on the value of 'cubaflags' above,
+# for details see Cuba-4.1/cuba.pdf
+seed=0
+####################### Divonne specific parameters ########################
+# determines sampling in partitioning phase
+key1=1500,1500,2000
+#---------------------------------------------------------------------------
+# determines sampling in final integration phase
+key2=1,1,1
+#---------------------------------------------------------------------------
+# sets strategy for refinement phase
+key3=1,1,1
+#---------------------------------------------------------------------------
+# controls thoroughness of partitioning phase, (essentially the number of
+# iterations performed before a partition is accepted)
+maxpass=4,4,4
+#---------------------------------------------------------------------------
+# the width of the border of the integration region functions which cannot
+# be evaluated on the border (most functions in secdec) need a non-zero 
+# border function values in this region are extrapolated from inside the 
+# integration region
+border=1.e-6,1.e-6,1.e-6
+#---------------------------------------------------------------------------
+# maximum chi squared value a single subregion is allowed to have in the 
+# final integration phase
+maxchisq=1.0,1.0,1.0
+#---------------------------------------------------------------------------
+# minimum deviation (as decimal) of the requested error of the entire 
+# integral which determines whether it is worthwhile further examining a
+# region which failed chi squared test
+mindeviation=.15e0,.15e0,.15e0
+#---------------------------------------------------------------------------
+####################### Vegas specific parameters ##########################
+# number of function evaluations on the first iteration
+nstart=200000,200000,200000
+#---------------------------------------------------------------------------
+# number of extra function evaluations per iteration
+nincrease=10000,10000,10000
+#---------------------------------------------------------------------------
+####################### Suave specific parameters ##########################
+# number of new integrand evaluations in each subdivision
+nnew=10000,10000,10000
+#---------------------------------------------------------------------------
+# measure of how 'flat' the function to evaluate is
+flatness=1d0,1d0,1d0
+#---------------------------------------------------------------------------
+################## Cuhre specific parameters ###############################
+# chooses basic integration rule for leading pole, subleading pole,...
+key=7,7,7
+#---------------------------------------------------------------------------
+################ cluster options: ##########################################
+# flag for job submission: 0: single machine, 1: cluster (batch system to 
+# submit jobs)
+clusterflag=0
+#---------------------------------------------------------------------------
+# if using a cluster: flag to use the default PBS batch setup (0) or a 
+# condor setup (1) or LSF cluster setup (2)
+batchsystem=0
+#---------------------------------------------------------------------------
+# if using a cluster: command line arguments passed to qsub for compilation jobs
+clusteroptscompile=
+#---------------------------------------------------------------------------
+# if using a cluster: command line arguments passed to qsub for integration jobs
+clusteroptsrun=
+#---------------------------------------------------------------------------
+# ############## plotting options: ##########################################
+# give the position in the list of invariants which determines the invariant 
+# to be plotted on the x-axis
+# example: the invariants are s,t,u,m1sq,m2sq
+# then xplot=4 would tell SecDec to write the values for m1sq into the 1st column 
+# of the *.gpdat file; the *gpdat files have the form 
+# [invariant chosen by xplot]  real_result  real_error  imag_result  imag_error  timing
+# if xplot is a list of length L, the first L columns of *.gpdat will correspond to the 
+# values of the invariants corresponding to the xplot labels (e.g. xplot=1,2)
+xplot=1

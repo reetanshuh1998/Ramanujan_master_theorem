@@ -1,0 +1,1362 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     50918,       1353]
+NotebookOptionsPosition[     48991,       1287]
+NotebookOutlinePosition[     49329,       1302]
+CellTagsIndexPosition[     49286,       1299]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "loading", " ", "FIESTA", " ", "and", " ", "turning", " ", "on", " ", 
+    "parallelization"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"FIESTAPath", "=", 
+     RowBox[{"StringReplace", "[", 
+      RowBox[{
+       RowBox[{"NotebookDirectory", "[", "]"}], ",", 
+       RowBox[{"\"\</examples/\>\"", "->", "\"\<\>\""}]}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Get", "[", 
+     RowBox[{"FIESTAPath", "<>", "\"\</FIESTA4.m\>\""}], "]"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"NumberOfSubkernels", "=", "4"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"NumberOfLinks", "=", "4"}], ";"}]}]}]], "Input",
+ CellChangeTimes->{{3.592633492003057*^9, 3.5926335498392973`*^9}, {
+  3.617956307288797*^9, 3.617956307463973*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"basic", " ", "example"}], " ", "-", " ", "box"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"SDEvaluate", "[", 
+   RowBox[{
+    RowBox[{"UF", "[", 
+     RowBox[{
+      RowBox[{"{", "k", "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", 
+         RowBox[{"k", "^", "2"}]}], ",", 
+        RowBox[{"-", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"k", "+", "p1"}], ")"}], "^", "2"}]}], ",", 
+        RowBox[{"-", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"k", "+", "p1", "+", "p2"}], ")"}], "^", "2"}]}], ",", 
+        RowBox[{"-", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"k", "+", "p1", "+", "p2", "+", "p4"}], ")"}], "^", 
+          "2"}]}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"p1", "^", "2"}], "\[Rule]", "0"}], ",", 
+        RowBox[{
+         RowBox[{"p2", "^", "2"}], "\[Rule]", "0"}], ",", 
+        RowBox[{
+         RowBox[{"p4", "^", "2"}], "\[Rule]", "0"}], ",", 
+        RowBox[{
+         RowBox[{"p1", " ", "p2"}], "\[Rule]", 
+         RowBox[{
+          RowBox[{"-", "S"}], "/", "2"}]}], ",", 
+        RowBox[{
+         RowBox[{"p2", " ", "p4"}], "\[Rule]", 
+         RowBox[{
+          RowBox[{"-", "T"}], "/", "2"}]}], ",", 
+        RowBox[{
+         RowBox[{"p1", " ", "p4"}], "\[Rule]", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"S", "+", "T"}], ")"}], "/", "2"}]}], ",", 
+        RowBox[{"S", "\[Rule]", "3"}], ",", 
+        RowBox[{"T", "\[Rule]", "1"}]}], "}"}]}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "1", ",", "1", ",", "1"}], "}"}], ",", "0"}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.592633640218749*^9, 3.592633656850006*^9}, {
+  3.592634063157921*^9, 3.5926340637732973`*^9}}],
+
+Cell["\<\
+FIESTA 4.0.dev
+Current integrator: vegasCuba
+CurrentIntegratorSettings: \
+{{\"epsrel\",\"1.000000E-05\"},{\"epsabs\",\"1.000000E-12\"},{\"mineval\",\"0\
+\"},{\"maxeval\",\"50000\"},{\"nstart\",\"1000\"},{\"nincrease\",\"500\"}}
+Integration test passed
+Starting 4 subkernels
+UsingC: True
+NumberOfLinks: 4
+UsingQLink: True
+Strategy: STRATEGY_S
+Integration has to be performed up to order 0
+KLink created (2013 version)! You can read information on QOpen, QRead, \
+QRemoveDatabase, QClose, QList, QSize, QPut, QGet, QSafeGet, QCheck and QRemove
+Sector decomposition - 4 sectors
+Primary sector 1 resulted in 3 sectors.
+Primary sector 2 resulted in 3 sectors.
+Primary sector 3 resulted in 3 sectors.
+Primary sector 4 resulted in 3 sectors.
+Totally: 0.3742 seconds; 8 sectors.
+Preparing database: 0.007 seconds. 
+Variable substitution..........0.0426 seconds; 12 terms.
+Pole resolution..........0.0486 seconds; 40 terms.
+Expression preparation..........0.0877 seconds; 40 terms.
+Epsilon expansion..........0.0933 seconds; 48 terms.
+Preparing integration strings..........0.0939 seconds; 48 terms.
+Database ready for integration.
+Terms of order -2: 8, max vars: 1
+Integrating..........1.0021 seconds.
+Returned answer: 1.333304 + pm* 0.000019
+(1.333304 + 0.000019*pm1)*ep^(-2)
+Terms of order -1: 12, max vars: 2
+Integrating..........0.0019 seconds.
+Returned answer: -2.065769 + pm* 0.000667
+(1.333304 + 0.000019*pm2)*ep^(-2)+(-0.732466 + 0.000667*pm3)*ep^(-1)
+Terms of order 0: 12, max vars: 2
+Integrating..........1.0034 seconds.
+Returned answer: -3.417411 + pm* 0.000379
+(1.333304 + 0.000019*pm4)*ep^(-2)+(-0.732466 + \
+0.000667*pm5)*ep^(-1)+(-4.386582 + 0.000768*pm6)*1
+Total integration time: 2.0494
+Total time used: 3.13682 seconds.\
+\>", "Print",
+ CellChangeTimes->{
+  3.5926336584830837`*^9, {3.592633712573682*^9, 3.592633742046154*^9}, 
+   3.592634107799798*^9, 3.6398975952819853`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", "4.386582`"}], "+", 
+  FractionBox[
+   RowBox[{"1.333304`", "\[VeryThinSpace]", "+", 
+    RowBox[{"0.000019`", " ", "pm7"}]}], 
+   SuperscriptBox["ep", "2"]], "+", 
+  FractionBox[
+   RowBox[{
+    RowBox[{"-", "0.732466`"}], "+", 
+    RowBox[{"0.000667`", " ", "pm8"}]}], "ep"], "+", 
+  RowBox[{"0.000768`", " ", "pm9"}]}]], "Output",
+ CellChangeTimes->{
+  3.5926336656206417`*^9, {3.59263372061578*^9, 3.592633749978735*^9}, 
+   3.592634115071347*^9, 3.6398976034969597`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", "expansion", " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"expand", "=", 
+   RowBox[{"SDExpand", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"x", "[", "1", "]"}], "+", 
+        RowBox[{"x", "[", "2", "]"}], "+", 
+        RowBox[{"x", "[", "3", "]"}], "+", 
+        RowBox[{"x", "[", "4", "]"}]}], ",", " ", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"x", "[", "1", "]"}], " ", 
+         RowBox[{"x", "[", "3", "]"}]}], "+", 
+        RowBox[{"t", " ", 
+         RowBox[{"x", "[", "2", "]"}], " ", 
+         RowBox[{"x", "[", "4", "]"}]}]}], ",", "1"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1", ",", "1", ",", "1"}], "}"}], ",", "1", ",", "t", 
+     ",", "1"}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.592633836220889*^9, 3.592633840008803*^9}, {
+  3.592634066556189*^9, 3.5926340674870577`*^9}}],
+
+Cell["\<\
+FIESTA 4.0.dev
+Current integrator: vegasCuba
+CurrentIntegratorSettings: \
+{{\"epsrel\",\"1.000000E-05\"},{\"epsabs\",\"1.000000E-12\"},{\"mineval\",\"0\
+\"},{\"maxeval\",\"50000\"},{\"nstart\",\"1000\"},{\"nincrease\",\"500\"}}
+Integration test passed
+Starting 4 subkernels
+UsingC: True
+NumberOfLinks: 4
+UsingQLink: True
+Strategy: STRATEGY_S
+Expansion variable found
+Integration has to be performed up to order 1
+Sector decomposition - 4 sectors
+Primary sector 1 resulted in 1 sectors.
+Primary sector 2 resulted in 1 sectors.
+Primary sector 3 resulted in 1 sectors.
+Primary sector 4 resulted in 1 sectors.
+Totally: 0.1396 seconds; 8 sectors.
+Preparing database: 0.0017 seconds. 
+Variable substitution..........0.0126 seconds; 4 terms.
+Pole resolution..........0.0399 seconds; 40 terms.
+Taking residues..........0.2895 seconds; 140 terms.
+Pole resolution..........0.3078 seconds; 164 terms.
+Expression preparation..........0.3828 seconds; 164 terms.
+Epsilon expansion..........0.4616 seconds; 424 terms.
+Preparing integration strings..........1.0494 seconds; 424 terms.
+Database ready for integration.
+Terms of ep order -2 and t order {-1, 0}: 4, max vars: 0
+Integrating..........1.0035 seconds.
+Returned answer: 4. + pm* 0
+(4.)*1/(ep^2*t)
+Terms of ep order -1 and t order {-1, 0}: 4, max vars: 0
+Integrating..........0.0012 seconds.
+Returned answer: -4. + pm* 0
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(0)*Log[t]/(ep*t)+(0)*ep^(-1)+(0)*t/ep
+Terms of ep order -1 and t order {-1, 1}: 4, max vars: 0
+Integrating..........1.0055 seconds.
+Returned answer: -2. + pm* 0
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-2.)*Log[t]/(ep*t)+(0)*ep^(-1)+(0)*t/ep
+Terms of ep order -1 and t order {0, 0}: 2, max vars: 1
+Integrating..........0.0007 seconds.
+Returned answer: 0 + pm* 0
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-2.)*Log[t]/(ep*t)+(0)*ep^(-1)+(0)*t/ep
+Terms of ep order -1 and t order {1, 0}: 2, max vars: 1
+Integrating..........0.0012 seconds.
+Returned answer: 0 + pm* 0
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-2.)*Log[t]/(ep*t)+(0)*ep^(-1)+(0)*t/ep
+Terms of ep order 0 and t order {-1, 0}: 4, max vars: 1
+Integrating..........1.0017 seconds.
+Returned answer: -12.449491 + pm* 0.000102
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + \
+0.000102*pm33)*t^(-1)+(-2.)*Log[t]/(ep*t)+(-2.)*Log[t]/t+(0)*Log[t]^2/t+(0)*\
+ep^(-1)+(0)*1+(0)*Log[t]+(0)*t/ep+(0)*t+(0)*t*Log[t]
+Terms of ep order 0 and t order {-1, 1}: 4, max vars: 0
+Integrating..........0.0007 seconds.
+Returned answer: 2. + pm* 0
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + \
+0.000102*pm45)*t^(-1)+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(0)*Log[t]^2/t+(0)*ep^(\
+-1)+(0)*1+(0)*Log[t]+(0)*t/ep+(0)*t+(0)*t*Log[t]
+Terms of ep order 0 and t order {-1, 2}: 4, max vars: 0
+Integrating..........1.0023 seconds.
+Returned answer: 0 + pm* 0
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + \
+0.000102*pm57)*t^(-1)+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(0)*Log[t]^2/t+(0)*ep^(\
+-1)+(0)*1+(0)*Log[t]+(0)*t/ep+(0)*t+(0)*t*Log[t]
+Terms of ep order 0 and t order {0, 0}: 4, max vars: 2
+Integrating..........0.0012 seconds.
+Returned answer: 0.000025 + pm* 0.000343
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + \
+0.000102*pm69)*t^(-1)+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(0)*Log[t]^2/t+(0)*ep^(\
+-1)+(0.000025 + 0.000343*pm74)*1+(0)*Log[t]+(0)*t/ep+(0)*t+(0)*t*Log[t]
+Terms of ep order 0 and t order {0, 1}: 2, max vars: 1
+Integrating..........1.0264 seconds.
+Returned answer: 0 + pm* 0
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + \
+0.000102*pm81)*t^(-1)+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(0)*Log[t]^2/t+(0)*ep^(\
+-1)+(0.000025 + 0.000343*pm86)*1+(0)*Log[t]+(0)*t/ep+(0)*t+(0)*t*Log[t]
+Terms of ep order 0 and t order {1, 0}: 4, max vars: 2
+Integrating..........0.0007 seconds.
+Returned answer: -0.00001 + pm* 0.000135
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + \
+0.000102*pm93)*t^(-1)+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(0)*Log[t]^2/t+(0)*ep^(\
+-1)+(0.000025 + 0.000343*pm98)*1+(0)*Log[t]+(0)*t/ep+(-0.00001 + \
+0.000135*pm101)*t+(0)*t*Log[t]
+Terms of ep order 0 and t order {1, 1}: 2, max vars: 1
+Integrating..........1.0044 seconds.
+Returned answer: 0 + pm* 0
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + \
+0.000102*pm105)*t^(-1)+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(0)*Log[t]^2/t+(0)*ep^\
+(-1)+(0.000025 + 0.000343*pm110)*1+(0)*Log[t]+(0)*t/ep+(-0.00001 + \
+0.000135*pm113)*t+(0)*t*Log[t]
+Terms of ep order 1 and t order {-1, 0}: 4, max vars: 2
+Integrating..........0.0008 seconds.
+Returned answer: 0.428818 + pm* 0.001222
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + 0.000102*pm117)*t^(-1)+(-13.623417 \
++ 0.001227*pm118)*ep/t+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(0.355066)*(ep*Log[t])\
+/t+(0)*Log[t]^2/t+(0)*(ep*Log[t]^2)/t+(0)*(ep*Log[t]^3)/t+(0)*ep^(-1)+(0.\
+000025 + 0.000343*pm126)*1+(0.000025 + \
+0.000343*pm127)*ep+(0)*Log[t]+(0)*ep*Log[t]+(0)*ep*Log[t]^2+(0)*t/ep+(-0.\
+00001 + 0.000135*pm132)*t+(-0.00001 + \
+0.000135*pm133)*ep*t+(0)*t*Log[t]+(0)*ep*t*Log[t]+(0)*ep*t*Log[t]^2
+Terms of ep order 1 and t order {-1, 1}: 4, max vars: 1
+Integrating..........1.0019 seconds.
+Returned answer: 11.159639 + pm* 0.000091
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + 0.000102*pm139)*t^(-1)+(-13.623417 \
++ 0.001227*pm140)*ep/t+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(11.514705 + \
+0.000091*pm143)*(ep*Log[t])/t+(0)*Log[t]^2/t+(0)*(ep*Log[t]^2)/t+(0)*(ep*Log[\
+t]^3)/t+(0)*ep^(-1)+(0.000025 + 0.000343*pm148)*1+(0.000025 + \
+0.000343*pm149)*ep+(0)*Log[t]+(0)*ep*Log[t]+(0)*ep*Log[t]^2+(0)*t/ep+(-0.\
+00001 + 0.000135*pm154)*t+(-0.00001 + \
+0.000135*pm155)*ep*t+(0)*t*Log[t]+(0)*ep*t*Log[t]+(0)*ep*t*Log[t]^2
+Terms of ep order 1 and t order {-1, 2}: 4, max vars: 0
+Integrating..........1.0019 seconds.
+Returned answer: -4.*^-6 + pm* 0
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + 0.000102*pm161)*t^(-1)+(-13.623417 \
++ 0.001227*pm162)*ep/t+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(11.514705 + \
+0.000091*pm165)*(ep*Log[t])/t+(0)*Log[t]^2/t+(-4.*^-6)*(ep*Log[t]^2)/t+(0)*(\
+ep*Log[t]^3)/t+(0)*ep^(-1)+(0.000025 + 0.000343*pm170)*1+(0.000025 + \
+0.000343*pm171)*ep+(0)*Log[t]+(0)*ep*Log[t]+(0)*ep*Log[t]^2+(0)*t/ep+(-0.\
+00001 + 0.000135*pm176)*t+(-0.00001 + \
+0.000135*pm177)*ep*t+(0)*t*Log[t]+(0)*ep*t*Log[t]+(0)*ep*t*Log[t]^2
+Terms of ep order 1 and t order {-1, 3}: 4, max vars: 0
+Integrating..........0.0007 seconds.
+Returned answer: 0.333332 + pm* 0
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + 0.000102*pm183)*t^(-1)+(-13.623417 \
++ 0.001227*pm184)*ep/t+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(11.514705 + \
+0.000091*pm187)*(ep*Log[t])/t+(0)*Log[t]^2/t+(-4.*^-6)*(ep*Log[t]^2)/t+(0.\
+333332)*(ep*Log[t]^3)/t+(0)*ep^(-1)+(0.000025 + 0.000343*pm192)*1+(0.000025 + \
+0.000343*pm193)*ep+(0)*Log[t]+(0)*ep*Log[t]+(0)*ep*Log[t]^2+(0)*t/ep+(-0.\
+00001 + 0.000135*pm198)*t+(-0.00001 + \
+0.000135*pm199)*ep*t+(0)*t*Log[t]+(0)*ep*t*Log[t]+(0)*ep*t*Log[t]^2
+Terms of ep order 1 and t order {0, 0}: 4, max vars: 3
+Integrating..........1.0019 seconds.
+Returned answer: -11.870319 + pm* 0.010589
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + 0.000102*pm205)*t^(-1)+(-13.623417 \
++ 0.001227*pm206)*ep/t+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(11.514705 + \
+0.000091*pm209)*(ep*Log[t])/t+(0)*Log[t]^2/t+(-4.*^-6)*(ep*Log[t]^2)/t+(0.\
+333332)*(ep*Log[t]^3)/t+(0)*ep^(-1)+(0.000025 + 0.000343*pm214)*1+(-11.870294 \
++ 0.010594*pm215)*ep+(0)*Log[t]+(0)*ep*Log[t]+(0)*ep*Log[t]^2+(0)*t/ep+(-0.\
+00001 + 0.000135*pm220)*t+(-0.00001 + \
+0.000135*pm221)*ep*t+(0)*t*Log[t]+(0)*ep*t*Log[t]+(0)*ep*t*Log[t]^2
+Terms of ep order 1 and t order {0, 1}: 4, max vars: 2
+Integrating..........0.0008 seconds.
+Returned answer: 1.999928 + pm* 0.001143
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + 0.000102*pm227)*t^(-1)+(-13.623417 \
++ 0.001227*pm228)*ep/t+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(11.514705 + \
+0.000091*pm231)*(ep*Log[t])/t+(0)*Log[t]^2/t+(-4.*^-6)*(ep*Log[t]^2)/t+(0.\
+333332)*(ep*Log[t]^3)/t+(0)*ep^(-1)+(0.000025 + 0.000343*pm236)*1+(-11.870294 \
++ 0.010594*pm237)*ep+(0)*Log[t]+(1.999928 + \
+0.001143*pm239)*ep*Log[t]+(0)*ep*Log[t]^2+(0)*t/ep+(-0.00001 + \
+0.000135*pm242)*t+(-0.00001 + \
+0.000135*pm243)*ep*t+(0)*t*Log[t]+(0)*ep*t*Log[t]+(0)*ep*t*Log[t]^2
+Terms of ep order 1 and t order {0, 2}: 2, max vars: 1
+Integrating..........0.0007 seconds.
+Returned answer: -0.999987 + pm* 0.000015
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + 0.000102*pm249)*t^(-1)+(-13.623417 \
++ 0.001227*pm250)*ep/t+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(11.514705 + \
+0.000091*pm253)*(ep*Log[t])/t+(0)*Log[t]^2/t+(-4.*^-6)*(ep*Log[t]^2)/t+(0.\
+333332)*(ep*Log[t]^3)/t+(0)*ep^(-1)+(0.000025 + 0.000343*pm258)*1+(-11.870294 \
++ 0.010594*pm259)*ep+(0)*Log[t]+(1.999928 + \
+0.001143*pm261)*ep*Log[t]+(-0.999987 + \
+0.000015*pm262)*ep*Log[t]^2+(0)*t/ep+(-0.00001 + 0.000135*pm264)*t+(-0.00001 \
++ 0.000135*pm265)*ep*t+(0)*t*Log[t]+(0)*ep*t*Log[t]+(0)*ep*t*Log[t]^2
+Terms of ep order 1 and t order {1, 0}: 4, max vars: 3
+Integrating..........1.0033 seconds.
+Returned answer: 5.185152 + pm* 0.005174
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + 0.000102*pm271)*t^(-1)+(-13.623417 \
++ 0.001227*pm272)*ep/t+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(11.514705 + \
+0.000091*pm275)*(ep*Log[t])/t+(0)*Log[t]^2/t+(-4.*^-6)*(ep*Log[t]^2)/t+(0.\
+333332)*(ep*Log[t]^3)/t+(0)*ep^(-1)+(0.000025 + 0.000343*pm280)*1+(-11.870294 \
++ 0.010594*pm281)*ep+(0)*Log[t]+(1.999928 + \
+0.001143*pm283)*ep*Log[t]+(-0.999987 + \
+0.000015*pm284)*ep*Log[t]^2+(0)*t/ep+(-0.00001 + 0.000135*pm286)*t+(5.185141 \
++ 0.005176*pm287)*ep*t+(0)*t*Log[t]+(0)*ep*t*Log[t]+(0)*ep*t*Log[t]^2
+Terms of ep order 1 and t order {1, 1}: 4, max vars: 2
+Integrating..........1.0019 seconds.
+Returned answer: -0.499977 + pm* 0.001654
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + 0.000102*pm293)*t^(-1)+(-13.623417 \
++ 0.001227*pm294)*ep/t+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(11.514705 + \
+0.000091*pm297)*(ep*Log[t])/t+(0)*Log[t]^2/t+(-4.*^-6)*(ep*Log[t]^2)/t+(0.\
+333332)*(ep*Log[t]^3)/t+(0)*ep^(-1)+(0.000025 + 0.000343*pm302)*1+(-11.870294 \
++ 0.010594*pm303)*ep+(0)*Log[t]+(1.999928 + \
+0.001143*pm305)*ep*Log[t]+(-0.999987 + \
+0.000015*pm306)*ep*Log[t]^2+(0)*t/ep+(-0.00001 + 0.000135*pm308)*t+(5.185141 \
++ 0.005176*pm309)*ep*t+(0)*t*Log[t]+(-0.499977 + \
+0.001654*pm311)*ep*t*Log[t]+(0)*ep*t*Log[t]^2
+Terms of ep order 1 and t order {1, 2}: 2, max vars: 1
+Integrating..........0.0008 seconds.
+Returned answer: 0.500017 + pm* 0.000073
+(4.)*1/(ep^2*t)+(0)*1/(ep*t)+(-13.159623 + 0.000102*pm315)*t^(-1)+(-13.623417 \
++ 0.001227*pm316)*ep/t+(-2.)*Log[t]/(ep*t)+(0)*Log[t]/t+(11.514705 + \
+0.000091*pm319)*(ep*Log[t])/t+(0)*Log[t]^2/t+(-4.*^-6)*(ep*Log[t]^2)/t+(0.\
+333332)*(ep*Log[t]^3)/t+(0)*ep^(-1)+(0.000025 + 0.000343*pm324)*1+(-11.870294 \
++ 0.010594*pm325)*ep+(0)*Log[t]+(1.999928 + \
+0.001143*pm327)*ep*Log[t]+(-0.999987 + \
+0.000015*pm328)*ep*Log[t]^2+(0)*t/ep+(-0.00001 + 0.000135*pm330)*t+(5.185141 \
++ 0.005176*pm331)*ep*t+(0)*t*Log[t]+(-0.499977 + \
+0.001654*pm333)*ep*t*Log[t]+(0.500017 + 0.000073*pm334)*ep*t*Log[t]^2
+Total integration time: 12.4706
+Total time used: 15.7052 seconds.\
+\>", "Print",
+ CellChangeTimes->{3.592633841994727*^9, 3.5926340700246143`*^9, 
+  3.5926341176262693`*^9, 3.639897606853753*^9}],
+
+Cell[BoxData[
+ RowBox[{"0.000025`", "\[VeryThinSpace]", "+", 
+  RowBox[{"0.000343`", " ", "pm346"}], "+", 
+  RowBox[{"ep", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "11.870294`"}], "+", 
+     RowBox[{"0.010594`", " ", "pm347"}]}], ")"}]}], "+", 
+  FractionBox["4.`", 
+   RowBox[{
+    SuperscriptBox["ep", "2"], " ", "t"}]], "+", 
+  FractionBox[
+   RowBox[{
+    RowBox[{"-", "13.159623`"}], "+", 
+    RowBox[{"0.000102`", " ", "pm337"}]}], "t"], "+", 
+  FractionBox[
+   RowBox[{"ep", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "13.623417`"}], "+", 
+      RowBox[{"0.001227`", " ", "pm338"}]}], ")"}]}], "t"], "+", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "0.00001`"}], "+", 
+     RowBox[{"0.000135`", " ", "pm352"}]}], ")"}], " ", "t"}], "+", 
+  RowBox[{"ep", " ", 
+   RowBox[{"(", 
+    RowBox[{"5.185141`", "\[VeryThinSpace]", "+", 
+     RowBox[{"0.005176`", " ", "pm353"}]}], ")"}], " ", "t"}], "+", 
+  RowBox[{"ep", " ", 
+   RowBox[{"(", 
+    RowBox[{"1.999928`", "\[VeryThinSpace]", "+", 
+     RowBox[{"0.001143`", " ", "pm349"}]}], ")"}], " ", 
+   RowBox[{"Log", "[", "t", "]"}]}], "-", 
+  FractionBox[
+   RowBox[{"2.`", " ", 
+    RowBox[{"Log", "[", "t", "]"}]}], 
+   RowBox[{"ep", " ", "t"}]], "+", 
+  FractionBox[
+   RowBox[{"ep", " ", 
+    RowBox[{"(", 
+     RowBox[{"11.514705`", "\[VeryThinSpace]", "+", 
+      RowBox[{"0.000091`", " ", "pm341"}]}], ")"}], " ", 
+    RowBox[{"Log", "[", "t", "]"}]}], "t"], "+", 
+  RowBox[{"ep", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "0.499977`"}], "+", 
+     RowBox[{"0.001654`", " ", "pm355"}]}], ")"}], " ", "t", " ", 
+   RowBox[{"Log", "[", "t", "]"}]}], "+", 
+  RowBox[{"ep", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "0.999987`"}], "+", 
+     RowBox[{"0.000015`", " ", "pm350"}]}], ")"}], " ", 
+   SuperscriptBox[
+    RowBox[{"Log", "[", "t", "]"}], "2"]}], "-", 
+  FractionBox[
+   RowBox[{"4.`*^-6", " ", "ep", " ", 
+    SuperscriptBox[
+     RowBox[{"Log", "[", "t", "]"}], "2"]}], "t"], "+", 
+  RowBox[{"ep", " ", 
+   RowBox[{"(", 
+    RowBox[{"0.500017`", "\[VeryThinSpace]", "+", 
+     RowBox[{"0.000073`", " ", "pm356"}]}], ")"}], " ", "t", " ", 
+   SuperscriptBox[
+    RowBox[{"Log", "[", "t", "]"}], "2"]}], "+", 
+  FractionBox[
+   RowBox[{"0.333332`", " ", "ep", " ", 
+    SuperscriptBox[
+     RowBox[{"Log", "[", "t", "]"}], "3"]}], "t"]}]], "Output",
+ CellChangeTimes->{3.592633862773019*^9, 3.592634075331223*^9, 
+  3.592634137516239*^9, 3.639897627370957*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"asy", " ", "expansion"}], ";", " ", 
+    RowBox[{
+    "requires", " ", "qhull", " ", "to", " ", "be", " ", "installed"}]}], 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"RegVar", "=", "la"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"asyexpand", "=", 
+     RowBox[{"SDExpandAsy", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"x", "[", "1", "]"}], "+", 
+          RowBox[{"x", "[", "2", "]"}], "+", 
+          RowBox[{"x", "[", "3", "]"}], "+", 
+          RowBox[{"x", "[", "4", "]"}]}], ",", " ", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"x", "[", "1", "]"}], " ", 
+           RowBox[{"x", "[", "3", "]"}]}], "+", 
+          RowBox[{"t", " ", 
+           RowBox[{"x", "[", "2", "]"}], " ", 
+           RowBox[{"x", "[", "4", "]"}]}]}], ",", "1"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"1", "+", "la"}], ",", 
+         RowBox[{"1", "+", "la"}], ",", 
+         RowBox[{"1", "-", "la"}], ",", 
+         RowBox[{"1", "-", "la"}]}], "}"}], ",", "1", ",", "t", ",", "1"}], 
+      "]"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Clear", "[", "RegVar", "]"}], ";"}], "\[IndentingNewLine]", 
+   "asyexpand"}]}]], "Input",
+ CellChangeTimes->{{3.592633889342195*^9, 3.592633908656457*^9}, {
+  3.592634079000828*^9, 3.592634122304152*^9}}],
+
+Cell["\<\
+FIESTA 4.0.dev
+Current integrator: vegasCuba
+CurrentIntegratorSettings: \
+{{\"epsrel\",\"1.000000E-05\"},{\"epsabs\",\"1.000000E-12\"},{\"mineval\",\"0\
+\"},{\"maxeval\",\"50000\"},{\"nstart\",\"1000\"},{\"nincrease\",\"500\"}}
+Integration test passed
+Starting 4 subkernels
+UsingC: True
+NumberOfLinks: 4
+UsingQLink: True
+Strategy: STRATEGY_S
+Loading ASY
+Regions: {{0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 1, 0}}
+Working in region {0, 0, 0, 0}
+External degree: 0
+Evaluating at order 0
+Integrating by x[2] and changing variables
+Integrating by x[1] and changing variables
+Integrating by x[3] and changing variables
+Delta function used
+Integration has to be performed up to order 1
+Database ready for integration.
+Total time used: 0.002182 seconds.
+Evaluating at order 1
+Integrating by x[2] and changing variables
+Integrating by x[1] and changing variables
+Integrating by x[3] and changing variables
+Delta function used
+Integration has to be performed up to order 1
+Database ready for integration.
+Total time used: 0.002483 seconds.
+Working in region {1, 0, 0, 0}
+External degree: -1 - ep + la
+Evaluating at order -1
+Integrating by x[1] and changing variables
+Integrating by x[2] and changing variables
+Integrating by x[3] and changing variables
+Delta function used
+Integration has to be performed up to order 1
+Database ready for integration.
+Total time used: 0.002521 seconds.
+Evaluating at order 0
+Integrating by x[1] and changing variables
+Integrating by x[2] and changing variables
+Integrating by x[3] and changing variables
+Delta function used
+Integration has to be performed up to order 1
+Database ready for integration.
+Total time used: 0.00234 seconds.
+Evaluating at order 1
+Integrating by x[1] and changing variables
+Integrating by x[2] and changing variables
+Integrating by x[3] and changing variables
+Delta function used
+Integration has to be performed up to order 1
+Database ready for integration.
+Total time used: 0.002291 seconds.
+Working in region {0, 0, 1, 0}
+External degree: -1 - ep - la
+Evaluating at order -1
+Integrating by x[3] and changing variables
+Integrating by x[1] and changing variables
+Integrating by x[2] and changing variables
+Delta function used
+Integration has to be performed up to order 1
+Database ready for integration.
+Total time used: 0.002247 seconds.
+Evaluating at order 0
+Integrating by x[3] and changing variables
+Integrating by x[1] and changing variables
+Integrating by x[2] and changing variables
+Delta function used
+Integration has to be performed up to order 1
+Database ready for integration.
+Total time used: 0.002248 seconds.
+Evaluating at order 1
+Integrating by x[3] and changing variables
+Integrating by x[1] and changing variables
+Integrating by x[2] and changing variables
+Delta function used
+Integration has to be performed up to order 1
+Database ready for integration.
+Total time used: 0.002361 seconds.
+Integrating task 1
+We have an exact answer: (E^(ep*EulerGamma)*Gamma[2 + ep]*Gamma[-1 - ep - \
+la]*Gamma[-1 - ep + la])/(Gamma[-2*ep]*Gamma[1 - la]*Gamma[1 + la])
+Integrating task 2 (multiplied by t^(1))
+We have an exact answer: E^(ep*EulerGamma)*((-2*Gamma[2 + ep]*Gamma[2 - \
+la]*Gamma[-2 - ep - la]*Gamma[2 + la]*Gamma[-2 - ep + \
+la])/(Gamma[-2*ep]*Gamma[1 - la]^2*Gamma[1 + la]^2) - (ep*Gamma[2 + \
+ep]*Gamma[2 - la]*Gamma[-2 - ep - la]*Gamma[2 + la]*Gamma[-2 - ep + \
+la])/(Gamma[-2*ep]*Gamma[1 - la]^2*Gamma[1 + la]^2))
+Integrating task 3 (multiplied by t^(-1 - ep + la))
+We have an exact answer: (E^(ep*EulerGamma)*Gamma[-ep]*Gamma[1 + ep - \
+la]*Gamma[-2*la]*Gamma[-ep + 2*la])/(Gamma[-2*ep]*Gamma[1 - la]^2*Gamma[1 + \
+la])
+Integrating task 4 (multiplied by t^(-ep + la))
+We have an exact answer: (2*E^(ep*EulerGamma)*ep*Gamma[1 - ep]*Gamma[-1 - \
+2*la]*Gamma[ep - la]*Gamma[2 + la]*Gamma[1 - ep + 2*la])/(Gamma[1 - \
+2*ep]*Gamma[1 - la]^2*Gamma[1 + la]^2)
+Integrating task 5 (multiplied by t^(1 - ep + la))
+We have an exact answer: E^(ep*EulerGamma)*(-((ep*Gamma[2 - ep]*Gamma[-2 - \
+2*la]*Gamma[-1 + ep - la]*Gamma[3 + la]*Gamma[2 - ep + 2*la])/(Gamma[2 - \
+2*ep]*Gamma[1 - la]^2*Gamma[1 + la]^2)) + (2*ep^2*Gamma[2 - ep]*Gamma[-2 - \
+2*la]*Gamma[-1 + ep - la]*Gamma[3 + la]*Gamma[2 - ep + 2*la])/(Gamma[2 - \
+2*ep]*Gamma[1 - la]^2*Gamma[1 + la]^2))
+Integrating task 6 (multiplied by t^(-1 - ep - la))
+We have an exact answer: (E^(ep*EulerGamma)*Gamma[-ep]*Gamma[-ep - \
+2*la]*Gamma[2*la]*Gamma[1 + ep + la])/(Gamma[-2*ep]*Gamma[1 - la]*Gamma[1 + \
+la]^2)
+Integrating task 7 (multiplied by t^(-ep - la))
+We have an exact answer: (2*E^(ep*EulerGamma)*ep*Gamma[1 - ep]*Gamma[1 - ep - \
+2*la]*Gamma[2 - la]*Gamma[ep + la]*Gamma[-1 + 2*la])/(Gamma[1 - 2*ep]*Gamma[1 \
+- la]^2*Gamma[1 + la]^2)
+Integrating task 8 (multiplied by t^(1 - ep - la))
+We have an exact answer: E^(ep*EulerGamma)*(-((ep*Gamma[2 - ep]*Gamma[2 - ep \
+- 2*la]*Gamma[3 - la]*Gamma[-1 + ep + la]*Gamma[-2 + 2*la])/(Gamma[2 - \
+2*ep]*Gamma[1 - la]^2*Gamma[1 + la]^2)) + (2*ep^2*Gamma[2 - ep]*Gamma[2 - ep \
+- 2*la]*Gamma[3 - la]*Gamma[-1 + ep + la]*Gamma[-2 + 2*la])/(Gamma[2 - \
+2*ep]*Gamma[1 - la]^2*Gamma[1 + la]^2))
+Total integration time: 0.2721\
+\>", "Print",
+ CellChangeTimes->{3.592633909761051*^9, 3.592634140297594*^9, 
+  3.639897630092082*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["4", 
+   RowBox[{
+    SuperscriptBox["ep", "2"], " ", "t"}]], "-", 
+  FractionBox[
+   RowBox[{"4", " ", 
+    SuperscriptBox["\[Pi]", "2"]}], 
+   RowBox[{"3", " ", "t"}]], "-", 
+  FractionBox[
+   RowBox[{"2", " ", 
+    RowBox[{"Log", "[", "t", "]"}]}], 
+   RowBox[{"ep", " ", "t"}]], "+", 
+  RowBox[{"ep", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "2"}], "-", 
+     SuperscriptBox["\[Pi]", "2"], "+", 
+     RowBox[{"2", " ", 
+      RowBox[{"Log", "[", "t", "]"}]}], "-", 
+     SuperscriptBox[
+      RowBox[{"Log", "[", "t", "]"}], "2"], "+", 
+     RowBox[{"t", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        FractionBox["1", "4"], "+", 
+        FractionBox[
+         SuperscriptBox["\[Pi]", "2"], "2"], "-", 
+        FractionBox[
+         RowBox[{"Log", "[", "t", "]"}], "2"], "+", 
+        FractionBox[
+         SuperscriptBox[
+          RowBox[{"Log", "[", "t", "]"}], "2"], "2"]}], ")"}]}], "+", 
+     FractionBox[
+      RowBox[{
+       RowBox[{
+        FractionBox["7", "6"], " ", 
+        SuperscriptBox["\[Pi]", "2"], " ", 
+        RowBox[{"Log", "[", "t", "]"}]}], "+", 
+       FractionBox[
+        SuperscriptBox[
+         RowBox[{"Log", "[", "t", "]"}], "3"], "3"], "+", 
+       RowBox[{
+        FractionBox["17", "3"], " ", 
+        RowBox[{"PolyGamma", "[", 
+         RowBox[{"2", ",", "1"}], "]"}]}]}], "t"]}], ")"}]}]}]], "Output",
+ CellChangeTimes->{3.592633919757914*^9, 3.592634157768044*^9, 
+  3.639897647264778*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "we", " ", "obtained", " ", "the", " ", "same", " ", "result", " ", "by", 
+    " ", "different", " ", "approaches"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"Collect", "[", 
+   RowBox[{
+    RowBox[{"expand", "-", 
+     RowBox[{"N", "[", "asyexpand", "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"ep", ",", "t", ",", 
+      RowBox[{"Log", "[", "t", "]"}]}], "}"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.59263396341296*^9, 3.5926340098045473`*^9}, {
+  3.5926341579118347`*^9, 3.592634185034656*^9}}],
+
+Cell[BoxData[
+ RowBox[{"0.000025`", "\[VeryThinSpace]", "+", 
+  RowBox[{"0.000343`", " ", "pm346"}], "+", 
+  FractionBox[
+   RowBox[{
+    RowBox[{"-", "0.00015046521419037617`"}], "+", 
+    RowBox[{"0.000102`", " ", "pm337"}]}], "t"], "+", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "0.00001`"}], "+", 
+     RowBox[{"0.000135`", " ", "pm352"}]}], ")"}], " ", "t"}], "+", 
+  RowBox[{"ep", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "0.0006895989106414646`"}], "+", 
+     RowBox[{"0.010594`", " ", "pm347"}], "+", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "0.000072000000000072`"}], "+", 
+        RowBox[{"0.001143`", " ", "pm349"}]}], ")"}], " ", 
+      RowBox[{"Log", "[", "t", "]"}]}], "+", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"0.000013000000000040757`", "\[VeryThinSpace]", "+", 
+        RowBox[{"0.000015`", " ", "pm350"}]}], ")"}], " ", 
+      SuperscriptBox[
+       RowBox[{"Log", "[", "t", "]"}], "2"]}], "+", 
+     RowBox[{"t", " ", 
+      RowBox[{"(", 
+       RowBox[{"0.0003387994553207818`", "\[VeryThinSpace]", "+", 
+        RowBox[{"0.005176`", " ", "pm353"}], "+", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"0.000022999999999995246`", "\[VeryThinSpace]", "+", 
+           RowBox[{"0.001654`", " ", "pm355"}]}], ")"}], " ", 
+         RowBox[{"Log", "[", "t", "]"}]}], "+", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"0.000017000000000044757`", "\[VeryThinSpace]", "+", 
+           RowBox[{"0.000073`", " ", "pm356"}]}], ")"}], " ", 
+         SuperscriptBox[
+          RowBox[{"Log", "[", "t", "]"}], "2"]}]}], ")"}]}], "+", 
+     FractionBox[
+      RowBox[{
+       RowBox[{"-", "0.00010543085793202067`"}], "+", 
+       RowBox[{"0.001227`", " ", "pm338"}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"0.00016653206241379337`", "\[VeryThinSpace]", "+", 
+          RowBox[{"0.000091`", " ", "pm341"}]}], ")"}], " ", 
+        RowBox[{"Log", "[", "t", "]"}]}], "-", 
+       RowBox[{"4.`*^-6", " ", 
+        SuperscriptBox[
+         RowBox[{"Log", "[", "t", "]"}], "2"]}], "-", 
+       RowBox[{"1.3333333332976594`*^-6", " ", 
+        SuperscriptBox[
+         RowBox[{"Log", "[", "t", "]"}], "3"]}]}], "t"]}], 
+    ")"}]}]}]], "Output",
+ CellChangeTimes->{{3.592634001150942*^9, 3.592634010208391*^9}, {
+   3.592634164740172*^9, 3.59263418544403*^9}, 3.639897650274362*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"analyze", " ", "the", " ", "box", " ", "poles"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"SDAnalyze", "[", 
+   RowBox[{
+    RowBox[{"UF", "[", 
+     RowBox[{
+      RowBox[{"{", "k", "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", 
+         RowBox[{"k", "^", "2"}]}], ",", 
+        RowBox[{"-", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"k", "+", "p1"}], ")"}], "^", "2"}]}], ",", 
+        RowBox[{"-", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"k", "+", "p1", "+", "p2"}], ")"}], "^", "2"}]}], ",", 
+        RowBox[{"-", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"k", "+", "p1", "+", "p2", "+", "p4"}], ")"}], "^", 
+          "2"}]}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"p1", "^", "2"}], "\[Rule]", "0"}], ",", 
+        RowBox[{
+         RowBox[{"p2", "^", "2"}], "\[Rule]", "0"}], ",", 
+        RowBox[{
+         RowBox[{"p4", "^", "2"}], "\[Rule]", "0"}], ",", 
+        RowBox[{
+         RowBox[{"p1", " ", "p2"}], "\[Rule]", 
+         RowBox[{
+          RowBox[{"-", "S"}], "/", "2"}]}], ",", 
+        RowBox[{
+         RowBox[{"p2", " ", "p4"}], "\[Rule]", 
+         RowBox[{
+          RowBox[{"-", "T"}], "/", "2"}]}], ",", 
+        RowBox[{
+         RowBox[{"p1", " ", "p4"}], "\[Rule]", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"S", "+", "T"}], ")"}], "/", "2"}]}], ",", 
+        RowBox[{"S", "\[Rule]", "3"}], ",", 
+        RowBox[{"T", "\[Rule]", "1"}]}], "}"}]}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "1", ",", "1", ",", "1"}], "}"}], ",", "1", ",", "8"}],
+    "]"}]}]], "Input",
+ CellChangeTimes->{{3.5926342204107447`*^9, 3.592634227621512*^9}}],
+
+Cell["\<\
+Variables for UF: {k, p1, p2, p4, S, T}
+FIESTA 4.0.dev
+Current integrator: vegasCuba
+CurrentIntegratorSettings: \
+{{\"epsrel\",\"1.000000E-05\"},{\"epsabs\",\"1.000000E-12\"},{\"mineval\",\"0\
+\"},{\"maxeval\",\"50000\"},{\"nstart\",\"1000\"},{\"nincrease\",\"500\"}}
+Integration test passed
+Starting 4 subkernels
+UsingC: True
+NumberOfLinks: 4
+UsingQLink: True
+Strategy: STRATEGY_S
+Integration has to be performed up to order 0
+Sector decomposition - 4 sectors
+Primary sector 1 resulted in 3 sectors.
+Primary sector 2 resulted in 3 sectors.
+Primary sector 3 resulted in 3 sectors.
+Primary sector 4 resulted in 3 sectors.
+Totally: 0.1638 seconds; 8 sectors.
+Preparing database: 0.0044 seconds. 
+Variable substitution..........0.0243 seconds; 12 terms.\
+\>", "Print",
+ CellChangeTimes->{3.5926342300124397`*^9, 3.639897697035541*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"2", ",", "4"}], "}"}]], "Output",
+ CellChangeTimes->{3.5926342357167473`*^9, 3.639897702753826*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"complex", " ", "box"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"ComplexMode", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"SDEvaluate", "[", 
+    RowBox[{
+     RowBox[{"UF", "[", 
+      RowBox[{
+       RowBox[{"{", "k", "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{"k", "^", "2"}]}], ",", 
+         RowBox[{"-", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"k", "+", "p1"}], ")"}], "^", "2"}]}], ",", 
+         RowBox[{"-", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"k", "+", "p1", "+", "p2"}], ")"}], "^", "2"}]}], ",", 
+         RowBox[{"-", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"k", "+", "p1", "+", "p2", "+", "p4"}], ")"}], "^", 
+           "2"}]}]}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"p1", "^", "2"}], "\[Rule]", "0"}], ",", 
+         RowBox[{
+          RowBox[{"p2", "^", "2"}], "\[Rule]", "0"}], ",", 
+         RowBox[{
+          RowBox[{"p4", "^", "2"}], "\[Rule]", "0"}], ",", 
+         RowBox[{
+          RowBox[{"p1", " ", "p2"}], "\[Rule]", 
+          RowBox[{
+           RowBox[{"-", "S"}], "/", "2"}]}], ",", 
+         RowBox[{
+          RowBox[{"p2", " ", "p4"}], "\[Rule]", 
+          RowBox[{
+           RowBox[{"-", "T"}], "/", "2"}]}], ",", 
+         RowBox[{
+          RowBox[{"p1", " ", "p4"}], "\[Rule]", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"S", "+", "T"}], ")"}], "/", "2"}]}], ",", 
+         RowBox[{"S", "\[Rule]", "3"}], ",", 
+         RowBox[{"T", "\[Rule]", 
+          RowBox[{"-", "1"}]}]}], "}"}]}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1", ",", "1", ",", "1"}], "}"}], ",", "0"}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.592634263228565*^9, 3.5926342747476473`*^9}}],
+
+Cell["\<\
+Variables for UF: {k, p1, p2, p4, S, T}
+FIESTA 4.0.dev
+Current integrator: vegasCuba
+CurrentIntegratorSettings: \
+{{\"epsrel\",\"1.000000E-05\"},{\"epsabs\",\"1.000000E-12\"},{\"mineval\",\"0\
+\"},{\"maxeval\",\"50000\"},{\"nstart\",\"1000\"},{\"nincrease\",\"500\"}}
+Integration test passed
+Starting 4 subkernels
+UsingC: True
+NumberOfLinks: 4
+UsingQLink: True
+Strategy: STRATEGY_S
+Integration has to be performed up to order 0
+Sector decomposition - 4 sectors
+Primary sector 1 resulted in 3 sectors.
+Primary sector 2 resulted in 3 sectors.
+Primary sector 3 resulted in 3 sectors.
+Primary sector 4 resulted in 3 sectors.
+Totally: 0.1586 seconds; 8 sectors.
+Preparing database: 0.0029 seconds. 
+Variable substitution..........0.0199 seconds; 12 terms.
+Performing contour transformation..........4.0044 seconds; 12 terms.
+Pole resolution..........0.0477 seconds; 40 terms.
+Expression preparation..........0.0793 seconds; 40 terms.
+Epsilon expansion..........0.0864 seconds; 48 terms.
+Preparing integration strings..........0.1049 seconds; 48 terms.
+Database ready for integration.
+Terms of order -2: 8, max vars: 1
+Integrating..........1.0021 seconds.
+Returned answer: -1.333583 + 0.000148*I + pm* 0.006191 + 0.004355*I
+((-1.333583 + 0.000148*I) + (0.006191 + 0.004355*I)*pm357)*ep^(-2)
+Terms of order -1: 12, max vars: 2
+Integrating..........0.0014 seconds.
+Returned answer: 2.065753 - 2.094174*I + pm* 0.00731 + 0.008323*I
+((-1.333583 + 0.000148*I) + (0.006191 + 0.004355*I)*pm358)*ep^(-2)+((0.732171 \
+- 2.094027*I) + (0.00958 + 0.009394*I)*pm359)*ep^(-1)
+Terms of order 0: 12, max vars: 2
+Integrating..........0.0017 seconds.
+Returned answer: 3.416847 + 4.394407*I + pm* 0.022873 + 0.02206*I
+((-1.333583 + 0.000148*I) + (0.006191 + 0.004355*I)*pm360)*ep^(-2)+((0.732171 \
+- 2.094027*I) + (0.00958 + 0.009394*I)*pm361)*ep^(-1)+((4.385773 + \
+2.300354*I) + (0.024547 + 0.023849*I)*pm362)*1
+Total integration time: 2.0428
+Total time used: 7.04567 seconds.\
+\>", "Print",
+ CellChangeTimes->{3.592634276128932*^9, 3.639897706822453*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{"4.385773`", "\[VeryThinSpace]", "+", 
+    RowBox[{"2.300354`", " ", "\[ImaginaryI]"}]}], ")"}], "+", 
+  FractionBox[
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1.333583`"}], "+", 
+      RowBox[{"0.000148`", " ", "\[ImaginaryI]"}]}], ")"}], "+", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"0.006191`", "\[VeryThinSpace]", "+", 
+       RowBox[{"0.004355`", " ", "\[ImaginaryI]"}]}], ")"}], " ", "pm363"}]}], 
+   SuperscriptBox["ep", "2"]], "+", 
+  FractionBox[
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"0.732171`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.094027`", " ", "\[ImaginaryI]"}]}], ")"}], "+", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"0.00958`", "\[VeryThinSpace]", "+", 
+       RowBox[{"0.009394`", " ", "\[ImaginaryI]"}]}], ")"}], " ", "pm364"}]}],
+    "ep"], "+", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"0.024547`", "\[VeryThinSpace]", "+", 
+     RowBox[{"0.023849`", " ", "\[ImaginaryI]"}]}], ")"}], " ", 
+   "pm365"}]}]], "Output",
+ CellChangeTimes->{3.592634288769672*^9, 3.639897719089422*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "let", " ", "us", " ", "only", " ", "prepare", " ", "the", " ", "database",
+     " ", "for", " ", "integration"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"complex", " ", "box"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"ComplexMode", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"OnlyPrepare", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"SDEvaluate", "[", 
+    RowBox[{
+     RowBox[{"UF", "[", 
+      RowBox[{
+       RowBox[{"{", "k", "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{"k", "^", "2"}]}], ",", 
+         RowBox[{"-", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"k", "+", "p1"}], ")"}], "^", "2"}]}], ",", 
+         RowBox[{"-", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"k", "+", "p1", "+", "p2"}], ")"}], "^", "2"}]}], ",", 
+         RowBox[{"-", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"k", "+", "p1", "+", "p2", "+", "p4"}], ")"}], "^", 
+           "2"}]}]}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"p1", "^", "2"}], "\[Rule]", "0"}], ",", 
+         RowBox[{
+          RowBox[{"p2", "^", "2"}], "\[Rule]", "0"}], ",", 
+         RowBox[{
+          RowBox[{"p4", "^", "2"}], "\[Rule]", "0"}], ",", 
+         RowBox[{
+          RowBox[{"p1", " ", "p2"}], "\[Rule]", 
+          RowBox[{
+           RowBox[{"-", "S"}], "/", "2"}]}], ",", 
+         RowBox[{
+          RowBox[{"p2", " ", "p4"}], "\[Rule]", 
+          RowBox[{
+           RowBox[{"-", "T"}], "/", "2"}]}], ",", 
+         RowBox[{
+          RowBox[{"p1", " ", "p4"}], "\[Rule]", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"S", "+", "T"}], ")"}], "/", "2"}]}], ",", 
+         RowBox[{"S", "\[Rule]", "3"}], ",", 
+         RowBox[{"T", "\[Rule]", 
+          RowBox[{"-", "1"}]}]}], "}"}]}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1", ",", "1", ",", "1"}], "}"}], ",", "0"}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.59263434308855*^9, 3.592634362409658*^9}}],
+
+Cell["\<\
+Variables for UF: {k, p1, p2, p4, S, T}
+FIESTA 4.0.dev
+Current integrator: vegasCuba
+CurrentIntegratorSettings: \
+{{\"epsrel\",\"1.000000E-05\"},{\"epsabs\",\"1.000000E-12\"},{\"mineval\",\"0\
+\"},{\"maxeval\",\"50000\"},{\"nstart\",\"1000\"},{\"nincrease\",\"500\"}}
+Integration test passed
+Starting 4 subkernels
+UsingC: True
+NumberOfLinks: 4
+UsingQLink: True
+Strategy: STRATEGY_S
+Integration has to be performed up to order 0
+Sector decomposition - 4 sectors
+Primary sector 1 resulted in 3 sectors.
+Primary sector 2 resulted in 3 sectors.
+Primary sector 3 resulted in 3 sectors.
+Primary sector 4 resulted in 3 sectors.
+Totally: 0.2408 seconds; 8 sectors.
+Preparing database: 0.0046 seconds. 
+Variable substitution..........0.0205 seconds; 12 terms.
+Performing contour transformation..........4.0597 seconds; 12 terms.
+Pole resolution..........0.0487 seconds; 40 terms.
+Expression preparation..........0.0912 seconds; 40 terms.
+Epsilon expansion..........0.0889 seconds; 48 terms.
+Preparing integration strings..........0.1031 seconds; 48 terms.
+Database ready for integration.
+/home/sander/fiesta/FIESTA4/bin/CIntegratePool -in \
+/home/sander/fiesta/FIESTA4/temp/dbin -threads 4 -complex
+Total time used: 5.28926 seconds.\
+\>", "Print",
+ CellChangeTimes->{3.639897757750012*^9}],
+
+Cell[BoxData["\<\"Prepared\"\>"], "Output",
+ CellChangeTimes->{3.639897768217865*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"(*", " ", 
+  RowBox[{
+  "now", " ", "you", " ", "should", " ", "run", " ", "the", " ", "printed", 
+   " ", "command", " ", "in", " ", "a", " ", "shell"}], " ", "*)"}]], "Input",\
+
+ CellChangeTimes->{{3.592634383829246*^9, 3.592634395908408*^9}}],
+
+Cell[BoxData[
+ RowBox[{"(*", " ", "OR", " ", "*)"}]], "Input",
+ CellChangeTimes->{{3.592634399648634*^9, 3.592634401612842*^9}}],
+
+Cell[BoxData[
+ RowBox[{"(*", " ", 
+  RowBox[{"run", " ", 
+   RowBox[{"SDIntegrate", ".", " ", "you"}], " ", "can", " ", "even", " ", 
+   "quit", " ", "the", " ", "kernel", " ", "before", " ", 
+   RowBox[{"that", "!"}]}], " ", "*)"}]], "Input",
+ CellChangeTimes->{{3.5926344032184143`*^9, 3.592634430846107*^9}}],
+
+Cell[BoxData["Quit"], "Input",
+ CellChangeTimes->{{3.592634431803248*^9, 3.592634432352257*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"FIESTAPath", "=", 
+   RowBox[{"StringReplace", "[", 
+    RowBox[{
+     RowBox[{"NotebookDirectory", "[", "]"}], ",", 
+     RowBox[{"\"\</examples/\>\"", "->", "\"\<\>\""}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Get", "[", 
+   RowBox[{"FIESTAPath", "<>", "\"\</FIESTA4.m\>\""}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"NumberOfSubkernels", "=", "4"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"NumberOfLinks", "=", "4"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ComplexMode", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"SDIntegrate", "[", "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.592634447270002*^9, 3.592634477144573*^9}, {
+  3.617956314039188*^9, 3.6179563145594997`*^9}}],
+
+Cell["\<\
+KLink created (2013 version)! You can read information on QOpen, QRead, \
+QRemoveDatabase, QClose, QList, QSize, QPut, QGet, QSafeGet, QCheck and QRemove
+Starting 4 subkernels
+Terms of order -2: 8, max vars: 1
+Integrating..........1.0047 seconds.
+Returned answer: -1.333583 + 0.000148*I + pm* 0.006191 + 0.004355*I
+((-1.333583 + 0.000148*I) + (0.006191 + 0.004355*I)*pm1)*ep^(-2)
+Terms of order -1: 12, max vars: 2
+Integrating..........0.0025 seconds.
+Returned answer: 2.065753 - 2.094174*I + pm* 0.00731 + 0.008323*I
+((-1.333583 + 0.000148*I) + (0.006191 + 0.004355*I)*pm2)*ep^(-2)+((0.732171 - \
+2.094027*I) + (0.00958 + 0.009394*I)*pm3)*ep^(-1)
+Terms of order 0: 12, max vars: 2
+Integrating..........1.0036 seconds.
+Returned answer: 3.416847 + 4.394407*I + pm* 0.022873 + 0.02206*I
+((-1.333583 + 0.000148*I) + (0.006191 + 0.004355*I)*pm4)*ep^(-2)+((0.732171 - \
+2.094027*I) + (0.00958 + 0.009394*I)*pm5)*ep^(-1)+((4.385773 + 2.300354*I) + \
+(0.024547 + 0.023849*I)*pm6)*1
+Total integration time: 5.9908\
+\>", "Print",
+ CellChangeTimes->{{3.592634463137895*^9, 3.592634482935746*^9}, 
+   3.639897774814124*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "you", " ", "can", " ", "now", " ", "generate", " ", "your", " ", 
+    "result"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"GenerateAnswer", "[", "]"}]}]], "Input",
+ CellChangeTimes->{{3.5926344726573477`*^9, 3.5926344948132563`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{"4.385773`", "\[VeryThinSpace]", "+", 
+    RowBox[{"2.300354`", " ", "\[ImaginaryI]"}]}], ")"}], "+", 
+  RowBox[{"0.03422469882993859`", " ", "pm13"}], "+", 
+  FractionBox[
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"0.732171`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.094027`", " ", "\[ImaginaryI]"}]}], ")"}], "+", 
+    RowBox[{"0.01341728869779584`", " ", "pm14"}]}], "ep"], "+", 
+  FractionBox[
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1.333583`"}], "+", 
+      RowBox[{"0.000148`", " ", "\[ImaginaryI]"}]}], ")"}], "+", 
+    RowBox[{"0.007569313443106978`", " ", "pm15"}]}], 
+   SuperscriptBox["ep", "2"]]}]], "Output",
+ CellChangeTimes->{3.5926344956457043`*^9, 3.639897782954453*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"(*", " ", 
+  RowBox[{
+  "or", " ", "even", " ", "quit", " ", "the", " ", "kernel", " ", "and", " ", 
+   "do", " ", "it", " ", "again"}], " ", "*)"}]], "Input",
+ CellChangeTimes->{{3.59263449918365*^9, 3.592634509702547*^9}}],
+
+Cell[BoxData["Quit"], "Input",
+ CellChangeTimes->{{3.592634510905004*^9, 3.592634511250924*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"FIESTAPath", "=", 
+   RowBox[{"StringReplace", "[", 
+    RowBox[{
+     RowBox[{"NotebookDirectory", "[", "]"}], ",", 
+     RowBox[{"\"\</examples/\>\"", "->", "\"\<\>\""}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Get", "[", 
+   RowBox[{"FIESTAPath", "<>", "\"\</FIESTA4.m\>\""}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"NumberOfSubkernels", "=", "4"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"NumberOfLinks", "=", "4"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ComplexMode", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"GenerateAnswer", "[", "]"}]}], "Input",
+ CellChangeTimes->{{3.592634520984997*^9, 3.592634531791461*^9}, {
+  3.6179563172732973`*^9, 3.617956317592456*^9}}],
+
+Cell["\<\
+KLink created (2013 version)! You can read information on QOpen, QRead, \
+QRemoveDatabase, QClose, QList, QSize, QPut, QGet, QSafeGet, QCheck and \
+QRemove\
+\>", "Print",
+ CellChangeTimes->{3.59263453590373*^9, 3.6398977901255207`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{"4.385773`", "\[VeryThinSpace]", "+", 
+    RowBox[{"2.300354`", " ", "\[ImaginaryI]"}]}], ")"}], "+", 
+  RowBox[{"0.03422469882993859`", " ", "pm4"}], "+", 
+  FractionBox[
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"0.732171`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.094027`", " ", "\[ImaginaryI]"}]}], ")"}], "+", 
+    RowBox[{"0.01341728869779584`", " ", "pm5"}]}], "ep"], "+", 
+  FractionBox[
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1.333583`"}], "+", 
+      RowBox[{"0.000148`", " ", "\[ImaginaryI]"}]}], ")"}], "+", 
+    RowBox[{"0.007569313443106978`", " ", "pm6"}]}], 
+   SuperscriptBox["ep", "2"]]}]], "Output",
+ CellChangeTimes->{{3.592634523562666*^9, 3.592634536153266*^9}, 
+   3.639897790156147*^9}]
+}, Open  ]]
+},
+WindowSize->{1179, 707},
+WindowMargins->{{Automatic, 147}, {Automatic, 15}},
+FrontEndVersion->"9.0 for Linux x86 (64-bit) (February 7, 2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 872, 23, 121, "Input"],
+Cell[CellGroupData[{
+Cell[1454, 47, 1849, 55, 99, "Input"],
+Cell[3306, 104, 1897, 46, 615, "Print"],
+Cell[5206, 152, 514, 14, 53, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5757, 171, 913, 24, 55, "Input"],
+Cell[6673, 197, 10948, 204, 1863, "Print"],
+Cell[17624, 403, 2493, 73, 202, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20154, 481, 1452, 40, 121, "Input"],
+Cell[21609, 523, 5191, 124, 1575, "Print"],
+Cell[26803, 649, 1485, 47, 126, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[28325, 701, 572, 14, 55, "Input"],
+Cell[28900, 717, 2403, 61, 163, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[31340, 783, 1796, 53, 99, "Input"],
+Cell[33139, 838, 841, 23, 311, "Print"],
+Cell[33983, 863, 139, 3, 32, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[34159, 871, 1930, 56, 121, "Input"],
+Cell[36092, 929, 2043, 46, 631, "Print"],
+Cell[38138, 977, 1098, 31, 95, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[39273, 1013, 2201, 62, 165, "Input"],
+Cell[41477, 1077, 1290, 32, 439, "Print"],
+Cell[42770, 1111, 85, 1, 32, "Output"]
+}, Open  ]],
+Cell[42870, 1115, 269, 6, 32, "Input"],
+Cell[43142, 1123, 128, 2, 32, "Input"],
+Cell[43273, 1127, 311, 6, 32, "Input"],
+Cell[43587, 1135, 96, 1, 32, "Input"],
+Cell[CellGroupData[{
+Cell[43708, 1140, 810, 21, 143, "Input"],
+Cell[44521, 1163, 1122, 22, 247, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[45680, 1190, 302, 7, 55, "Input"],
+Cell[45985, 1199, 767, 20, 52, "Output"]
+}, Open  ]],
+Cell[46767, 1222, 248, 5, 32, "Input"],
+Cell[47018, 1229, 96, 1, 32, "Input"],
+Cell[CellGroupData[{
+Cell[47139, 1234, 795, 20, 143, "Input"],
+Cell[47937, 1256, 245, 5, 23, "Print"],
+Cell[48185, 1263, 790, 21, 85, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

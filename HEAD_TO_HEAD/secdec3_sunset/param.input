@@ -1,0 +1,9 @@
+# SecDec 3 param.input for 2-loop sunset
+graph=sunset_benchmark
+epsord=0
+# Integrator: 3=Divonne, 4=Cuhre
+integrator=3
+# Max precision for Divonne
+maxeval=500000
+# Contour deformation
+contourdef=False

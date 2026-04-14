@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+### submit_lsf.in --- template for submit_lsf[polestruct].[epsord]
+
+unset CDPATH
+DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OPTSCOMPILE='<%$params{"clusteroptscompile"}%>'
+OPTSRUN='<% $params{"clusteroptsrun"}%>'
+cd $DIR/<%File::Spec->abs2rel($currentdir, $paths{"ap_out_cluster"}) . "/"%>
+CURRDIR=$PWD
+<%
+    $errpath= File::Spec->abs2rel($paths{"ap_out_clustererr"}, $currentdir) . "/";
+    $logpath= File::Spec->abs2rel($paths{"ap_out_clusterlog"}, $currentdir) . "/";
+    for ($kk=1;$kk<= $groupcount;$kk++) {
+        $jobdep="";
+	    $OUT .= "bsub -J \"JOB_ID${kk}\" \$OPTSCOMPILE -e ${errpath}${filename}.m${kk}.err -o ${logpath}${filename}.m${kk}.log <<< \"\$CURRDIR/runmake.sh\"\n";
+                $jobdep = $jobdep . " && done(" . "JOB_ID${kk})";
+	
+$OUT .= "bsub \$OPTSRUN -e ${errpath}${filename}.i${kk}.err -o ${logpath}${filename}.i${kk}.log -w \"done(JOB_ID${kk})\" <<< \"\$CURRDIR/runjob.sh\"\n";
+   }
+%>
+
+

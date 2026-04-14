@@ -1,0 +1,72 @@
+{
+  "triangle2L": {
+    "pysecdec": [
+      0.35,
+      10.15
+    ],
+    "secdec3": [
+      8.92,
+      6.2
+    ],
+    "fiesta4": [
+      "FAIL",
+      "FAIL"
+    ]
+  },
+  "P126": {
+    "pysecdec": [
+      0.36,
+      10.15
+    ],
+    "secdec3": [
+      "FAIL",
+      "FAIL"
+    ],
+    "fiesta4": [
+      1.39,
+      0.46
+    ]
+  },
+  "triangle3L": {
+    "pysecdec": [
+      0.41,
+      10.15
+    ],
+    "secdec3": [
+      38.1,
+      67.86
+    ],
+    "fiesta4": [
+      "FAIL",
+      "FAIL"
+    ]
+  },
+  "elliptic2L": {
+    "pysecdec": [
+      0.35,
+      10.15
+    ],
+    "secdec3": [
+      "FAIL",
+      "FAIL"
+    ],
+    "fiesta4": [
+      "FAIL",
+      "FAIL"
+    ]
+  },
+  "box2L_invprop": {
+    "pysecdec": [
+      "N/A",
+      "N/A"
+    ],
+    "secdec3": [
+      39.93,
+      42.8
+    ],
+    "fiesta4": [
+      1.4,
+      0.47
+    ]
+  }
+}

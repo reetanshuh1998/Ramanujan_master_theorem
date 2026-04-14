@@ -1,0 +1,2 @@
+bin/CIntegratePool -in examples/in -threads 4
+rm examples/out.kch

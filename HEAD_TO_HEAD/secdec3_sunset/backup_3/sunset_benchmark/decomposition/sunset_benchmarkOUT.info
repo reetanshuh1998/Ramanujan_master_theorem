@@ -1,0 +1,25 @@
+polesP1l0h0 = {2, 2, 2}
+
+threshold = none
+
+Nn = 3
+
+allcount = 6
+
+maxlogpole = 1
+
+maxlinpole = 0
+
+maxhpole = 0
+
+overallmaxpole = 1
+
+prefacord = -1
+
+prefac = -(Gamma[-1 + 2*eps]/prefactor)
+
+mindegree = 0
+
+maxdegree = 0
+
+lengthprimseclist = 3

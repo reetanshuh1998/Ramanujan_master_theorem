@@ -1,0 +1,25 @@
+<%
+    $relpath=File::Spec->abs2rel($currentdir, $paths{"ap_out_cluster"}) . "/";
+    $condorcompile=File::Spec->abs2rel($paths{"apf_out_condorcompile"}, $paths{"ap_out_cluster"});
+    $condorrun=File::Spec->abs2rel($paths{"apf_out_condorrun"}, $paths{"ap_out_cluster"});
+    for ($kk=1;$kk<= $groupcount;$kk++) {
+        $jobdep="";
+        for ($i=$fmax[$kk-1]+1; $i <= $fmax[$kk]; $i++) {
+	    $OUT .= "JOB f${i} ${condorcompile}\n";
+	    $OUT .= "VARS f${i} relpath=\"${relpath}\" kk=\"${kk}\" file=\"f${i}.o\"\n";
+            $jobdep = $jobdep . " " . "f${i}";
+	    if ($params{"contourdef"} eq True) {
+	    $OUT .= "JOB g${i} ${condorcompile}\n";
+	    $OUT .= "VARS g${i} relpath=\"${relpath}\" kk=\"${kk}\" file=\"g${i}.o\"\n";
+            $jobdep = $jobdep . " " . "g${i}";
+	    }
+	}
+	$OUT .= "JOB int${kk} condor.compile\n";
+	$OUT .= "VARS int${kk} relpath=\"${relpath}\" kk=\"${kk}\" file=\"intfile${kk}\"\n";
+	$OUT .= "JOB run${kk} ${condorrun}\n";
+	$OUT .= "VARS run${kk} relpath=\"${relpath}\" kk=\"${kk}\"\n";
+	$OUT .= "PARENT $jobdep CHILD int${kk}\n";
+	$OUT .= "PARENT int${kk} CHILD run${kk}\n";
+    }
+%>
+

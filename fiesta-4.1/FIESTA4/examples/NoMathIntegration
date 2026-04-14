@@ -1,0 +1,8 @@
+echo --------------------------- RUNNING MATH------------------------
+math < examples/SDExpandPrepare.m
+echo --------------------------- RUNNING CIntegratePool--------------
+bin/CIntegratePool -in temp/dbin -threads 2
+echo --------------------------- RUNNING MATH------------------------
+math < examples/generate.m
+rm temp/dbin.kch
+rm temp/dbout.kch

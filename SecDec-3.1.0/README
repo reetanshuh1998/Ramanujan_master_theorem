@@ -1,0 +1,29 @@
+Program: SecDec
+Authors: Sophia Borowka, Gudrun Heinrich, Stephen Jones, Matthias Kerner, Johannes Schlenk, Tom Zirke 
+Version 3
+
+---------------------------------------------------------------------------------------
+INSTALLATION: 
+
+make
+
+Prerequisites: 
+Mathematica
+Perl
+C++/Fortran compiler
+       
+----------------------------------------------------------------------------------------
+USAGE:
+
+to calculate loop integrals: 
+go the the directory "loop" and see README there.
+Examples for the loop setup are in loop/demos.
+
+to calculate parametric integrals not related to loop integrals:
+go the the directory "general" and see README there.
+Examples for the "general" setup are in general/demos.
+Contour deformation is not available for the general parametric integrals.
+It is available however for the "userdefined" setup in the loop directory,
+which goes beyond standard loop integrals.
+
+ 

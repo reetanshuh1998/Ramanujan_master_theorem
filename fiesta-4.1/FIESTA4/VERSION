@@ -1,0 +1,8 @@
+This is FIESTA, version 4
+
+The main improvements since the previous published version (3.0) include the following:
+
+- speedup due to vectorization 
+- possibility to use GPUs
+- improved cluster stability when MPI is used for massive parallel calculations
+- a number of bug fixes and stability improvements

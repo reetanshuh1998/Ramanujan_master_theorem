@@ -1,0 +1,41 @@
+  #****s* SecDec/general/perlsrc/mathlaunch.pl
+  #  NAME
+  #    mathlaunch.pl
+  #
+  #  USAGE
+  #  'perl mathlaunch.pl inputfile.m outputfile'
+  # 
+  #  USED BY 
+  #  makeFU.pl, decompose.pl, batch*l*h*, results.pl
+  #  
+  #  PURPOSE
+  #  finds the path for Mathematica, and then runs the inputfile.m,
+  #  with any output directed to outputfile
+  #  
+  #  INPUTS
+  #  parameters parsed via ARGV:
+  #  @ARGV=(inputfile.m, outputfile)
+  #
+  #  RESULT
+  #  inputfile.m is run, output directed to outputfile
+  #    
+  #****
+  #
+$flag=0; $iteration=0;
+while ( ($flag == 0) && ($iteration < 15) ) {
+  system("MATH_EXEC <$ARGV[0] >$ARGV[1]");
+  $mathcheck=`fgrep "You will" $ARGV[1]`;
+  if ( "$mathcheck" ne "" ) {
+    $iteration=$iteration+1;
+    print "Could not acquire a Mathematica licence: Retry number $iteration\n";
+    system("sleep 30");
+    if ($iteration == 15) { print "Could not acquire a Mathematica licence. Try again later.\n"; }
+  } else { $flag=1; }
+}
+$exer=$?>>8;
+if($exer==127){print "Path for Mathematica was not determined";exit 127};
+
+# 
+# (2>&1 is for Error redirection to stdout, 
+# &1 is stdout (standard output stream)
+# &2 is stderr (standard error stream)

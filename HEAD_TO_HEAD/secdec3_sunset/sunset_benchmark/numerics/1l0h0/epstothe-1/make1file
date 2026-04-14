@@ -1,0 +1,13 @@
+CC	= gcc -O
+LIBS	= -lm -lstdc++ 
+INC=-I/home/reet/Downloads/Ramanujan/SecDec-3.1.0/src/cquad/include
+LIB	= ../../../../../../SecDec-3.1.0/src/cquad/lib/libcquad.a
+%.o : %.cc intfile.hh 
+	$(CC) $(INC) -c -o $@ $<
+MAIN	= intfile1.o
+CFILES	=  f1.o f2.o f3.o f4.o f5.o f6.o
+intfile1: $(MAIN)  $(CFILES) $(LIB)
+	$(CC) -o $@.exe \
+	$(MAIN) $(CFILES) $(INC) $(LIB) $(LIBS)
+clean:
+	rm $(MAIN)  $(CFILES)

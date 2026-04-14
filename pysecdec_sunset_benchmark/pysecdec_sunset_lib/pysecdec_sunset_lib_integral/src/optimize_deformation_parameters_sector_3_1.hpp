@@ -1,0 +1,12 @@
+#ifndef pysecdec_sunset_lib_integral_codegen_optimize_deformation_parameters_sector_3_order_1_hpp_included
+#define pysecdec_sunset_lib_integral_codegen_optimize_deformation_parameters_sector_3_order_1_hpp_included
+#include "pysecdec_sunset_lib_integral.hpp"
+#include "functions.hpp"
+#include <cmath>
+#include <limits>
+#include <vector>
+namespace pysecdec_sunset_lib_integral
+{
+secdecutil::SectorContainerWithDeformation<real_t, complex_t>::MaximalDeformationFunction sector_3_order_1_maximal_allowed_deformation_parameters;
+};
+#endif

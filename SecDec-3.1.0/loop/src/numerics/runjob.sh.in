@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+CURRDIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    
+cd $CURRDIR
+echo I am in directory $CURRDIR
+
+KINEMFILE=$CURRDIR/../../../kinematics.input
+while read kinem || [ -n "$kinem" ];
+do
+    [ -z "$kinem" ] && continue
+    [[ "$kinem" =~ \#.* ]] && continue
+<%
+    for ($kk=1;$kk<= $groupcount;$kk++) {
+	$OUT .= "    \$CURRDIR/intfile${kk}.exe \$kinem";
+    }%>
+done < $KINEMFILE

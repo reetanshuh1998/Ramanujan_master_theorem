@@ -1,0 +1,8 @@
+graph=temp
+epsord=0
+contourdef=False
+cubacores=1
+integrator=1
+nstart=10000
+nincrease=5000
+epsrel=2e-3,2e-3,2e-3

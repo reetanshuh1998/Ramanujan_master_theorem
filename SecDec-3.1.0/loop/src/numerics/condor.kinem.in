@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# appends a job for each kinematic point to condor.run
+KINEMFILE=<%File::Spec->abs2rel($paths{"apf_out_kinemfile"}, $paths{"ap_out_cluster"})%>
+RUNFILEIN=<%File::Spec->abs2rel($paths{"apf_out_condorrunin"}, $paths{"ap_out_cluster"})%>
+RUNFILEOUT=<%File::Spec->abs2rel($paths{"apf_out_condorrun"}, $paths{"ap_out_cluster"})%>
+cp $RUNFILEIN $RUNFILEOUT
+while read kinem || [ -n "$kinem" ];
+do
+	[ -z "$kinem" ] && continue
+	[[ "$kinem" =~ \#.* ]] && continue
+	echo "Arguments  = \"${kinem}\"" >> $RUNFILEOUT
+	echo "Queue" >> $RUNFILEOUT
+	echo "" >> $RUNFILEOUT
+done < $KINEMFILE
+

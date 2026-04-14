@@ -1,0 +1,68 @@
+(* Populated by makeFU.pl *)
+(*
+   Contains variables:
+   $FUNfile
+   $lmapstring
+   $userdefined
+*)
+
+userdefined=(*{$userdefined}*);
+
+If[userdefined==0,
+   If[cutconstruct,
+      fun=calcFUcut[proplist,externallegs,loops,numerator,ScalarProductRules];
+      zeropositions=Position[powerlist, 0,1] ;
+      If[zeropositions != {},
+         fun=fun/. ((z[#] -> 0) & /@ (zeropositions//Flatten))/.MapThread[z[#1] -> z[#2] &, {Complement[Range[Length[powerlist]], (zeropositions//Flatten)], Range[Length[powerlist] - Length[zeropositions]]}];
+	 powerlist=Delete[powerlist,zeropositions];
+      ],
+      If[invprops,
+	 fun=calcFU[momlist,Join[proplist,nonposproplist],Join[powerlist,nonpospowerlist],numerator,ScalarProductRules,invprops],
+	 fun=calcFU[momlist,proplist,powerlist,numerator,ScalarProductRules,invprops]]];
+   U[z_]:=fun[[1]];
+   F[z_]:=fun[[2]];
+   Nu[z_]:=Product[z[i]^Simplify[powerlist[[i]]-1], {i,Length[powerlist]}]*fun[[3]];
+   rank=fun[[4]];
+   If[F[z]==0, Print["Warning, function F is zero, please check your on-shell conditions"]]
+   ,
+   fun=calcUserFunc[functionlist,ScalarProductRules,feynpars];
+   facu=Max[Length[FactorList[functionlist[[#,3,1,1]]]]&/@Range[Length[functionlist]]];
+   facf=Max[Length[FactorList[functionlist[[#,3,2,1]]]]&/@Range[Length[functionlist]]];
+   If[Or[facu>2,facf>2], 
+      Print["Warning, parameter(s) z[i] can\n"]; 
+      Print["be factored into the list of exponents or\n"];
+      Print["invariant(s) into the numerator."];
+      ];
+   ];
+
+ funfile=ToString["(*{$FUNfile}*)"];
+ OpenWrite[funfile];
+If[userdefined==0,
+   WriteString[funfile,"U[z_]:="];
+   Write[funfile,U[z]];
+   WriteString[funfile,"\n"];
+   WriteString[funfile,"F[z_]:="];
+   Write[funfile,F[z]];
+   WriteString[funfile,"\n"];
+   WriteString[funfile,"Nu[z_]:="];
+   Write[funfile,Nu[z]];
+   WriteString[funfile,"\n"];
+   WriteString[funfile,"rank="];
+   Write[funfile,rank]
+   ,
+   WriteString[funfile,"functionlist ="];
+   Write[funfile,fun];
+   ];
+ WriteString[funfile,"\n"];
+ WriteString[funfile,"(* renaming of kinematic invariants to standard names: ms[i] for mass squared, "];
+ WriteString[funfile,"ssp[i] for Lorentz invariants: *)\n"];
+ WriteString[funfile,"replacements={ (*{$lmapstring}*) }; \n"];
+ Close[funfile];
+
+(* Scaleless check *)
+(* If[userdefined==0,
+   calcFU::scaleless="Integral is scaleless (0 in Dimensional Regularization)";
+   If[scaleless[U,F,Nn], Message[calcFU::scaleless]];
+]; *) (* Disabled as Nn computed incorrectly when using cutconstruct and 0 in powerlist *)
+
+

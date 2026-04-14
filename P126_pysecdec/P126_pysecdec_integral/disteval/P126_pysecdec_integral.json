@@ -1,0 +1,217 @@
+{
+  "name": "P126_pysecdec_integral",
+  "type": "integral",
+  "dimension": 5,
+  "regulators": [
+    "eps"
+  ],
+  "realp": [
+    "s"
+  ],
+  "complexp": [
+    "msq"
+  ],
+  "deformp_count": 5,
+  "complex_result": true,
+  "requested_orders": [
+    0
+  ],
+  "prefactor": "+(1)+(2-2*EulerGamma)*eps+(-4*EulerGamma+2*EulerGamma**2+pi**2/3)*eps**2",
+  "prefactor_lowest_orders": [
+    0
+  ],
+  "prefactor_highest_orders": [
+    2
+  ],
+  "expanded_prefactor": [
+    {
+      "regulator_powers": [
+        0
+      ],
+      "coefficient": "1"
+    },
+    {
+      "regulator_powers": [
+        1
+      ],
+      "coefficient": "2-2*EulerGamma"
+    },
+    {
+      "regulator_powers": [
+        2
+      ],
+      "coefficient": "-4*EulerGamma+2*EulerGamma**2+pi**2/3"
+    }
+  ],
+  "lowest_orders": [
+    -2
+  ],
+  "kernels": [
+    "sector_1_order_n1",
+    "sector_2_order_n1",
+    "sector_3_order_n1",
+    "sector_4_order_n1",
+    "sector_5_order_n1",
+    "sector_6_order_n1",
+    "sector_7_order_n1",
+    "sector_8_order_n1",
+    "sector_13_order_n1",
+    "sector_14_order_n1",
+    "sector_15_order_n1",
+    "sector_16_order_n1",
+    "sector_17_order_n1",
+    "sector_18_order_n1",
+    "sector_22_order_n1",
+    "sector_23_order_n1",
+    "sector_24_order_n1",
+    "sector_25_order_n1",
+    "sector_26_order_n1",
+    "sector_27_order_n1",
+    "sector_28_order_n1",
+    "sector_29_order_n1",
+    "sector_30_order_n1",
+    "sector_31_order_n1",
+    "sector_32_order_n1",
+    "sector_33_order_n1",
+    "sector_34_order_n1",
+    "sector_35_order_n1",
+    "sector_36_order_n1",
+    "sector_1_order_0",
+    "sector_2_order_0",
+    "sector_3_order_0",
+    "sector_4_order_0",
+    "sector_5_order_0",
+    "sector_6_order_0",
+    "sector_7_order_0",
+    "sector_8_order_0",
+    "sector_9_order_0",
+    "sector_10_order_0",
+    "sector_11_order_0",
+    "sector_12_order_0",
+    "sector_13_order_0",
+    "sector_14_order_0",
+    "sector_15_order_0",
+    "sector_16_order_0",
+    "sector_17_order_0",
+    "sector_18_order_0",
+    "sector_19_order_0",
+    "sector_20_order_0",
+    "sector_21_order_0",
+    "sector_22_order_0",
+    "sector_23_order_0",
+    "sector_24_order_0",
+    "sector_25_order_0",
+    "sector_26_order_0",
+    "sector_27_order_0",
+    "sector_28_order_0",
+    "sector_29_order_0",
+    "sector_30_order_0",
+    "sector_31_order_0",
+    "sector_32_order_0",
+    "sector_33_order_0",
+    "sector_34_order_0",
+    "sector_35_order_0",
+    "sector_36_order_0",
+    "sector_25_order_n2",
+    "sector_26_order_n2",
+    "sector_27_order_n2",
+    "sector_28_order_n2",
+    "sector_29_order_n2",
+    "sector_30_order_n2"
+  ],
+  "orders": [
+    {
+      "regulator_powers": [
+        -1
+      ],
+      "kernels": [
+        "sector_1_order_n1",
+        "sector_2_order_n1",
+        "sector_3_order_n1",
+        "sector_4_order_n1",
+        "sector_5_order_n1",
+        "sector_6_order_n1",
+        "sector_7_order_n1",
+        "sector_8_order_n1",
+        "sector_13_order_n1",
+        "sector_14_order_n1",
+        "sector_15_order_n1",
+        "sector_16_order_n1",
+        "sector_17_order_n1",
+        "sector_18_order_n1",
+        "sector_22_order_n1",
+        "sector_23_order_n1",
+        "sector_24_order_n1",
+        "sector_25_order_n1",
+        "sector_26_order_n1",
+        "sector_27_order_n1",
+        "sector_28_order_n1",
+        "sector_29_order_n1",
+        "sector_30_order_n1",
+        "sector_31_order_n1",
+        "sector_32_order_n1",
+        "sector_33_order_n1",
+        "sector_34_order_n1",
+        "sector_35_order_n1",
+        "sector_36_order_n1"
+      ]
+    },
+    {
+      "regulator_powers": [
+        0
+      ],
+      "kernels": [
+        "sector_1_order_0",
+        "sector_2_order_0",
+        "sector_3_order_0",
+        "sector_4_order_0",
+        "sector_5_order_0",
+        "sector_6_order_0",
+        "sector_7_order_0",
+        "sector_8_order_0",
+        "sector_9_order_0",
+        "sector_10_order_0",
+        "sector_11_order_0",
+        "sector_12_order_0",
+        "sector_13_order_0",
+        "sector_14_order_0",
+        "sector_15_order_0",
+        "sector_16_order_0",
+        "sector_17_order_0",
+        "sector_18_order_0",
+        "sector_19_order_0",
+        "sector_20_order_0",
+        "sector_21_order_0",
+        "sector_22_order_0",
+        "sector_23_order_0",
+        "sector_24_order_0",
+        "sector_25_order_0",
+        "sector_26_order_0",
+        "sector_27_order_0",
+        "sector_28_order_0",
+        "sector_29_order_0",
+        "sector_30_order_0",
+        "sector_31_order_0",
+        "sector_32_order_0",
+        "sector_33_order_0",
+        "sector_34_order_0",
+        "sector_35_order_0",
+        "sector_36_order_0"
+      ]
+    },
+    {
+      "regulator_powers": [
+        -2
+      ],
+      "kernels": [
+        "sector_25_order_n2",
+        "sector_26_order_n2",
+        "sector_27_order_n2",
+        "sector_28_order_n2",
+        "sector_29_order_n2",
+        "sector_30_order_n2"
+      ]
+    }
+  ],
+  "generated_by": "pySecDec 1.6.6 (d5762dda) [Python 3.12.3, NumPy 1.26.4, SymPy 1.14.0]"
+}

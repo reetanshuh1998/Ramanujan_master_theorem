@@ -1,0 +1,182 @@
+################ input parameters for sector decomposition ######################
+#
+# ############### all lines beginning with # are comments ########################
+# ############### please do not change the order of the entries ###################
+#--------------------------------------------------------------------------------------------------
+# subdirectory for the mathematica output files: 
+subdir=PS2to3
+#--------------------------------------------------------------------------------------------------
+# if empty: default directory for the output has integral name (given below)  appended to directory above, 
+# otherwise specify full path for Mathematica output files here
+outputdir=
+#--------------------------------------------------------------------------------------------------
+# integral name
+integrand=s23s35JADE
+#--------------------------------------------------------------------------------------------------
+#########################################################
+# parameters for subtractions and epsilon expansion
+########################################################
+# epsord: level up to which expansion in eps is desired 
+# (default is epsord=0: Laurent series is cut after finite part eps^0)
+# series will be calculated from eps^(-maxpole) to eps^epsord
+# note that epsord is negative if only some pole coeffs are required
+epsord=0
+#--------------------------------------------------------------------------------------------------
+# flag to use integration by parts (IBP) to deal with numerical instability in functions with 
+# many subtractions. '0' for never, '1' for always, '2' for a mixed approach. 
+# '2' is designed to use IBP when it is more efficient to do so, and not otherwise.
+# Note that using IBP can increase considerably the number of functions to be integrated
+IBPflag=0
+##################################################################### 
+# parameters for  job submission and numerical integration
+#####################################################################
+# Fortran compiler (tested with gfortran, ifort, g77), if blank defaults to gfortran
+compiler=
+#--------------------------------------------------------------------------------------------------
+# flag to decide at which stage the program terminates: ('exe flag')
+# 0 - the iterated sector decomposition is done and 
+#      the scripts to do the subtraction and epsilon expansion and 
+#      to create the fortran files and to launch the numerical integration
+#      are created (scripts batch* in graph subdirectory)  but not run 
+#     (useful if a cluster is available to run each pole structure on a different node)
+# 1 - the subtraction and epsilon expansion are performed, and the 
+#      resulting functions are written to fortran files 
+# 2 - all the files needed for the numerical integration are created
+# 3 - compilation is launched to make the executables 
+# 4 - the executables are run, either by batch submission or locally
+exeflag=4
+#--------------------------------------------------------------------------------------------------
+# flag for job submission: 0: single machine, 1: cluster (batch system to submit jobs)
+clusterflag=0
+#--------------------------------------------------------------------------------------------------
+# if using a cluster: flag to use the default batch setup (0) or a user-defined setup (1)  
+batchsystem=0
+#--------------------------------------------------------------------------------------------------
+# if using a cluster: maximum number of jobs allowed in the queue
+maxjobs=200
+#--------------------------------------------------------------------------------------------------
+# maximal CPU time (in hours) (used to send to a particular queue on a batch system)
+maxcput=1
+#--------------------------------------------------------------------------------------------------
+# symbolic constants occurring in the integrand
+# give as a list in the order they appear in the inegrand function
+#b,alpha,g
+symbols=y
+#--------------------------------------------------------------------------------------------------
+# numerical values for the (symbolic) constants occurring in the integrand
+# give as a list in the same order as the list above
+values=0.01
+dummys=JADE
+#--------------------------------------------------------------------------------------------------
+# name of the point to calculate (should be either blank or a string, useful to label the result files
+# in case of different choices for the numerical constants contained in the integrand)
+pointname=j3
+###################################################################
+# numerical integration specifications:
+###################################################################
+# Numerical integrator to use:
+# 0=BASES,>0=>CUBA, 1=Vegas,2=Suave,3=Divonne,4=Cuhre
+integrator=0
+#--------------------------------------------------------------------------------------------------
+# path for BASES library for numerical integration
+# leave blank for default path =  SecDec/src/basesv5.1, otherwise give full path
+basespath=
+#--------------------------------------------------------------------------------------------------
+# ncall  for BASES for leading,subleading,...
+ncall=4000000,4500000,5000000,5000000
+#--------------------------------------------------------------------------------------------------
+# relative accuracy acc1 for grid step
+acc1=.05d0,.05d0,.05d0,.1d0
+#--------------------------------------------------------------------------------------------------
+#rel accuracy acc2 for integration step
+acc2=.05d0, .05d0, .08d0,.1d0
+#--------------------------------------------------------------------------------------------------
+# number of iterations for grid step
+iter1=10,10,10,10,10,10,10
+#--------------------------------------------------------------------------------------------------
+# number of iterations for integration step
+iter2=10,10,10,10,10,12,12
+#--------------------------------------------------------------------------------------------------
+# path for Cuba library
+# leave blank for default path =  ../Cuba-4.1, otherwise give full path
+cubapath=
+######################### Cuba parameters #########################
+# maximum number of function evaluations for leading pole, subleading pole,...
+maxeval=30000000,36000000,45000000,60000000,66000000
+#--------------------------------------------------------------------------------------------------
+# minimum number of function evaluations for leading pole, subleading pole,...
+mineval=0,0,0,0,0,0,0
+#--------------------------------------------------------------------------------------------------
+# relative accuraccy required (as decimal) for leading pole, subleading pole,...
+epsrel=.03d-2,.05d-2,.05d-2,.08d-2,.1d-2
+#--------------------------------------------------------------------------------------------------
+# absolute accuraccy required (as decimal) for leading pole, subleading pole,...
+epsabs=1d-12,1d-12,1d-12,1d-12,1d-12
+#--------------------------------------------------------------------------------------------------
+# flag for Cuba (encodes verbosity, how samples are used, and how random numbers are generated)
+cubaflags=2
+#--------------------------------------------------------------------------------------------------
+####################### Vegas specific parameters #################
+# number of function evaluations on the first iteration
+nstart=1000000,1200000,1500000,2000000,2200000
+#--------------------------------------------------------------------------------------------------
+# number of extra function evaluations per iteration
+nincrease=500000,600000,750000,1000000,1100000
+#--------------------------------------------------------------------------------------------------
+####################### Suave specific parameters #################
+# number of new integrand evaluations in each subdivision
+nnew=1000000,1000000,1000000,1000000,1000000
+#--------------------------------------------------------------------------------------------------
+# measure of how 'flat' the function to evaluate is
+flatness=1d0,1d0,1d0,1d0,1d0
+#--------------------------------------------------------------------------------------------------
+####################### Divonne specific parameters ###############
+# determines sampling in partitioning phase
+key1=1000,1000,1000,1000,1000
+#--------------------------------------------------------------------------------------------------
+# determines sampling in final integration phase
+key2=1,1,1,1,1
+#--------------------------------------------------------------------------------------------------
+# sets strategy for refinement phase
+key3=1,1,1,1,1
+#--------------------------------------------------------------------------------------------------
+# controls thoroughness of partitioning phase
+# (essentially the number of 'saftey' iterations performed before a partition is accepted)
+maxpass=5,5,5,5,5
+#--------------------------------------------------------------------------------------------------
+# the width of the border of the integration region
+# functions which cannot be evaluated on the border (most functions in secdec) need a non-zero border
+# function values in this region are extrapolated from inside the integration region
+border=1d-5,1d-5,1d-4,1d-4,1d-4,1d-4 
+#--------------------------------------------------------------------------------------------------
+# maximum chi squared value a single subregion is allowed to have in the final integration phase
+maxchisq=1d1,1d1,1d1,1d1,1d1,1d1
+#--------------------------------------------------------------------------------------------------
+# minimum deviation (as decimal) of the requested error of the entire integral which determines
+# whether it is worthwhile further examining a region which failed chi squared test
+mindeviation=.25d0,.25d0,.25d0,.25d0,.25d0,.25d0
+#--------------------------------------------------------------------------------------------------
+################################ Cuhre specific parameters ###################
+# chooses basic integration rule
+key=7
+#--------------------------------------------------------------------------------------------------
+########################################################
+# advanced options
+########################################################
+#--------------------------------------------------------------------------------------------------
+# flag to integrate subsets of functions for each pole order separately or 
+# to sum all functions for a certain pole order and then integrate
+# integrate and then sum: 0 
+# sum and then integrate: 1
+# flag=1 will allow cancellations between different functions and thus give a more realistic error,
+# but should not be used for complicated diagrams where the individual functions are large already
+togetherflag=0
+#--------------------------------------------------------------------------------------------------
+# editor to display numerical result
+# if blank, result will not be automatically displayed in an editor window
+editor=emacs
+#--------------------------------------------------------------------------------------------------
+# the maximum size in bytes of the fortran functions to be grouped together
+# for integration.
+grouping=2000000
+#--------------------------------------------------------------------------------------------------

@@ -1,0 +1,17 @@
+Universe = vanilla
+Executable = <%`which make`%>
+
+Notification = Never
+
+Input  = /dev/null
+Output = <%File::Spec->abs2rel($paths{"ap_out_clusterlog"}, $currentdir) . "/"%>$(file).$(Cluster).$(Process).stdout.txt
+Error  = <%File::Spec->abs2rel($paths{"ap_out_clustererr"}, $currentdir) . "/"%>$(file).$(Cluster).$(Process).stderr.txt
+Log    = <%File::Spec->abs2rel($paths{"ap_out_clusterlog"}, $currentdir) . "/"%>$(file).$(Cluster).$(Process).log
+Getenv = true
+
+Initialdir = $(relpath)
+
+Requirements = Arch == "X86_64" && Pool == "Theory"
+
+Arguments  = " -f make$(kk)file $(file)"
+Queue

@@ -1,0 +1,16 @@
+Universe = vanilla
+Executable = $(relpath)intfile$(kk).exe
+
+Notification = Never
+
+Input  = /dev/null
+Output = <%File::Spec->abs2rel($paths{"ap_out_clusterlog"}, $currentdir) . "/"%>run.$(Cluster).$(Process).stdout.txt
+Error  = <%File::Spec->abs2rel($paths{"ap_out_clustererr"}, $currentdir) . "/"%>run.$(Cluster).$(Process).stderr.txt
+Log    = <%File::Spec->abs2rel($paths{"ap_out_clusterlog"}, $currentdir) . "/"%>run.$(Cluster).$(Process).log
+Getenv = true
+
+Initialdir = $(relpath)
+
+Requirements = Arch == "X86_64" && Pool == "Theory"
+
+

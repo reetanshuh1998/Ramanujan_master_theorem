@@ -1,0 +1,127 @@
+USAGE:
+1) templates for the input files can be obtained with the command
+   'secdec -g --prep'
+
+2) Set the desired parameters in param.input and define the integrand function in math.m
+    you can also rename param.input into [myparamfilename] and math.m into [mymathfilename],
+    and move them to [myworkingdirectory] (recommended)
+    Then use 'secdec -g -d myworkingdirectory -p myparamfilename -m mymathfilename'
+
+
+3) a) if the calculations are done sequentially: (no batch system used)
+    
+    The results are saved to the files integralname/integralname_[point]epstothe*.res,
+     integralname/integralname_[point]full.res. 
+    The result file can also be automatically displayed with your specified text editor, 
+    if the editor is set in param.input
+
+
+3) b) if using a batch system on a cluster: 
+     
+     i) default batch setup (PBS): 
+        
+	When all jobs have finished execute the command 
+	'secdec -d myworkingdirectory -p myparamfilename --collectresults'. 
+
+     ii) customised setup:
+         
+        manually edit perlsrc/makejob.pm and perlsrc/launchjob.pm (required) to be compatible with
+	your batch system syntax.
+	To ensure the maximum number of jobs allowed in the queue is not exceeded, 
+	manually edit perlsrc/makesub.pm
+	(optional - if not done, max jobs allowed = infinity).
+	This writes the desired syntax to the scripts subdir/integralname/job[polestructure], which are
+	launched automatically by subexp.pl (or finishnumerics.pl).
+	The submission files for numerical integration are created at
+	subdir/integralname/polestructure/epstothe[o]/polestructure.[o].[ni] or
+        subdir/integralname/polestructure/epstothe[o]/[nv]/polestructure.[o].[nv].[ni],
+	where [o] is the order of epsilon, [nv] is the number of integration variables (only when IBP used)
+	and [ni] labels which executable (intfile[ni].exe) is to be run.
+	these are launched by subfile.pl in the same directory, which is run automatically by
+	perlsrc/polenumerics.pl, or perlsrc/finishpolenumerics.pl
+	
+        When all jobs have finished type  
+	'secdec -d myworkingdirectory -p myparamfilename --collectresults'. 
+
+4) To remove intermediate auxiliary files after completion of the calculation, 
+     you can use the command './makeclean'.
+
+  called with no arguments this removes intermediate perl scripts, makefiles, .o files, *sf*.f, executables,
+  and where applicable job submission files, but leaves the fortran files created by Mathematica, 
+  so that different  numerical points can be calculated without rerunning the Mathematica code.
+  called with the argument 'all' (i.e. "./makeclean all"),  it removes everything except
+  the [integralname]*full.res file.
+  The executable cleanall.sh will remove all job error/output files from the batch
+  system in the "general/" directory.
+
+
+  USEFUL ADDITIONAL COMMANDS:  
+  './finishnumerics.pl [-d myworkingdirectory -p myparamfilename]': 
+   if the 'exe' flag in 'param.input' resp. 'myparamfilename' is set < 4, this 
+   will complete the calculation without redoing previous steps. 
+   Then execute the command'./results.pl [-d myworkingdir -p myparamfilename]'
+   to collect and display the result as above.
+  
+  './justnumerics.pl [-d myworkingdirectory -p myparamfilename]': 
+   to produce results for a different kinematic point: (if fortran files f*.f have been produced already)
+   change the point name and the numerical values for the masses/invariants in the parameter file
+   and then execute the command 
+   './justnumerics.pl [-d myworkingdirectory -p myparamfilename]' to produce numerical results 
+   for different points in phase space 
+   (it skips the mathematica subtraction+epsilon expansion step which can be done once and for all,
+   as the kinematic variables at this stage are still symbolic).
+   Then type './results.pl [-d myworkingdirectory -p myparamfilename]'
+   to collect and display the result as above.
+  
+  './createdummyfortran.pl [-d myworkingdirectory -p myparamfilename]':
+   when implicit functions have been used at the algebraic stage, 
+   this command produces optimized fortran code to be used at the numerical integration stage.
+   For more details please see demos/dummyfunction_readme
+   
+  './multinumerics.pl [-d myworkingdirectory -p mymultiparamfilename]' or
+   this is used to automate the calculation of many different numeric points.
+   For more details please see demos/Readme_multinumerics
+
+
+DEMOS: the 'demos' subdirectory contains parameter and template files for the examples 
+              described in the manuscript. 
+	      The file 'timings.info' gives a list of timings for the different examples 
+	      (indicative timings only, as this is obviously machine dependent).
+	      The results which a correct usage of the program should produce are 
+	      also given in the 'demos' subdirectory,  in the files with extension *.res.
+
+
+USEFUL FOR TROUBLESHOOTING:
+
+-- If the numerical integration takes very long:
+apart from the fact that this is to be expected for complicated integrands, other reasons could be
+
+ - the integrand still contains undefined symbols at the numerical integration stage
+because the numerical values for the constants have not been properly defined
+(e.g. values for which the integrand has a singularity within the integration range).
+ - When using divonne, 'border' is set too small. This is particularly important
+ when the integrand ~1/sqrt(x) (1/sqrt(1-x)) when x->0 (x->1), or the integrand
+ has a complicated pole structure.
+Things to do are: 
+check the log files of the numerical integration in the subdiretories 
+ integralname/polestructure/epstothe[i], where ``polestructure" is of the form e.g.  2l0h0, 
+denoting 2 logarithmic poles and 0 linear or higher poles.
+
+- or you chose a very large number of Monte Carlo points or an extremely high accuracy 
+in the input file
+
+
+-- If the results do not appear in an editor window:
+either you did not specify an editor in param.input (last entry) or 
+your system is unable to open the editor window. 
+In this case just look at the result file located in the  integralname} subdirectory 
+(where  integralname is the name for the calculated integral or graph, 
+specified by you  in param.input, third item). The result file is called integralname\_[point]full.res.
+
+-- If you get the message ``path for Mathematica not automatically found":
+Insert the path to Mathematica on your system manually for the variable  \mathpath
+in the file  perlsrc/mathlaunch.pl.
+
+
+
+

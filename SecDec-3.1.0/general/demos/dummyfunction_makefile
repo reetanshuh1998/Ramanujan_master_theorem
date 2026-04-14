@@ -1,0 +1,5 @@
+dummy:
+	cd ..; perl createdummyfortran.pl -d demos -p dummyfunction.input; cd -
+	cp  dummyfunctions/cut_edited.f dummyfunctions/cut.f
+	../../secdec -g -p dummyfunction.input -m dummyfunction.m
+

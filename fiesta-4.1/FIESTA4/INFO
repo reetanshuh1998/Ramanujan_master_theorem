@@ -1,0 +1,194 @@
+This is information on internal structure of communication between parts of the program.
+Unless you are not debugging something or writing your own fork you do not need to go deeper.
+
+For general information see README
+
+For install instructions see INSTALL
+
+For version information see VERSION
+
+---------------------------------------------------------------------------------------------------------
+
+FIESTA.m prepares a key-value database for integration with the use of KLink (kyotocabinet).
+The structure of the database is the following:
+
+key: 0-
+value: list of tasks (for example, {1,2})
+in standart SDEvaluate databases it will be usually equal to {1} (one task)
+each task will be further denoted with <task>
+
+key: 0-RegVar
+value: name of the additional regularization variable; can be missing
+
+key: 0-SmallVar
+value: name of the additional variable tending to zero; only in SDExpandAsy
+
+key: 0-RequestedOrders
+value: pair of requested orders for ep and small var; only in SDExpandAsy
+
+key: <task>-UsingC
+value: True or False; a prepared database can be used only with the same UsingC setting
+
+key: <task>-ExternalExponent
+value: the exponent of small variable; everything is multiplied by t^value; it is 0 for basic examples
+
+key: <task>-Exact
+value: True or False; indicates whether we know an excat answer
+
+in case of True for <task>-Exact we have only one more key for this <task>:
+
+key: <task>-ExactValue
+value: result for this <task>
+
+otherwise we have the following keys:
+
+key: <task>-ForEvaluation
+value: list of pairs {ep order, {extvar order, extvar log order}} - coefficients that have to be evaluated
+
+key: <task>-ForEvaluationString
+value: same but elements are separated with | and ep order and extvar pair with -
+example: 1-{1,1}|
+the terms separated will be called <intdeg> below
+
+key: <task>-SCounter
+value: number of sectors; each <intdeg> will have SCounter integration terms (some are equal to zero)
+
+key: <task>-<intdeg>-T
+value: number of non-zero terms corresponding to <intdeg>; only for output
+
+key: <task>-<intdeg>-N
+value: max number of variables in integrals with <intdeg>
+
+key: <task>-<intdeg>-<num>
+value: number of subterms in sector <num> for order <intdeg>
+
+key: <task>-<intdeg>-<num>-<num2>
+value: the integration term num2 in sector num for order <intdeg>
+the term is ended with ;\\012
+
+key: <task>-runorder
+value: maximal order to run integration till; coincides with the maximal value of first parts of <intdeg>
+
+---------------
+the following terms are needed only for final result collection
+---------------
+
+key: <task>-SHIFT
+value: order shift between requested order and runorder; corresponds to the ep-order of external terms
+
+key: <task>-EXTERNAL
+value: external terms outside of integration
+
+key: <task>-EXTERNAL-<deg>
+value: numerical series coefficient of EXTERNAL of order <deg>
+
+key: <task>-EXTERNAL-<deg>E
+value: exact series coefficient of EXTERNAL of order <deg>
+
+-------------------------------------------------------------------------------------------------------------------
+
+The binaries CIntegratePool and CIntegratePoolMPI use this database for integration. They have the following options:
+
+-in <path> - path to input database
+-out <path> - path to output database; used only in -direct mode
+-bucket <num> - database setting; for details refer to kyotocabinet documentation
+-integrator <string> - integration choice, by default: vegasCuba
+-intpar <key> <vaue> - integrator option
+-math <path> - sets the path to Mathematica binary for CIntegrateMP (see below)
+
+The following options are related to multiple precision integration tuning
+-MPThreshold <num> 
+-MPPrecision <num>
+-PrecisionShift <num>
+-SmallX <num>
+-MPMin <num>
+
+-threads <num> - number of threads; ignored my CIntegratePoolMPI
+-all - integrate with all <task>
+-task <task> integrate with chosen <task>
+-prefix <intdeg> - integrate only chosen <intdeg>
+-test - only test integration, no database usage
+-direct - called alone, not from Mathematica; results in writing in output database and writing to stdout; with no -direct writes results to files
+-CIntegratePath <path> - path to CIntegrateMP or CIntegrateMPC
+-notest - skip the integration consistency test (good for special integration options of justEvaluate integrator)
+-CubaCores <num> - internal parralization option for the Cuba integrator
+
+-------------------------------------------------------------------------------------------------------------------
+
+The binaries CIntegratePool and CIntegratePoolMPI (or Mathematica at the SDIntegrate[] stage) fill the second database with results.
+
+The second database has the following entries:
+
+0-, 0-RegVar, 0-SmallVar,
+
+<task>-Exact
+
+and depending on its value
+
+<task>-ExactValue
+
+or remaining keys
+
+<task>-ForEvaluation, <task>-ExpandVariable, <task>-runorder, <task>-SHIFT, <task>-EXTERNAL, <task>-EXTERNAL-<order>
+their values are just copied from the first database.
+
+key: <task>-<prefix>-R
+value: result for this task and prefix
+
+key: <task>-<prefix>-E
+value: False or True, indicates whether the result was calculated exactly. If it was perfomed by CIntegratePool, it is always False
+
+-------------------------------------------------------------------------------------------------------------------
+
+The binaries CIntegrateMP and CIntegrateMPC should normally not be called directly, however you can use them to test integration or to
+use it from your separate programs.
+
+After being launched the binary waits for input. The input command should be ended with new line. Most commands require an argument ended with new line
+(setting integration parameters requires two arguments). The command result is printed back. The commands are the following:
+
+exit, Exit, quit or Quit - exit immidiately
+help - list commands
+
+MPFR, Native or Mixed (default) sets the evaluation mode
+
+Debug - turns all printing of all results
+TestF - tests the F function for being positive instead of integrating
+Statistics - prints timings
+
+SetIntegrator - set integrator equal to the next argument
+SetCurrentIntegratorParameter - set integrator parameter (two arguments)
+GetCurrentIntegratorParameters - print out actual parameters
+
+CPUCores - sets the number of CPU calculating cores = the cubacores setting of Cuba
+GPUCores - sets the number of GPU calculating cores = the cubaaccel setting of Cuba
+GPUForceCore - specifies the GPU core that will be used (in case of GPUCores=1)
+GPUMemoryPart - limits the GPU memory that will be used by the process (default = 1 = full)
+
+The following options are related to multiple precision integration tuning
+SetMPPrecision (integer argument)
+SetMPPrecisionShift (integer argument)
+SetSmallX (float argument %f)
+SetMPThreshold (float argument %f)
+SetMPMin (float argument %f)
+
+Integrate - the main integration command. The integrand format should be the following:
+<nvars>;
+<terms>;
+<terms> - lines with terms ending with ;
+<final expression>;
+
+<terms> can be 0, in this case the final expression comes right after the number of vars
+the terms or the final expression can refer preveous terms with f[n] (n starts from 1)
+integration variables are refered with x[n] (n starts from 1)
+power goes as p[_,_], logarithm as l[_], Pi as P, EulerGamma as G, PolyGamma is not shortened.
+
+Parse - same, but only check the input, do not integrate. Good answer is {0,0}
+
+SetMath - provides path to the Mathematica binary. If it is provided, CIntegrateMP can call Mathematica and evaluate some constants
+          currently the only constant working this way is PolyGamma[_,_]
+          some of the values of PolyGamma are stored in constants.h
+          setting math is not recommended if you are using massive thread or mpi calculations (each slave will call math!)
+          a better approach to be safe is to use OnlyPrepare in Mathematica, then run your job
+          if some constants are missing you can add them to constants.h, recompile the binaries and launch the job again
+          and since this version of FIESTA makes a complete parse check of all expressions before integrating, it won't take much time.
+

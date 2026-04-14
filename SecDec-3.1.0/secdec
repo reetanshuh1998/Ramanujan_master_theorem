@@ -1,0 +1,454 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use FindBin qw( $RealBin );
+use lib "$RealBin/loop/perlsrc/modules";
+use banner;
+use paths;
+use params;
+use Cwd;
+use File::Spec;
+use Getopt::Long;
+
+banner::printversion();
+
+# Get command line parameters + secdec directory
+my $paramfile;
+my $mathfile;
+my $kinemfile;
+my $directory;
+my $general=0; # false
+my $userdefined=0; # false
+my $makeparams;
+my $makefu;
+my $decompose;
+my $preparesubexpand;
+my $subexpand;
+my $preparenumerics;
+my $numerics;
+my $collectresults;
+my $algebraic;
+my $prep;
+my @polestructs;
+my @epsords;
+my $help;
+GetOptions(
+"p|parameter=s" => \$paramfile, "m|math=s"=>\$mathfile, "k|kinematics=s"=>\$kinemfile, "d|directory=s"=>\$directory,
+"general" => \$general,
+"userdefined" => \$userdefined,
+"makeparams" => \$makeparams,
+"makefu" => \$makefu,
+"decompose" => \$decompose,
+"preparesubexpand" => \$preparesubexpand,
+"subexpand" => \$subexpand,
+"preparenumerics" => \$preparenumerics,
+"numerics" => \$numerics,
+"collectresults" => \$collectresults,
+"algebraic" => \$algebraic,
+"prep" => \$prep,
+"polestructs=s" => \@polestructs,
+"epsords=s" => \@epsords,
+'help|?'=>\$help);
+
+my $secdecdir = $RealBin; # SecDec dir
+my $workingdir = undef;
+my %paths = ();
+
+# Print useage message
+if ( $help )
+{
+    helpmessage();
+}
+
+if ( $directory )
+{
+    $workingdir = File::Spec->rel2abs( $directory, getcwd());
+} else {
+    $workingdir = getcwd(); # this picks up the user's working directory (where they called SecDec from)
+}
+print "Detected SecDec directory as " . $secdecdir . "\n";
+print "Detected user's working directory as " . $workingdir . "\n\n";
+
+# copy template files to user's working directory
+if ( $prep && ($paramfile || $mathfile || $kinemfile) ) {
+    print "Error - SecDec called with 'secdec --prep' but paramfile, mathfile or kinemfile specified.\n";
+    print "Perhaps you meant one of the following:\n";
+    print "secdec -p=<paramfile> -m=<mathfile> -k=<kinemfile>\n";
+    print "secdec --prep\n";
+    exit 1;
+}
+if ( $prep && $general ) {
+    %paths = paths::gettemplatepaths($secdecdir,$workingdir,2);
+} elsif ( $prep && $userdefined ) {
+    %paths = paths::gettemplatepaths($secdecdir,$workingdir,1);
+} elsif ( $prep ) { # loop integral
+    %paths = paths::gettemplatepaths($secdecdir,$workingdir,0);
+}
+if ( $prep ) {
+    File::Copy::Recursive::fcopy( $paths{"apf_paramfile_template"} , $paths{"apf_paramfile"} )
+    or die "Cannot copy " . $paths{"apf_paramfile_template"} . " to " . $paths{"apf_paramfile"} . "\n";
+    
+    File::Copy::Recursive::fcopy( $paths{"apf_mathfile_template"} , $paths{"apf_mathfile"} )
+    or die "Cannot copy " . $paths{"apf_mathfile_template"} . " to " . $paths{"apf_mathfile"} . "\n";
+    
+    File::Copy::Recursive::fcopy( $paths{"apf_kinemfile_template"} , $paths{"apf_kinemfile"} )
+    or die "Cannot copy " . $paths{"apf_kinemfile_template"} . " to " . $paths{"apf_kinemfile"} . "\n";
+    
+    print "Success - input template files written to " . $workingdir . "\n";
+    print "Please fill in the input files and run: secdec\n";
+    
+    exit 0;
+}
+
+# If input files not specified, use defaults
+my %definputfiles=paths::defaultinputfiles;
+unless($mathfile)  { 
+    $mathfile = $definputfiles{"def_mathfile"};
+    print "No mathfile specified, using default " . $workingdir . "/" . $mathfile . "\n" 
+}
+unless($paramfile) { 
+    $paramfile = $definputfiles{"def_paramfile"};
+    print "No paramfile specified, using default " . $workingdir . "/" . $paramfile . "\n" 
+}
+
+# legacy mode for general
+# note that we call with -t $mathfile
+if ( $general != 0 ) {
+    if(!(defined $numerics || defined $collectresults)){
+      system( "cd " . $secdecdir . ";" . "cd " . "general/" . ";" . "./launch -p $paramfile -t $mathfile -d $workingdir" );
+    }
+    if (defined $kinemfile) {
+      if(!(defined $algebraic || defined $collectresults)) {
+	system( "cd " . $secdecdir . ";" . "cd " . "general/" . ";" . "perl multinumerics.pl -p $kinemfile -d $workingdir" );
+      }
+      if(!(defined $algebraic || defined $numerics)) {
+	system( "cd " . $secdecdir . ";" . "cd " . "general/" . ";" . "perl multinumerics.pl -p $kinemfile -d $workingdir 1 > /dev/null" );
+	system( "cd " . $secdecdir . ";" . "cd " . "general/" . ";" . "perl multinumerics.pl -p $kinemfile -d $workingdir 2 > /dev/null" );
+      }
+    } 
+    else { # !kinemfile
+      if (defined $collectresults) {
+	system( "cd " . $secdecdir . ";" . "cd " . "general/" . ";" . "perl results.pl -p $paramfile -d $workingdir" );
+      }
+    }
+    exit 0;
+}
+
+# If kinematics file is not specified, use default
+unless($kinemfile) { 
+    $kinemfile = $definputfiles{"def_kinemfile"};
+    print "No kinemfile specified, using default " . $workingdir . "/" . $kinemfile . "\n"
+}
+
+# Read paramfile + construct paths
+%paths = paths::getpaths($secdecdir,$workingdir,$paramfile,$mathfile,$kinemfile);
+my %params = params::readparams($paths{"apf_paramfile"});
+%paths = paths::updatepaths(\%paths,\%params);
+
+# Check if SecDec is installed
+unless ( -e $paths{"apf_mathlaunch"} ) {
+     print "Error - SecDec does not appear to be installed correctly\n";
+     print "Navigate to " . $paths{"ap_secdecdir"} . " and run: make\n";
+     exit 99;
+}
+
+if ( $params{"strategy"} eq "G1" or $params{"strategy"} eq "G2" ) {
+ unless ( -e $paths{"apf_normaliz"} ) {
+     print "Error - Normaliz executable not found in the directory\n";
+     print "		$paths{ap_src}\n";
+     print "	To use the geometric strategies G1 and G2 the program Normaliz is needed.\n";
+     print "	The program can be downloaded from\n";
+     print "		http://www.math.uos.de/normaliz/Normaliz2.10.1/\n";
+     exit 101;
+ }
+ print substr(qx($paths{apf_normaliz} -?), 0, 360);
+ print "The geometric decomposition strategies G1 and G2 use the program Normaliz.\n";
+ print "Please refer to Normaliz in any publication for which it has been used:\n";
+ print "	W. Bruns, B. Ichim, T. Roemer and C. Soeger: Normaliz. Algorithms for rational cones and affine monoids. Available from http://www.math.uos.de/normaliz\n";
+ print "	W. Bruns, B. Ichim and C. Soeger. The power of pyramid decomposition in Normaliz. Preprint arXiv:1206.1916\n";
+}
+
+my $singlejobs;
+if ( defined $makeparams || defined $makefu          || defined $decompose || defined $preparesubexpand ||
+     defined $subexpand  || defined $preparenumerics || defined $numerics  || defined $collectresults   ||
+     defined $algebraic  || defined $numerics )
+{
+    $singlejobs = 1;
+}
+
+if ( !$singlejobs || $algebraic )
+{
+     paths::backupoutputdir(\%paths,\%params); # backup existing output structure
+}
+
+unless ( -e $paths{"ap_outputdir"} ) {
+     paths::createoutputdir(\%paths,\%params); # construct output directory structure
+}
+
+# output params hash to file (for debugging)
+open (ET,">",$paths{"apf_out_params"}) || die "cannot open " . $paths{"apf_out_params"} . "\n";
+while (my ($k,$v)=each %params) {
+    if (defined $k && defined $v ) {
+        if ( ref($v) eq "ARRAY" ) { 
+            print ET $k . "=" . join(',',@{$v}) . "\n";
+        } else {
+            print ET $k . "=" . $v . "\n";
+        }
+    }
+}
+close (ET);
+
+if ( ( $singlejobs && $makeparams ) || ( $singlejobs && $algebraic ) || ( !$singlejobs && $params{"exe"} >= 0 ) ) {
+    makeparams($paramfile,$mathfile,$kinemfile,$workingdir,$userdefined);
+}
+
+if ( ( $singlejobs && $makefu ) || ( $singlejobs && $algebraic ) || ( !$singlejobs && $params{"exe"} >= 0 ) ) {
+    makeFU($paramfile,$mathfile,$kinemfile,$workingdir,$userdefined);
+}
+
+if ( ( $singlejobs && $decompose ) || ( $singlejobs && $algebraic ) || ( !$singlejobs && $params{"exe"} >= 0 ) ) {
+    decompose($paramfile,$mathfile,$kinemfile,$workingdir,$userdefined);
+}
+
+if ( ( $singlejobs && $preparesubexpand ) || ( $singlejobs && $algebraic ) || ( !$singlejobs && $params{"exe"} >= 0 ) ) {
+    preparesubexpand($paramfile,$mathfile,$kinemfile,$workingdir,$userdefined);
+}
+
+if ( ( $singlejobs && $subexpand ) || ( $singlejobs && $algebraic ) || ( !$singlejobs && $params{"exe"} >= 1 ) ) {
+    subexpand($paramfile,$mathfile,$kinemfile,$workingdir,$userdefined,\@polestructs);
+}
+
+if ( ( $singlejobs && $preparenumerics ) || ( $singlejobs && $algebraic ) || ( !$singlejobs && $params{"exe"} >= 1 ) ) {
+    preparenumerics($paramfile,$mathfile,$kinemfile,$workingdir,$userdefined,\@polestructs,\@epsords);
+}
+
+if ( !$singlejobs && ( $params{"clusterflag"} != 0 ) ) {
+    print "\n=== Cluster mode enabled ===\n";
+    print "clusterflag set to " . $params{"clusterflag"} . " in paramfile.\n";
+    print "Execution halted at numerics stage.\n";
+    print "Now:\n";
+    print "1) Move " . $paths{"ap_outputdir"} . " to your cluster\n";
+    print "2) Check the submission scripts in " . $paths{"ap_out_cluster"} . "\n";
+    print "3) Run the submission scripts\n";
+    print "Alternatively, to continue in serial mode enter:\n";
+    print "secdec --numerics -p=<paramfile> -m=<mathfile> -k=<kinemfile>\n";
+    exit 0;
+}
+
+if ( ( $singlejobs && $numerics ) || ( !$singlejobs && $params{"exe"} >= 2 ) ) {
+    #multinumerics($paramfile,$mathfile,$kinemfile,$workingdir,$userdefined);
+    if( $singlejobs ) {
+      paths::copykinemtooutput( \%paths );
+      print "\n";
+    }
+    numerics($paramfile,$mathfile,$kinemfile,$workingdir,$userdefined,\@polestructs,\@epsords);
+}
+
+if ( ( $singlejobs && $collectresults ) || ( !$singlejobs && $params{"exe"} >= 3 ) ) {
+    collectresults($paramfile,$mathfile,$kinemfile,$workingdir,$userdefined);
+}
+
+    # todo
+    # perl loop/perlsrc/makeparams.pl $paramfile $mathfile $kinemfile $workingdir
+    # perl loop/perlsrc/makeFU.pl $paramfile $mathfile $kinemfile $workingdir
+    # perl loop/perlsrc/userdefined/decomposeuserdefined.pl $paramfile $mathfile $kinemfile $workingdir "launch"
+    # perl loop/perlsrc/userdefined/subexpuserdefined.pl $paramfile $mathfile $kinemfile $workingdir "launch"
+    # perl resultsuserdefined.pl $paramfile $mathfile $kinem $workingdir "launch"
+    
+########## Begin subroutines ##########
+sub makeparams
+{
+    my $paramfile=$_[0];
+    my $mathfile=$_[1];
+    my $kinemfile=$_[2];
+    my $workingdir=$_[3];
+    my $userdefined=$_[4];
+    
+    system( "cd " . $secdecdir . ";" . "perl " . $paths{"apf_makeparams"} . " -p=$paramfile -m=$mathfile -k=$kinemfile -d=$workingdir -u=$userdefined" );
+    if ( $? != 0 ) {
+        print "Failed to determine input parameters, check " . $mathfile . "\n";
+        exit 2;
+    }
+}
+
+sub makeFU
+{
+    my $paramfile=$_[0];
+    my $mathfile=$_[1];
+    my $kinemfile=$_[2];
+    my $workingdir=$_[3];
+    my $userdefined=$_[4];
+    
+    system( "cd " . $secdecdir . ";" .  "perl " . $paths{"apf_makeFU"} . " -p=$paramfile -m=$mathfile -k=$kinemfile -d=$workingdir -u=$userdefined" );
+    if ( $? != 0 ) {
+        print "Failed to construct F and U\n";
+        exit 3;
+    }
+}
+
+sub decompose
+{
+    my $paramfile=$_[0];
+    my $mathfile=$_[1];
+    my $kinemfile=$_[2];
+    my $workingdir=$_[3];
+    my $userdefined=$_[4];
+    
+    system( "cd " . $secdecdir . ";" .  "perl " . $paths{"apf_decompose"} . " -p=$paramfile -m=$mathfile -k=$kinemfile -d=$workingdir -u=$userdefined" );
+    if ( $? != 0 ) {
+        print "Calculation failed at the decomposition stage\n";
+        exit 4;
+    }
+}
+
+sub preparesubexpand
+{
+    my $paramfile=$_[0];
+    my $mathfile=$_[1];
+    my $kinemfile=$_[2];
+    my $workingdir=$_[3];
+    my $userdefined=$_[4];
+    
+    system( "cd " . $secdecdir . ";" .  "perl " . $paths{"apf_preparesubexpand"} . " -p=$paramfile -m=$mathfile -k=$kinemfile -d=$workingdir -u=$userdefined" );
+    if ( $? == 91 ) {
+        print "Calculation terminated upon finding NaN for numerical integration\n";
+        exit 5;
+    }
+    elsif ( $? == 90 ) {
+        print "Calculation terminated upon finding suspected unintegrable function\n";
+        exit 5;
+    }
+    elsif ( $? == 89 ) {
+        print "Calculation terminated upon finding integration with result greater than 1E17\n";
+        exit 5;
+    }
+    elsif ( $? != 0 ) {
+        print "Calculation terminated during preparation of substitution and expansion\n";
+        exit 5;
+    }
+}
+
+sub subexpand
+{
+    my $paramfile=$_[0];
+    my $mathfile=$_[1];
+    my $kinemfile=$_[2];
+    my $workingdir=$_[3];
+    my $userdefined=$_[4];
+    my @polestructs=@{$_[5]};
+    
+    my $psstring = "";
+    if ( @polestructs ) {
+        $psstring = "-polestructs=";
+    }
+
+    system( "cd " . $secdecdir . ";" .  "perl " . $paths{"apf_subexpand"} . " -p=$paramfile -m=$mathfile -k=$kinemfile -d=$workingdir -u=$userdefined" . $psstring . join(',',@polestructs) );
+
+    if ( $? != 0 ) {
+        print "Calculation terminated during substitution and expansion\n";
+        exit 6;
+    }
+}
+
+sub preparenumerics
+{
+    my $paramfile=$_[0];
+    my $mathfile=$_[1];
+    my $kinemfile=$_[2];
+    my $workingdir=$_[3];
+    my $userdefined=$_[4];
+    my @polestructs=@{$_[5]};
+    my @epsords=@{$_[6]};
+    
+    my $psstring = "";
+    if ( @polestructs ) {
+            $psstring = "-polestructs=";
+    }
+    
+    my $eostring = "";
+    if ( @epsords ) {
+        $eostring = "-epsords=";
+    }
+    
+    system( "cd " . $secdecdir . ";" .  "perl " . $paths{"apf_preparenumerics"} . " -p=$paramfile -m=$mathfile -k=$kinemfile -d=$workingdir -u=$userdefined" . $psstring . join(',',@polestructs) . " " . $eostring . join(',',@epsords) );
+    
+    if ( $? != 0 ) {
+        print "Calculation terminated in preparenumerics\n";
+        exit 7;
+    }
+}
+
+sub numerics
+{
+    my $paramfile=$_[0];
+    my $mathfile=$_[1];
+    my $kinemfile=$_[2];
+    my $workingdir=$_[3];
+    my $userdefined=$_[4];
+    my @polestructs=@{$_[5]};
+    my @epsords=@{$_[6]};
+    
+    my $psstring = "";
+    if ( @polestructs ) {
+        $psstring = "-polestructs=";
+    }
+    
+    my $eostring = "";
+    if ( @epsords ) {
+        $eostring = "-epsords=";
+    }
+    
+    system( "cd " . $secdecdir . ";" .  "perl " . $paths{"apf_numerics"} . " -p=$paramfile -m=$mathfile -k=$kinemfile -d=$workingdir -u=$userdefined" . $psstring . join(',',@polestructs) . " " . $eostring . join(',',@epsords) );
+    
+    if ( $? != 0 ) {
+        print "Failed to perform numerical integration\n";
+        exit 8;
+    }
+}
+
+sub collectresults
+{
+    my $paramfile=$_[0];
+    my $mathfile=$_[1];
+    my $kinemfile=$_[2];
+    my $workingdir=$_[3];
+    my $userdefined=$_[4];
+    
+    system( "cd " . $secdecdir . ";" .  "perl " . $paths{"apf_collectresults"} . " -p=$paramfile -m=$mathfile -k=$kinemfile -d=$workingdir -u=$userdefined" );
+    if ( $? != 0 ) {
+        print "Failed to collect results\n";
+        exit 9;
+    }
+}
+
+sub helpmessage
+{
+    print "Usage:\n\n";
+    print "secdec [-prep] [-p=<paramfile>] [-m=<mathfile>] [-k=<kinemfile>] [-d=<inputdir>] [-u/g] \n";
+    print "[-makeparams/makefu/decompose/preparesubexpand/subexpand/preparenumerics/numerics/\n";
+    print "collectresults/algebraic] [-polestructs=<polestructs>] [-epsords=<epsords>]\n\n";
+    print "-prep\t\t\t\t create template input files, may also be used with -u or -g\n";
+    print "-p=<paramfile>\t\t\t name of parameter file with extension\n";
+    print "-m=<mathfile>\t\t\t name of math file with extension\n";
+    print "-k=<kinemfile>\t\t\t name of kinematics file with extension\n";
+    print "-d=<inputdir>\t\t\t path to input directory (where paramfile, mathfile, kinemfile are)\n";
+    print "-u\t\t\t\t user-defined mode, primary sector decomposition omitted\n";
+    print "-g\t\t\t\t general mode\n";
+    print "-makeparams\t\t\t extracts parameters from the graph definition given in the mathfile\n";
+    print "-makefu\t\t\t\t constructs the graph polynomials F and U\n";
+    print "-decompose\t\t\t performs the iterated sector decomposition\n";
+    print "-preparesubexpand\t\t writes Mathematica files which perform subtractions and eps-expansions for each pole structure\n";
+    print "-subexpand\t\t\t performs the subtractions and eps-expansions for each pole structure\n";
+    print "-preparenumerics\t\t writes the files needed to perform the numerical integration of each pole structure\n";
+    print "-numerics\t\t\t performs the compilation and runs the executables\n";
+    print "-collectresults\t\t\t collects the the results\n";
+    print "-algebraic\t\t\t equivalent to consecutively running -makeparams ... -preparenumerics\n";
+    print "-polestructs=<polestructs>\t only operate on the specified polestructs e.g. -polestructs=2l0h0,1l0h0\n";
+    print "-epsords=<epsords>\t\t only operate on the specified epsords e.g. -epsords=-2,-1,0\n";
+    exit 1;
+}
+########## End subroutines ##########
+
+exit 0;

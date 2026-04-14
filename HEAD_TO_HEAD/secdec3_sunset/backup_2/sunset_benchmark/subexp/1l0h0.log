@@ -1,0 +1,42 @@
+Wolfram 14.3.0 Kernel for Linux x86 (64-bit)
+Copyright 1988-2025 Wolfram Research, Inc.
+
+In[1]:= 
+In[2]:=                                                                                                                                                                                                                                                                                                                                                                                                                 
+In[3]:= 
+In[4]:= In[4]:= 
+In[5]:= In[5]:=         Recasting input for subtraction
+Recasting done, time taken = 0.000598 seconds
+Integrand takes up 22888 bytes
+Integrand list ordered, time taken = 0.000211 seconds
+Collating integrand list
+Integrand list collated, time taken = 0.000097 seconds
+Checking for symmetry amongst subsectors
+Symmetries accounted for, time taken = 0.001954 seconds
+Producing C++ functions
+Memory in use before optimizing C++ functions = 119379000
+Replacements:{x0 -> t[1], x1 -> t[2]}
+No replacements done.
+No replacements done.
+Replacements:{x0 -> t[1], x1 -> t[2]}
+No replacements done.
+No replacements done.
+Replacements:{x0 -> t[1], x1 -> t[2]}
+No replacements done.
+No replacements done.
+Replacements:{x0 -> t[1], x1 -> t[2]}
+No replacements done.
+No replacements done.
+Replacements:{x0 -> t[1], x1 -> t[2]}
+No replacements done.
+No replacements done.
+Replacements:{x0 -> t[1], x1 -> t[2]}
+No replacements done.
+No replacements done.
+numericalintegrand 1 evaluated, Memory in use = 119732056
+C++ functions produced, time taken = 0.088532 seconds
+
+In[6]:= 
+In[7]:= Total time taken to produce C++ files: 0.623038 secs
+
+In[8]:= In[8]:= 

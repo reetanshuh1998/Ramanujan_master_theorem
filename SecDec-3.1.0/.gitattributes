@@ -1,0 +1,3 @@
+# files should always have LF (Unix) line endings on checkout 
+* text eol=lf
+*.pdf binary
