@@ -111,10 +111,9 @@ class LocalToolManager:
 
         try:
             res = subprocess.run(["MathKernel", "-script", run_script], capture_output=True, text=True)
-            match = re.search(r"TIME=([\d\.]+)", res.stdout)
             if match:
                 total = float(match.group(1))
-                return [round(total * 0.75, 2), round(total * 0.25, 2)]
+                return ["N/A", round(total, 2)] # FIESTA total time reported as numerical phase
         except:
             return ["FAIL", "FAIL"]
         return ["FAIL", "FAIL"]
@@ -146,9 +145,9 @@ class LocalToolManager:
         subprocess.run(["make", "-C", pkg_dir], capture_output=True)
         alg_time = time.perf_counter() - start
         
-        # 3. Numerical Phase (Library Call)
-        # We simulate the lib call timing here for the benchmark runner
-        return [round(alg_time, 2), 10.15]
+        # pySecDec integration requires a separate runtime call
+        # For the stabilization release, we report N/A if not implemented
+        return [round(alg_time, 2), "N/A"]
 
     def generate_configs(self, tid, case):
         """Generate SecDec 3 and FIESTA 5 input files from topology defs."""

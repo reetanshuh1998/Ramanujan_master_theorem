@@ -88,6 +88,10 @@ class TripleProductEngine(AnalyticalConvolutionEngine):
         except Exception as e:
             return f"Trio Convolution failed: {e}"
 
+    def solve_triple_bessel(self, k, a, b, nu=0, s=1.0):
+        """Standard API alias for the Trio Benchmark"""
+        return self.solve_trio_benchmark(k, a, b, nu=nu, s_target=s)
+
 def benchmark_race():
     print("\n" + "="*70)
     print("   RAMANUJAN ANALYTICAL CONVOLUTION ENGINE (RACE) - BENCHMARK")

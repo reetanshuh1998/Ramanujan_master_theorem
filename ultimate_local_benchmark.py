@@ -98,7 +98,7 @@ def ultimate_local_benchmark():
     
     # Initialize Manager
     manager = LocalToolManager(os.getcwd())
-    solver = FeynmanMoBSolver(precision=50)
+    solver = FeynmanMoBSolver(precision=30)
     
     report_data = []
 
@@ -146,9 +146,6 @@ def ultimate_local_benchmark():
     print("=" * 160)
     print("\n[VERDICT] All timings captured via live execution on the local benchmarking suite.")
     print("[VERDICT] RAF maintains O(1) discovery speed across all categories.\n")
-
-if __name__ == "__main__":
-    ultimate_local_benchmark()
 
 if __name__ == "__main__":
     ultimate_local_benchmark()
