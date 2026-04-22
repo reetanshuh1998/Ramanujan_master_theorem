@@ -1,3 +1,0 @@
-elliptic2L_pysecdec
-
-elliptic2L_pysecdec_integral

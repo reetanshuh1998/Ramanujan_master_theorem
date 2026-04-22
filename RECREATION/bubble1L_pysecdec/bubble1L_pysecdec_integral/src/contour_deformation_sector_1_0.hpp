@@ -1,9 +1,0 @@
-#ifndef bubble1L_pysecdec_integral_codegen_contour_deformation_sector_1_order_0_hpp_included
-#define bubble1L_pysecdec_integral_codegen_contour_deformation_sector_1_order_0_hpp_included
-#include "bubble1L_pysecdec_integral.hpp"
-#include "functions.hpp"
-namespace bubble1L_pysecdec_integral
-{
-secdecutil::SectorContainerWithDeformation<real_t, complex_t>::DeformedIntegrandFunction sector_1_order_0_contour_deformation_polynomial;
-};
-#endif

@@ -1,3 +1,0 @@
-tadpole1L_pysecdec
-
-tadpole1L_pysecdec_integral

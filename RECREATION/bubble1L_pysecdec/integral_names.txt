@@ -1,3 +1,0 @@
-bubble1L_pysecdec
-
-bubble1L_pysecdec_integral

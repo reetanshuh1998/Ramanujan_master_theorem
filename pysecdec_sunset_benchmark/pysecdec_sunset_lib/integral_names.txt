@@ -1,3 +1,0 @@
-pysecdec_sunset_lib
-
-pysecdec_sunset_lib_integral

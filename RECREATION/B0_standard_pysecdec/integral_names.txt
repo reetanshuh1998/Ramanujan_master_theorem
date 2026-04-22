@@ -1,3 +1,0 @@
-B0_standard_pysecdec
-
-B0_standard_pysecdec_integral

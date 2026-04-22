@@ -1,3 +1,0 @@
-triangle1L_massive_pysecdec
-
-triangle1L_massive_pysecdec_integral

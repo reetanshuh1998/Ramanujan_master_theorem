@@ -1,3 +1,0 @@
-P126_pysecdec
-
-P126_pysecdec_integral
