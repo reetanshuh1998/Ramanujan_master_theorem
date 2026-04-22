@@ -1,5 +1,5 @@
 (* FIESTA 5.0 script for 2-loop massive sunset *)
-FIESTAPath = "/home/reet/Downloads/Ramanujan/fiesta-5.0/FIESTA5";
+FIESTAPath = FileNameJoin[{DirectoryName[$InputFileName], "..", "..", "third_party", "fiesta-5.0", "FIESTA5"}];
 SetDirectory[FIESTAPath];
 <<FIESTA5.m;
 
@@ -25,5 +25,5 @@ endTime = AbsoluteTime[];
 Print["Result: ", res];
 Print["Time: ", endTime - startTime];
 
-Export["/home/reet/Downloads/Ramanujan/HEAD_TO_HEAD/fiesta_sunset/result.txt", {res, endTime - startTime}];
+Export[FileNameJoin[{DirectoryName[$InputFileName], "result.txt"}], {res, endTime - startTime}];
 Quit[];

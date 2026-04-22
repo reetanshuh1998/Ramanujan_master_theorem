@@ -19,22 +19,31 @@ def run_raf_benchmark(case, solver):
     f_poly = case['f_signature']
     
     start_discovery = time.time()
-    res, disc_time = solver.solve_graph_polynomials(
-        u_poly, f_poly, 
-        s_val=case.get('s_val', 1.0), 
-        msq_val=case.get('msq_val', 1.0),
-        t_val=case.get('t_val', 0.0)
-    )
-    total_disc_time = time.time() - start_discovery
+    try:
+        res, solver_time = solver.solve_graph_polynomials(
+            u_poly, f_poly, 
+            s_val=case.get('s_val', 1.0), 
+            msq_val=case.get('msq_val', 1.0),
+            t_val=case.get('t_val', 0.0)
+        )
+    except NotImplementedError:
+        return {
+            'val': 'N/A',
+            'discovery_time': 0.0,
+            'eval_time': 0.0,
+            'total_time': 0.0
+        }
+    total_time = time.time() - start_discovery
     
-    # 2. EVALUATION (Residue series sum)
-    eval_time = 0.0001 # O(log 1/eps)
+    # We report the solver's internal discovery time, and the rest is numeric evaluation
+    eval_time = total_time - solver_time
+    if eval_time < 0: eval_time = 0.0
     
     return {
         'val': res,
-        'discovery_time': disc_time,
+        'discovery_time': solver_time,
         'eval_time': eval_time,
-        'total_time': disc_time + eval_time
+        'total_time': total_time
     }
 
 def run_pysecdec_benchmark(case):

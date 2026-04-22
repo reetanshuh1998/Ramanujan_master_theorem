@@ -1,0 +1,86 @@
+@namespace=tadpole1L_pysecdec_integral
+@sector=1
+@contourDeformation=1
+@enforceComplex=0
+@integrationVariables=x0
+@realParameters=msq
+@complexParameters=
+@regulators=eps
+@highestPoles=0
+@requiredOrders=1
+@numOrders=2
+@qmcTransform=korobov3x3
+@order1_name=0
+@order1_regulatorPowers=
+ 0,
+@end
+@order1_integrationVariables=x0
+@order1_deformationParameters=SecDecInternalLambda0
+@order1_integrandBody=
+
+
+
+
+SecDecInternalSecDecInternalCondefJacCall1 = 
+1;
+
+   SecDecInternalSecondAbbreviation[1]= - msq*SecDecInternalSecDecInternalCondefJacCall1;
+
+SecDecInternalSignCheckExpression = SecDecInternalRealPart(1);
+if (!(SecDecInternalSignCheckExpression >= 0)) SecDecInternalSignCheckErrorPositivePolynomial(1);
+return(SecDecInternalSecondAbbreviation[1]);
+@end
+@order1_contourDeformationPolynomialBody=
+
+   SecDecInternalAbbreviation[1]= - 1 + x0;
+   SecDecInternalAbbreviation[1]=SecDecInternalLambda0*x0*SecDecInternalAbbreviation[1];
+
+SecDecInternalSecDecInternalRealPartCall1 = SecDecInternalRealPart( 0);
+SecDecInternalSecDecInternalDeformedx0Call = x0 + i_*SecDecInternalSecDecInternalRealPartCall1*SecDecInternalAbbreviation[1];
+return( - msq);
+@end
+@order1_optimizeDeformationParametersBody=
+
+
+SecDecInternalOutputDeformationParameters(0,
+SecDecInternalDenominator(SecDecInternalAbs(SecDecInternalRealPart( 0))));
+@end
+@order2_name=1
+@order2_regulatorPowers=
+ 1,
+@end
+@order2_integrationVariables=x0
+@order2_deformationParameters=SecDecInternalLambda0
+@order2_integrandBody=
+
+
+
+
+SecDecInternallogCall1 = 
+log(
+ - msq
+);
+SecDecInternalSecDecInternalCondefJacCall1 = 
+1;
+
+   SecDecInternalSecondAbbreviation[1]=msq*SecDecInternalSecDecInternalCondefJacCall1*SecDecInternallogCall1;
+
+SecDecInternalSignCheckExpression = SecDecInternalRealPart(1);
+if (!(SecDecInternalSignCheckExpression >= 0)) SecDecInternalSignCheckErrorPositivePolynomial(1);
+return(SecDecInternalSecondAbbreviation[1]);
+@end
+@order2_contourDeformationPolynomialBody=
+
+   SecDecInternalAbbreviation[1]= - 1 + x0;
+   SecDecInternalAbbreviation[1]=SecDecInternalLambda0*x0*SecDecInternalAbbreviation[1];
+
+SecDecInternalSecDecInternalRealPartCall1 = SecDecInternalRealPart( 0);
+SecDecInternalSecDecInternalDeformedx0Call = x0 + i_*SecDecInternalSecDecInternalRealPartCall1*SecDecInternalAbbreviation[1];
+return( - msq);
+@end
+@order2_optimizeDeformationParametersBody=
+
+
+SecDecInternalOutputDeformationParameters(0,
+SecDecInternalDenominator(SecDecInternalAbs(SecDecInternalRealPart( 0))));
+@end

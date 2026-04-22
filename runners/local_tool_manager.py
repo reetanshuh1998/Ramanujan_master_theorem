@@ -65,22 +65,23 @@ TOPOLOGIES = {
 class LocalToolManager:
     def __init__(self, root_dir):
         self.root = root_dir
-        self.results_cache = os.path.join(self.root, "RECREATION/results_cache.json")
-        self.data = self._load_cache()
+        self.data = {}
 
     def _load_cache(self):
-        if os.path.exists(self.results_cache):
-            with open(self.results_cache, 'r') as f: return json.load(f)
         return {}
 
     def _save_cache(self):
-        with open(self.results_cache, 'w') as f: json.dump(self.data, f, indent=2)
+        pass
 
     def run_secdec3(self, tid):
         print(f"  [SecDec 3] Running local benchmark for {tid}...")
-        secdec_bin = os.path.join(self.root, "SecDec-3.1.0/secdec")
+        secdec_bin = os.path.join(self.root, "third_party", "SecDec-3.1.0", "secdec")
         case_dir = os.path.join(self.root, "RECREATION", tid, "secdec3")
         
+        if not os.path.exists(secdec_bin):
+            print(f"  [SecDec 3] Binary not found at {secdec_bin}, please compile it first.")
+            return ["FAIL", "FAIL"]
+            
         # 1. Algebraic Phase
         start = time.perf_counter()
         res = subprocess.run([secdec_bin, "-algebraic", "-p=param.input", "-m=math.m", "-d", case_dir], capture_output=True, text=True)
@@ -102,15 +103,21 @@ class LocalToolManager:
         
         # Real SDEvaluate logic
         with open(run_script, "w") as f:
-            f.write(f"<<fiesta-5.0/FIESTA5/FIESTA5.m;\n")
+            f.write(f"<<third_party/fiesta-5.0/FIESTA5/FIESTA5.m;\n")
             f.write(f"t1=AbsoluteTime[];\n")
             f.write(f"res = SDEvaluate[{{ {case['u_signature']}, {case['f_signature']}, 1 }}, {{0,0,0}}, 0, EpRel->1e-2];\n")
             f.write(f"t2=AbsoluteTime[];\n")
             f.write(f"Print[\"TIME=\", t2-t1];\n")
             f.write(f"Quit[];\n")
 
+        import shutil
+        if not shutil.which("MathKernel"):
+            print("  [FIESTA 5] MathKernel not found in PATH.")
+            return ["FAIL", "FAIL"]
+
         try:
             res = subprocess.run(["MathKernel", "-script", run_script], capture_output=True, text=True)
+            match = re.search(r"TIME=([\d.]+)", res.stdout)
             if match:
                 total = float(match.group(1))
                 return ["N/A", round(total, 2)] # FIESTA total time reported as numerical phase
@@ -145,9 +152,9 @@ class LocalToolManager:
         subprocess.run(["make", "-C", pkg_dir], capture_output=True)
         alg_time = time.perf_counter() - start
         
-        # pySecDec integration requires a separate runtime call
-        # For the stabilization release, we report N/A if not implemented
-        return [round(alg_time, 2), "N/A"]
+        # pySecDec integration requires a separate runtime call which is incomplete
+        # We report FAIL for the numerical phase to honestly indicate the missing step
+        return [round(alg_time, 2), "FAIL"]
 
     def generate_configs(self, tid, case):
         """Generate SecDec 3 and FIESTA 5 input files from topology defs."""

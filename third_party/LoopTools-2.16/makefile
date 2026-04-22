@@ -12,7 +12,7 @@ QUAD = 0
 QUADSIZE = 16
 
 FC = gfortran
-FFLAGS = -O3 -ffixed-line-length-none -fno-range-check \
+FFLAGS = -fPIC -O2 -ffixed-line-length-none -fno-range-check \
   $(DEF)QUAD=$(QUAD) $(DEF)QUADSIZE=$(QUADSIZE) \
   $(DEF)U77EXT=0
 
@@ -21,12 +21,12 @@ CDEFS = -DQUAD=$(QUAD) -DQUADSIZE=$(QUADSIZE) \
   -DBIGENDIAN=0
 
 CC = gcc
-CFLAGS = -O3 -g -fomit-frame-pointer -ffast-math -fPIC -Wall -m64
+CFLAGS = -fPIC -O2 -m64
 
 CXX = g++
-CXXFLAGS = -O3 -g -fomit-frame-pointer -ffast-math -fPIC -Wall -m64 -stdlib=libstdc++
+CXXFLAGS = -O3 -g -fomit-frame-pointer -ffast-math -fPIC -Wall -m64
 
-ML = 0
+ML = 1
 MCC = mcc
 MCDEFS = -D__int64=long\ long\ int
 MCFLAGS = -n

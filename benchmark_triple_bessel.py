@@ -45,8 +45,8 @@ def run_triple_benchmark():
         res_race = engine.solve_triple_bessel(sa, sb, sc)
         time_race = time.time() - start
         
-        # Reference (We use high-precision quadrature at low scale for ref)
-        ref = mpmath.quad(integrand, [0, mpmath.inf]) if scale == 1.0 else res_race
+        # Reference (We use high-precision quadrature for honest reference instead of self-reference)
+        ref = mpmath.quad(integrand, [0, mpmath.inf])
         
         err_sp_val = abs(res_sp - float(ref))
         err_race_val = abs(float(res_race) - float(ref))

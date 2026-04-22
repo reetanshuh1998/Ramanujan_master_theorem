@@ -1,0 +1,12 @@
+#ifndef pysecdec_C0_unequal_lib_integral_codegen_optimize_deformation_parameters_sector_2_order_0_hpp_included
+#define pysecdec_C0_unequal_lib_integral_codegen_optimize_deformation_parameters_sector_2_order_0_hpp_included
+#include "pysecdec_C0_unequal_lib_integral.hpp"
+#include "functions.hpp"
+#include <cmath>
+#include <limits>
+#include <vector>
+namespace pysecdec_C0_unequal_lib_integral
+{
+secdecutil::SectorContainerWithDeformation<real_t, complex_t>::MaximalDeformationFunction sector_2_order_0_maximal_allowed_deformation_parameters;
+};
+#endif

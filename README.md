@@ -25,19 +25,27 @@ We have successfully implemented the **fully unequal-mass** scalar triangle inte
 
 ---
 
-## Supported Topologies
 RAF's engine is built into specialized solvers capable of handling:
 - **Massive Vertices**: Full support for diagrams with internal heavy propagators (e.g., P126).
 - **Minkowski Branch Cuts**: Rigorous algebraic continuation for $B_0$ and $C_0$ across all kinematic regions.
 - **Elliptic Sectors**: Instant analytical discovery for kite diagrams and multi-loop elliptic structures.
 - **Inverse Propagators**: Specialized residue logic for diagrams with shifted propagator powers (e.g., box2L_invprop).
 
+### 📦 Library Architecture (New)
+The library is now organized as a formal Python package `ramanujan-qft`:
+- **`ramanujan_qft.core`**: The RMT discovery engine and **DL-MoB** reconstructor.
+- **`ramanujan_qft.solvers`**: Production-grade solvers for complex topologies.
+- **`ramanujan_qft.utils`**: High-precision continuation and convergence filters.
+
 ---
 
 ## Quick Start
 
 ### Installation
+To use the library in development mode:
 ```bash
+export PYTHONPATH=$PYTHONPATH:.
+```
 pip install mpmath sympy numpy scipy matplotlib
 ```
 

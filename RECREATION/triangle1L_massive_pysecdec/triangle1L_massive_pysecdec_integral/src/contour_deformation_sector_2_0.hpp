@@ -1,0 +1,9 @@
+#ifndef triangle1L_massive_pysecdec_integral_codegen_contour_deformation_sector_2_order_0_hpp_included
+#define triangle1L_massive_pysecdec_integral_codegen_contour_deformation_sector_2_order_0_hpp_included
+#include "triangle1L_massive_pysecdec_integral.hpp"
+#include "functions.hpp"
+namespace triangle1L_massive_pysecdec_integral
+{
+secdecutil::SectorContainerWithDeformation<real_t, complex_t>::DeformedIntegrandFunction sector_2_order_0_contour_deformation_polynomial;
+};
+#endif

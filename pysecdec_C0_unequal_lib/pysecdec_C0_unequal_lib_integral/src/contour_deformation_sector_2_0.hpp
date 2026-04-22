@@ -1,0 +1,9 @@
+#ifndef pysecdec_C0_unequal_lib_integral_codegen_contour_deformation_sector_2_order_0_hpp_included
+#define pysecdec_C0_unequal_lib_integral_codegen_contour_deformation_sector_2_order_0_hpp_included
+#include "pysecdec_C0_unequal_lib_integral.hpp"
+#include "functions.hpp"
+namespace pysecdec_C0_unequal_lib_integral
+{
+secdecutil::SectorContainerWithDeformation<real_t, complex_t>::DeformedIntegrandFunction sector_2_order_0_contour_deformation_polynomial;
+};
+#endif

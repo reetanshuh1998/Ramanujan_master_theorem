@@ -1,0 +1,9 @@
+#ifndef tadpole1L_pysecdec_integral_codegen_contour_deformation_sector_1_order_1_hpp_included
+#define tadpole1L_pysecdec_integral_codegen_contour_deformation_sector_1_order_1_hpp_included
+#include "tadpole1L_pysecdec_integral.hpp"
+#include "functions.hpp"
+namespace tadpole1L_pysecdec_integral
+{
+secdecutil::SectorContainerWithDeformation<real_t, complex_t>::DeformedIntegrandFunction sector_1_order_1_contour_deformation_polynomial;
+};
+#endif

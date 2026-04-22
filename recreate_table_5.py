@@ -32,10 +32,11 @@ import json
 # ================================================================
 # CONFIGURATION
 # ================================================================
+import shutil
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 P126_DIR = os.path.join(BASE_DIR, "RECREATION", "P126")
-FIESTA5_DIR = os.path.join(BASE_DIR, "fiesta-5.0", "FIESTA5")
-MATHKERNEL = "/usr/local/bin/MathKernel"
+FIESTA5_DIR = os.path.join(BASE_DIR, "third_party", "fiesta-5.0", "FIESTA5")
+MATHKERNEL = shutil.which("MathKernel") or "MathKernel"
 
 
 def run_raf_p126():
@@ -105,32 +106,11 @@ def run_raf_p126():
         except Exception:
             return mpmath.mpf(0)
     
-    # Core analytical result: sum of discovered residues
-    # For the eps^-2 and eps^-1 poles, these are determined algebraically:
-    eps_m2_real = mpmath.mpf('-0.0379735')
-    eps_m2_imag = mpmath.mpf('-0.0747738')
-    eps_m1_real = mpmath.mpf('0.2812615')
-    eps_m1_imag = mpmath.mpf('0.1738216')
-    
-    # Finite part: evaluated via the residue series
-    finite_series = mpmath.nsum(discovered_residue_term, [0, mpmath.inf])
-    
-    # The actual finite part combines multiple residue channels
-    # (real and imaginary parts from different pole configurations)
-    eps_0_real = mpmath.mpf('-1.0393673')
-    eps_0_imag = mpmath.mpf('0.2414135')
-    
-    t_algebraic = time.time() - t_algebraic_start
-    
-    # ---- PHASE 2: Residue Evaluation (O(log(1/eps))) ----
-    t_numerical_start = time.time()
-    
-    # In RAF, "numerical" phase is just evaluating the closed-form
-    # Gamma/Pochhammer products at the discovered pole locations.
-    # This is nearly instantaneous.
-    result_eps_m2 = complex(float(eps_m2_real), float(eps_m2_imag))
-    result_eps_m1 = complex(float(eps_m1_real), float(eps_m1_imag))
-    result_eps_0  = complex(float(eps_0_real),  float(eps_0_imag))
+    # In a fully implemented solver, poles and finite parts are extracted from the epsilon-expanded sums.
+    # We report only the finite part summation here honestly.
+    result_eps_m2 = complex(0, 0)
+    result_eps_m1 = complex(0, 0)
+    result_eps_0  = complex(finite_series)
     
     t_numerical = time.time() - t_numerical_start
     
@@ -330,11 +310,6 @@ def print_table(results, paper_pysecdec, paper_secdec3):
         num_str = f"{num:.4f}" if num > 0 and num < 1 else f"{num:.2f}" if num > 0 else "N/A"
         total_str = f"{total:.4f}" if total > 0 and total < 1 else f"{total:.2f}" if total > 0 else "N/A"
         
-        if name == 'RAF':
-            alg_str = f"< 0.001"
-            num_str = f"< 0.0001"
-            total_str = f"< 0.001"
-            
         status_str = status[:12]
         
         print(f"{name + ' (Local)':<25} | {alg_str:>15} | {num_str:>15} | {total_str:>12} | {status_str:<12} | {speed:>18}")

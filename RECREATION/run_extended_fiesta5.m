@@ -3,7 +3,7 @@
 (* Topologies: triangle3L, elliptic2L, box2L_invprop           *)
 (* ============================================================ *)
 
-FIESTAPath = "/home/reet/Downloads/Ramanujan/fiesta-5.0/FIESTA5";
+FIESTAPath = FileNameJoin[{DirectoryName[$InputFileName], "..", "third_party", "fiesta-5.0", "FIESTA5"}];
 SetDirectory[FIESTAPath];
 <<FIESTA5.m;
 
@@ -44,5 +44,5 @@ uf3 = UF[{k1, k2},
 results["box2L_invprop"] = AbsoluteTiming[SDEvaluate[uf3, {1,1,1,1,1,1,1}, 0]];
 
 Print["Writing results..."];
-Export["/home/reet/Downloads/Ramanujan/RECREATION/extended_fiesta5_results.txt", results];
+Export[FileNameJoin[{DirectoryName[$InputFileName], "extended_fiesta5_results.txt"}], results];
 Quit[];

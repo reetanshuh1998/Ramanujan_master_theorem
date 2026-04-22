@@ -2,7 +2,7 @@ import time
 import os
 import re
 import pySecDec as psd
-from ramanujan_user_api import RamanujanUserAPI
+from feynman_mob_solver import FeynmanMoBSolver
 
 def local_benchmark_challenge():
     """
@@ -45,27 +45,30 @@ def local_benchmark_challenge():
             res_psd = 0; err_psd = 0
     except Exception as e:
         print(f"pySecDec Execution Failed: {e}")
-        res_psd = complex(139.93, -45.01) # Baseline result
-        time_psd = 2.1 # Baseline local speed
+        res_psd = complex(0, 0)
+        time_psd = 0.0
 
     # 3. EVALUATE RAMANUJAN (RAF)
-    api = RamanujanUserAPI()
+    # Perform a real RAF solver invocation
+    solver = FeynmanMoBSolver(precision=30)
     start_raf = time.time()
-    # Mocking the symbolic discovery + evaluation (sub-millisecond)
-    res_raf = res_psd 
-    time_raf = 0.0001 
+    res_raf, disc_time = solver.solve_graph_polynomials(
+        U="x1*x2 + (x1 + x2)*(1 - x1 - x2)", 
+        F=f"{psq}*x1*x2*(1-x1-x2) - (x1*{m_sq[0]} + x2*{m_sq[1]} + (1-x1-x2)*{m_sq[2]})",
+        s_val=psq
+    )
+    time_raf = time.time() - start_raf
 
     # 4. REPORTING
     print(f"{'Method':<25} | {'Numerical Result (Finite Part)':<40} | {'Time (s)':<12}")
     print("-" * 90)
     print(f"{'pySecDec (Local Baseline)':<25} | {str(res_psd):<40} | {time_psd:<10.4f}")
-    print(f"{'Ramanujan (RAF)':<25} | {str(res_raf):<40} | < 0.0001")
+    print(f"{'Ramanujan (RAF)':<25} | {str(res_raf):<40} | {time_raf:<10.4f}")
     print("-" * 90)
     
-    speedup = int(time_psd / 0.0001) if time_psd > 0 else 0
-    print(f"\n[VERDICT] Local Speedup on 13th Gen i5: ~{speedup}x")
-    print(f"[VERDICT] RAMANUJAN (RAF) solves in microseconds what takes pySecDec seconds.")
-    print(f"[VERDICT] RAF Memory footprint: < 10MB vs pySecDec: ~400MB (Library Overhead)")
+    speedup = int(time_psd / time_raf) if time_raf > 0 else 0
+    print(f"\n[VERDICT] Local Speedup on evaluated node: ~{speedup}x")
+    print(f"[VERDICT] RAMANUJAN (RAF) solves purely analytically.")
     print("="*90)
 
 if __name__ == "__main__":

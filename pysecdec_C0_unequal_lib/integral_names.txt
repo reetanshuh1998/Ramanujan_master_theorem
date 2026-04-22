@@ -1,0 +1,3 @@
+pysecdec_C0_unequal_lib
+
+pysecdec_C0_unequal_lib_integral

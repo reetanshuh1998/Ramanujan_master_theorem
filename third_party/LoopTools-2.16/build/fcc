@@ -14,9 +14,9 @@ ldflags=
 fldflags="-L/usr/libexec/gcc/x86_64-linux-gnu/13/liblto_plugin.so -L/usr/lib/gcc/x86_64-linux-gnu/13 -L/usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/13/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/13/../../.. -lgfortran -lm -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lpthread -lrt"
 cdefs="-DQUAD=0 -DQUADSIZE=16 -DNOUNDERSCORE=0 -DBIGENDIAN=0"
 
-cc="${REALCC:-gcc -O3 -g -fomit-frame-pointer -ffast-math -fPIC -Wall -m64}"
+cc="${REALCC:-gcc -fPIC -O2 -m64}"
 cc+=" $cdefs"
-cxx="${REALCXX:-g++ -O3 -g -fomit-frame-pointer -ffast-math -fPIC -Wall -m64 -stdlib=libstdc++}"
+cxx="${REALCXX:-g++ -O3 -g -fomit-frame-pointer -ffast-math -fPIC -Wall -m64}"
 cxx+=" $cdefs"
 [[ "${0%.in}" =~ f++$ ]] && cc="$cxx"
 
