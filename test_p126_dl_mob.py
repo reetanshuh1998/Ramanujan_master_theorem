@@ -44,9 +44,15 @@ def run_p126_dl_mob_benchmark():
     print("\n" + "-"*120)
     print(f"{'Solver':<15} | {'Real Part':^25} | {'Imaginary Part':^25} | {'Time':^10} |")
     print("-"*120)
-    print(f"{'DL-MoB':<15} | {complex(res).real:^25.10f} | {complex(res).imag:^25.10f} | {dt*1000:^10.2f}ms |")
+    print(f"{'DL-MoB (Proto)':<15} | {complex(res).real:^25.10f} | {complex(res).imag:^25.10f} | {dt*1000:^10.2f}ms |")
     print(f"{'pySecDec':<15} | {'-2.4513...':^25} | {'-0.8921...':^25} | {'Target':^10} |")
+    print(f"{'LoopTools':<15} | {'N/A':^25} | {'N/A':^25} | {'1-Loop Only' :^10} |")
     print("-"*120)
+    
+    print("\n[Technical Note]")
+    print("1. LoopTools is a 1-loop library and cannot evaluate the 2-loop P126 vertex.")
+    print("2. The DL-MoB result currently uses the Sunset kernel as a prototype spectral density.")
+    print("3. Future work involves formalizing the P126-specific residue discovery in Stage D.")
 
 if __name__ == "__main__":
     run_p126_dl_mob_benchmark()
