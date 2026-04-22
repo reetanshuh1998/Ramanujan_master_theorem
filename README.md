@@ -22,16 +22,6 @@ We have successfully implemented the **fully unequal-mass** scalar triangle inte
 
 ---
 
-## The Perfect Table 4.1 (Verified Local Benchmarks)
-Our latest benchmarks demonstrate the "Ramanujan Supremacy" across 5 complex topologies.
-
-| Topology | RAF (alg, num) | pySecDec (Local) | SecDec 3 (Local) | FIESTA 5 (Local) | Speedup |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **triangle2L** | (**0.0000**, 0.0001) | (0.35, 10.15) | (8.92, 6.20) | (**FAIL**) | **> 10,000x** |
-| **P126** | (**0.0000**, 0.0001) | (0.36, 10.15) | (**FAIL**) | (1.39, 0.46) | **> 10,000x** |
-| **triangle3L** | (**0.0000**, 0.0001) | (0.41, 10.15) | (38.10, 67.86) | (**FAIL**) | **> 300,000x** |
-| **elliptic2L** | **(0.7810, 0.0001)** | (0.35, 10.15) | (**FAIL**) | (**FAIL**) | **Constant $O(1)$** |
-| **box2L_inv** | (**0.0001**, 0.0001) | (**N/A**) | (39.93, 42.80) | (1.40, 0.47) | **> 100,000x** |
 
 ---
 
