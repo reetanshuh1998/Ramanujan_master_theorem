@@ -1,7 +1,7 @@
 import time
 import mpmath
-from feynman_mob_solver import FeynmanMoBSolver
-from dispersion_mob import DispersionMoBEngine
+from ramanujan_qft.solvers.feynman_mob_solver import FeynmanMoBSolver
+from ramanujan_qft.core.dispersion_mob import DispersionMoBEngine
 
 def run_p126_dl_mob_benchmark():
     solver = FeynmanMoBSolver(precision=50)

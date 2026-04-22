@@ -10,7 +10,8 @@ def run_live_sunset_benchmark():
     solver = FeynmanMoBSolver(precision=50)
     
     # 1. Load pySecDec Library
-    lib_path = os.path.abspath('pysecdec_sunset_benchmark/pysecdec_sunset_lib/pysecdec_sunset_lib.so')
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    lib_path = os.path.join(base_path, 'pysecdec_sunset_benchmark', 'pysecdec_sunset_lib', 'pysecdec_sunset_lib_pylink.so')
     if not os.path.exists(lib_path):
         print(f"ERROR: pySecDec library not found at {lib_path}")
         return
@@ -89,5 +90,5 @@ def run_live_sunset_benchmark():
     print("The difference in real parts accounts for the Scheme-Dependent Subtraction Constant.")
 
 if __name__ == "__main__":
-    sys.path.append(os.getcwd())
+    
     run_live_sunset_benchmark()

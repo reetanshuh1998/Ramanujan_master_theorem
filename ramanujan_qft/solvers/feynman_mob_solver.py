@@ -2,7 +2,7 @@ import time
 import sympy as sp
 import mpmath
 import numpy as np
-from mob_dynamic_engine import MoBDynamicEngine
+from ramanujan_qft.core.mob_dynamic_engine import MoBDynamicEngine
 
 class GeneralizedBracketSolver:
     """

@@ -45,7 +45,6 @@ The library is now organized as a formal Python package `ramanujan-qft`:
 To use the library in development mode:
 ```bash
 export PYTHONPATH=$PYTHONPATH:.
-```
 pip install mpmath sympy numpy scipy matplotlib
 ```
 
@@ -62,10 +61,10 @@ python3 ultimate_local_benchmark.py
 ---
 
 ## Core Modules
-- `feynman_mob_solver.py`: The RAF residue discovery core for loop integrals.
-- `ramanujan_continuation.py`: Algebraic branch-cut tracking and hypergeometric continuation.
-- `mob_dynamic_engine.py`: Automated MoB rule generator for arbitrary graph polynomials.
-- `mob_convergence_filter.py`: High-precision filter for hypergeometric residue series.
+- `ramanujan_qft.solvers.feynman_mob_solver`: The RAF residue discovery core for loop integrals.
+- `ramanujan_qft.utils.ramanujan_continuation`: Algebraic branch-cut tracking and hypergeometric continuation.
+- `ramanujan_qft.core.mob_dynamic_engine`: Automated MoB rule generator for arbitrary graph polynomials.
+- `ramanujan_qft.utils.mob_convergence_filter`: High-precision filter for hypergeometric residue series.
 
 ---
 

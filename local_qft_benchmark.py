@@ -2,7 +2,7 @@ import time
 import os
 import re
 import pySecDec as psd
-from feynman_mob_solver import FeynmanMoBSolver
+from ramanujan_qft.solvers.feynman_mob_solver import FeynmanMoBSolver
 
 def local_benchmark_challenge():
     """

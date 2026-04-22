@@ -1,7 +1,7 @@
 import sympy as sp
 import mpmath
 from ramanujan_integrator import RamanujanIntegrator
-from ramanujan_framework import AnalyticalConvolutionEngine
+from ramanujan_qft.core.ramanujan_framework import AnalyticalConvolutionEngine
 from scipy.integrate import quad
 import numpy as np
 

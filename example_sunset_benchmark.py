@@ -1,7 +1,7 @@
 import time
 import mpmath
 import numpy as np
-from feynman_mob_solver import FeynmanMoBSolver
+from ramanujan_qft.solvers.feynman_mob_solver import FeynmanMoBSolver
 import ctypes
 import os
 

@@ -18,7 +18,7 @@ import time
 import os
 import re
 import mpmath
-from feynman_mob_solver import FeynmanMoBSolver
+from ramanujan_qft.solvers.feynman_mob_solver import FeynmanMoBSolver
 
 def parse_pysecdec_result(raw_str):
     """

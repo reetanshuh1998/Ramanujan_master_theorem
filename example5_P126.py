@@ -25,7 +25,7 @@ MoB Discovery via HCF (Hypergeometric Convergence Filter):
 """
 import os, re, time, mpmath
 from pySecDec.integral_interface import IntegralLibrary
-from mob_convergence_filter import HypergeometricConvergenceFilter
+from ramanujan_qft.utils.mob_convergence_filter import HypergeometricConvergenceFilter
 
 mpmath.mp.dps = 30
 

@@ -28,8 +28,6 @@ DL-MoB leverages **Ramanujan's Master Theorem** to "discover" the analytical Euc
 
 We demonstrate the framework's supremacy across a suite of 2-loop stress tests, providing the first purely algebraic $O(1)$ alternative to numerical sector decomposition.
 
-We demonstrate the framework's supremacy across a suite of 2-loop stress tests, providing the first purely algebraic $O(1)$ alternative to numerical sector decomposition.
-
 ---
 
 ## 2. The Theory of Dispersion-Linked MoB
@@ -50,9 +48,6 @@ For any topology, the imaginary part $\text{Im} I(s)$ is related to the $(L+1)$-
 
 ### 2.3 Stage III: Complex Reconstruction
 The final complex result is reconstructed through a subtracted dispersion relation. For a topology with UV degree of divergence $n$ (as identified by MoB Rule D1), we utilize $n$ subtractions to ensure convergence:
-$$I(s) = \sum_{k=0}^{n-1} s^k \mathcal{C}_k + \frac{s^n}{\pi} P.V. \int_{s_{th}}^\infty \frac{\rho(t)}{t^n (t - s)} dt + i \rho(s)$$
-This hybrid form ensures that the real part inherits the exact curvature of the threshold (the "elliptic" curving) while remaining anchored to the MoB discovery at the origin.
-
 This hybrid form ensures that the real part inherits the exact curvature of the threshold (the "elliptic" curving) while remaining anchored to the MoB discovery at the origin.
 
 ---
@@ -84,8 +79,6 @@ The massive sunset topology is evaluated across three critical regimes: Deep Euc
 ### 3.3 Discussion of Results
 The results demonstrate two key advantages of DL-MoB:
 1. **Stability**: Unlike sector decomposition, which often fails or returns purely real results near physical thresholds, DL-MoB explicitly captures the emergence of the imaginary part at $p^2 > 9$.
-2. **Speed**: Evaluation times in the Minkowski region are reduced to seconds, compared to minutes or hours for traditional high-dimensional numerical integration.
-
 2. **Speed**: Evaluation times in the Minkowski region are reduced to seconds, compared to minutes or hours for traditional high-dimensional numerical integration.
 
 ---

@@ -5,7 +5,7 @@ import re
 import json
 import mpmath
 import pySecDec as psd
-from feynman_mob_solver import FeynmanMoBSolver
+from ramanujan_qft.solvers.feynman_mob_solver import FeynmanMoBSolver
 
 def run_raf_benchmark(case, solver):
     """

@@ -35,7 +35,7 @@ RAF/MoB Analytical Solution:
 """
 import os, re, time, mpmath
 from pySecDec.integral_interface import IntegralLibrary
-from feynman_mob_solver import FeynmanMoBSolver   # ← THE RAF ENGINE
+from ramanujan_qft.solvers.feynman_mob_solver import FeynmanMoBSolver   # ← THE RAF ENGINE
 
 mpmath.mp.dps = 50
 

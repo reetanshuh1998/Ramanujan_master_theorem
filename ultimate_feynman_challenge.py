@@ -2,7 +2,7 @@ import time
 import sympy as sp
 import mpmath
 import numpy as np
-from feynman_mob_solver import FeynmanMoBSolver
+from ramanujan_qft.solvers.feynman_mob_solver import FeynmanMoBSolver
 
 def killer_benchmark_sunset():
     """

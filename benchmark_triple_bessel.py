@@ -2,7 +2,7 @@ import time
 import mpmath
 import numpy as np
 from scipy.integrate import quad
-from ramanujan_framework import TripleProductEngine
+from ramanujan_qft.core.ramanujan_framework import TripleProductEngine
 
 def run_triple_benchmark():
     engine = TripleProductEngine(precision=50)

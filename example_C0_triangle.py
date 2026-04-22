@@ -12,7 +12,7 @@ Three independent implementations compared:
 """
 import os, re, time, subprocess, mpmath
 from pySecDec.integral_interface import IntegralLibrary
-from feynman_mob_solver import FeynmanMoBSolver
+from ramanujan_qft.solvers.feynman_mob_solver import FeynmanMoBSolver
 
 mpmath.mp.dps = 50
 

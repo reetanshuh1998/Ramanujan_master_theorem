@@ -1,7 +1,7 @@
 import mpmath
 import numpy as np
 import matplotlib.pyplot as plt
-from ramanujan_framework import AnalyticalConvolutionEngine
+from ramanujan_qft.core.ramanujan_framework import AnalyticalConvolutionEngine
 from scipy.integrate import quad
 import time
 

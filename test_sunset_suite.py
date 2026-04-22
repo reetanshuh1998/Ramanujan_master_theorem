@@ -1,6 +1,6 @@
 import time
 import mpmath
-from feynman_mob_solver import FeynmanMoBSolver
+from ramanujan_qft.solvers.feynman_mob_solver import FeynmanMoBSolver
 
 def test_sunset_suite():
     solver = FeynmanMoBSolver(precision=50)

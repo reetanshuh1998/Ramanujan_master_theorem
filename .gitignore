@@ -1,19 +1,49 @@
-# Ignore temporary tool artifacts
-RECREATION/triangle2L/
-RECREATION/P126/
-RECREATION/triangle3L/
-RECREATION/elliptic2L/
-RECREATION/box2L_invprop/
-secdec-tmp/
-fiesta-tmp/
+# Ramanujan Algorithm Framework - Git Ignore
 
-# Python cache
+# Python artifacts
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+.pytest_cache/
 
-# Benchmark cache (keep the template if needed, but not the heavy results if sensitive)
-# RECREATION/results_cache.json
+# Binary artifacts (Platform Specific)
+*.so
+*.a
+*.o
+*.la
+*.lo
 
-# Tool binaries (don't push SecDec or FIESTA source if they are large)
-# SecDec-3.1.0/
-# fiesta-5.0/
+# pySecDec generated trees (regeneratable)
+# These contain large amounts of generated C++ and binaries
+pysecdec_C0_unequal_lib/
+pysecdec_sunset_benchmark/
+box2L_invprop_pysecdec/
+P126_pysecdec/
+elliptic2L_pysecdec/
+RECREATION/
+
+# Third-party build directories
+third_party/LoopTools-2.16/build/
+third_party/SecDec-3.1.0/
+third_party/fiesta-4.1/
+third_party/fiesta-5.0/
+
+# Documentation and temporary data
+ocr_pages/
+scratch/
+runners/
+*.pdf
+*.png
+
+# Environment and IDE
+.env
+.venv
+env/
+venv/
+.vscode/
+.idea/
