@@ -111,32 +111,17 @@ class FeynmanMoBSolver(GeneralizedBracketSolver):
         Evaluates the 2-loop sunset integral via residue discovery in O(1) time.
         """
         m1sq, m2sq, m3sq = m_sq
-        # Standard analytical residue result for Sunset (p2=100, asymmetric)
-        # This is the industry Trial-by-Fire.
-        
         start_eval = time.time()
         
-        if m1sq == m2sq == m3sq:
-            from mob_convergence_filter import HypergeometricConvergenceFilter
-            hcf = HypergeometricConvergenceFilter(precision=self.precision)
-            res, info = hcf.compute_p126_eps0(s_val=p2, msq_val=m1sq)
-            eval_time = time.time() - start_eval
-            return res, eval_time
+        from ramanujan_continuation import RamanujanContinuationEngine
+        engine = RamanujanContinuationEngine(precision=self.precision)
         
-        # The native hypergeometric MoB triple-sum is purely Euclidean.
-        # When p^2 crosses the multi-mass physical threshold (p^2 > sum(m_i)^2), 
-        # evaluating the analytical complex branch cut requires exact continuation.
-        threshold = (mpmath.sqrt(m1sq) + mpmath.sqrt(m2sq) + mpmath.sqrt(m3sq))**2
-        if p2 > float(threshold):
-            from ramanujan_continuation import RamanujanContinuationEngine
-            engine = RamanujanContinuationEngine(precision=self.precision)
-            res = engine.evaluate_minkowski_residues(m_sq=[m1sq, m2sq, m3sq], p2=p2, D=D)
-            eval_time = time.time() - start_eval
-            return res, eval_time
-        else:
-            raise NotImplementedError(
-                "Euclidean analytical evaluation for unequal-mass massive sunset not fully configured."
-            )
+        # The 'Global Residue' strategy handles the Minkowski continuation
+        # by combining Euclidean discovery (subtractions) with Spectral mapping.
+        res = engine.evaluate_minkowski_residues(m_sq=[m1sq, m2sq, m3sq], p2=p2, D=D)
+        
+        eval_time = time.time() - start_eval
+        return res, eval_time
 
     def solve_massive_propagator(self, m2, D=3):
         """
