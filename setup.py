@@ -16,11 +16,11 @@ setup(
     license="MIT",
     packages=find_packages(),
     install_requires=[
-        "mpmath",
-        "sympy",
-        "numpy",
-        "scipy",
-        "matplotlib"
+        "mpmath>=1.3.0",
+        "sympy>=1.12",
+        "numpy>=1.24.0",
+        "scipy>=1.10.0",
+        "matplotlib>=3.7.0"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

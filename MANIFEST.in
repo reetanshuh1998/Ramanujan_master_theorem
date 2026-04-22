@@ -3,4 +3,3 @@ include PAPER_DRAFT.md
 include LICENSE
 include THIRD_PARTY_NOTICES.md
 recursive-include ramanujan_qft *.py
-recursive-include pysecdec_sunset_benchmark *.py
