@@ -313,9 +313,9 @@ class FeynmanMoBSolver(GeneralizedBracketSolver):
                 y1 = m23 - p1
                 y2 = m23
                 c = m23 + p1 * m3 / m13
-                # Branch tracking via Ramanujan engine
-                res += (engine.algebraic_continuation_Li2(y1/c) - 
-                        engine.algebraic_continuation_Li2(y2/c))
+                # Branch tracking via global i-epsilon control
+                res += (engine.Li2_phys(y1/c) - 
+                        engine.Li2_phys(y2/c))
 
             # Term 2: The sqrt-based Dilog pair (physical threshold cut)
             y1_2 = -2 * p1 * m23
@@ -336,12 +336,36 @@ class FeynmanMoBSolver(GeneralizedBracketSolver):
             else:
                 if mpmath.norm(y3_2) > 1e-30: y4_2 = c_top / y3_2
                 
-            res += (engine.algebraic_continuation_Li2(y1_2 / y3_2) + 
-                    engine.algebraic_continuation_Li2(y1_2 / y4_2) -
-                    engine.algebraic_continuation_Li2(y2_2 / y3_2) - 
-                    engine.algebraic_continuation_Li2(y2_2 / y4_2))
+            res += (engine.Li2_phys(y1_2 / y3_2) + 
+                    engine.Li2_phys(y1_2 / y4_2) -
+                    engine.Li2_phys(y2_2 / y3_2) - 
+                    engine.Li2_phys(y2_2 / y4_2))
             
-            return res / p1
+            # --- IMAGINARY PART (Exact Residue Formula) ---
+            # The branch cut contribution (Im C0) is derived from the residue 
+            # of the 1D integral at the denominator roots x_plus/minus.
+            # Im = -(pi/s) * ln | (m2-m3-s*x_plus) / (m2-m3-s*x_minus) |
+            
+            # Roots of s*x^2 + (m1-m2-s)*x + m2 = 0
+            coeffs = [s, m1 - m2 - s, m2]
+            delta_sq = coeffs[1]**2 - 4 * coeffs[0] * coeffs[2]
+            
+            if delta_sq > 0:
+                sqrt_delta = mpmath.sqrt(delta_sq)
+                x_plus = (-coeffs[1] + sqrt_delta) / (2 * s)
+                x_minus = (-coeffs[1] - sqrt_delta) / (2 * s)
+                
+                if 0 < x_plus < 1 and 0 < x_minus < 1:
+                    # Terms in the log: (m2 - m3 - s*x)
+                    val_plus = m2 - m3 - s * x_plus
+                    val_minus = m2 - m3 - s * x_minus
+                    im_part = - (mpmath.pi / s) * mpmath.log(abs(val_plus / val_minus))
+                else:
+                    im_part = mpmath.mpf(0)
+            else:
+                im_part = mpmath.mpf(0)
+                
+            return mpmath.mpc(res.real / p1, im_part)
 
         # Equal mass scenario (Reduced MoB Series)
         m2 = mpmath.mpf(str(msq))

@@ -46,6 +46,16 @@ class RamanujanContinuationEngine:
         
         return term_a + term_b
 
+    def Li2_phys(self, z):
+        """
+        Physical Dilogarithm Li2(z + i*epsilon) for Feynman branch control.
+        Consistently handles branch cuts across multi-term expressions.
+        """
+        eps = mpmath.mpf('1e-30')
+        # We use a small imaginary part to select the correct sheet
+        # for all polylogarithm evaluations globally.
+        return mpmath.polylog(2, z + mpmath.mpc(0, eps))
+
     def algebraic_continuation_Li2(self, z):
         """
         Algebraic continuation of the Dilogarithm Li_2(z) for |z| > 1 into the Minkowski region.
