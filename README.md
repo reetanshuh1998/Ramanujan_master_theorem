@@ -58,6 +58,24 @@ To reproduce the full "Perfect Table":
 python3 ultimate_local_benchmark.py
 ```
 
+### Regenerating Sector Decomposition Binaries
+The `pySecDec` benchmarking binaries (`*.so` files) are not tracked in Git to maintain repository portability. To regenerate them locally for the 2-loop sunset benchmark:
+```bash
+python3 pysecdec_sunset_benchmark/generate_sunset.py
+make -C pysecdec_sunset_benchmark/pysecdec_sunset_lib
+```
+*(Ensure `pySecDecContrib` is installed and accessible in your Python environment).*
+
+---
+
+## Licensing
+The core Ramanujan Algorithm Framework (RAF) and its theoretical modules (`ramanujan_qft/`) are licensed under the **MIT License**.
+
+**Third-Party Disclosure**: This repository contains benchmark integrations with external libraries:
+- **LoopTools**: Provided under the **LGPL** (`third_party/LoopTools-2.16`).
+- **FIESTA / pySecDec**: Provided under **GPL/Academic** distribution.
+These third-party binaries are structurally isolated and not part of the core RAF package distribution.
+
 ---
 
 ## Core Modules

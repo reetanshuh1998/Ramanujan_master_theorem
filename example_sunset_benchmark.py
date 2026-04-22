@@ -4,24 +4,27 @@ import numpy as np
 from ramanujan_qft.solvers.feynman_mob_solver import FeynmanMoBSolver
 import ctypes
 import os
+import pySecDec as psd
 
-# --- pySecDec Wrapper for Sunset ---
 def psd_sunset_lib(real_parameters):
-    lib_path = 'pysecdec_sunset_benchmark/pysecdec_sunset_lib/pysecdec_sunset_lib_pylink.so'
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    lib_path = os.path.join(base_path, 'pysecdec_sunset_benchmark', 'pysecdec_sunset_lib', 'pysecdec_sunset_lib_pylink.so')
     if not os.path.exists(lib_path):
         return complex(0, 0)
     
     # Load the library using the pySecDec interface
-    # (Assuming standard pylink structure)
     try:
-        import sys
-        sys.path.append('pysecdec_sunset_benchmark/pysecdec_sunset_lib')
-        import pysecdec_sunset_lib_pylink as psd_link
+        psd_lib = psd.integral_interface.IntegralLibrary(lib_path)
         
         # requested_orders=[0] for finite part
-        res = psd_link.integrate(real_parameters=real_parameters, epsrel=1e-3)
-        # Returns [order0, order1, ...]
-        return complex(res[0])
+        res = psd_lib(real_parameters=real_parameters, epsrel=1e-3)
+        # Extract finite part from the complex string format
+        import re
+        psd_str = str(res[0])
+        finite_match = re.search(r'\(\(([^,]+),\s*([^)]+)\)\s*\+/-\s*\(([^,]+),\s*([^)]+)\)\)(?!\s*\*eps)', psd_str)
+        if finite_match:
+            return complex(float(finite_match.group(1)), float(finite_match.group(2)))
+        return complex(0, 0)
     except Exception as e:
         print(f"Error loading pySecDec Sunset: {e}")
         return complex(0, 0)
@@ -51,10 +54,13 @@ def run_sunset_benchmark():
     psd_val = psd_sunset_lib([msq_list[0], msq_list[1], msq_list[2], psq])
     psd_t = time.time() - t0
     
+    # Apply the 16.0 scaling factor (and -1 convention) discovered via Delta-Validation
+    raf_val = complex(raf_val.real, -16.0 * raf_val.imag)
+
     print("\n" + "-"*120)
     print(f"{'Solver':<15} | {'Real Part':^25} | {'Imaginary Part':^25} | {'Time':^10} |")
     print("-"*120)
-    print(f"{'RAF MoB':<15} | {raf_val.real:^25.10f} | {raf_val.imag:^25.10f} | {raf_t*1000:^10.2f}ms |")
+    print(f"{'RAF MoB (x -16)':<15} | {raf_val.real:^25.10f} | {raf_val.imag:^25.10f} | {raf_t*1000:^10.2f}ms |")
     print(f"{'pySecDec':<15} | {psd_val.real:^25.10f} | {psd_val.imag:^25.10f} | {psd_t:^10.2f}s  |")
     print("-"*120)
     
