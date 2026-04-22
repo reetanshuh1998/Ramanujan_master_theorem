@@ -116,7 +116,7 @@ class FeynmanMoBSolver(GeneralizedBracketSolver):
         # Threshold detection
         threshold = (mpmath.sqrt(m1sq) + mpmath.sqrt(m2sq) + mpmath.sqrt(m3sq))**2
         
-        from ramanujan_continuation import RamanujanContinuationEngine
+        from ramanujan_qft.utils.ramanujan_continuation import RamanujanContinuationEngine
         engine = RamanujanContinuationEngine(precision=self.precision)
 
         if p2 < threshold:
@@ -400,7 +400,7 @@ class FeynmanMoBSolver(GeneralizedBracketSolver):
 
     def solve_P126(self, s=9.0, msq=1.0, eps=0):
         # Specific wrapper for the P126 equal-mass massive-vertex
-        from mob_convergence_filter import HypergeometricConvergenceFilter
+        from ramanujan_qft.utils.mob_convergence_filter import HypergeometricConvergenceFilter
         hcf = HypergeometricConvergenceFilter(precision=self.precision)
         start_time = time.time()
         res, _ = hcf.compute_p126_eps0(s_val=s, msq_val=msq)
