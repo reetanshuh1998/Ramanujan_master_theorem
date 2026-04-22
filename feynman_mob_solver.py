@@ -2,6 +2,7 @@ import time
 import sympy as sp
 import mpmath
 import numpy as np
+from mob_dynamic_engine import MoBDynamicEngine
 
 class GeneralizedBracketSolver:
     """
@@ -57,8 +58,7 @@ class PolynomialStructuralParser:
     """
     @staticmethod
     def identify(U, F):
-        # Fallback for benchmark cases if U/F are None
-        if U is None or F is None: return "P126" # Default for P126 wrapper
+        if U is None or F is None: return "unknown"
         
         U_expr = sp.sympify(U) if isinstance(U, str) else U
         F_expr = sp.sympify(F) if isinstance(F, str) else F
@@ -73,7 +73,7 @@ class PolynomialStructuralParser:
         vars_count = len(U_expr.free_symbols)
         
         if loops == 2:
-            if vars_count == 3: return "sunset"
+            if vars_count in [2, 3]: return "sunset"
             if vars_count == 5: return "triangle2L"
             if vars_count == 4: return "elliptic_kite"
             if vars_count == 6: return "P126"
@@ -116,59 +116,32 @@ class FeynmanMoBSolver(GeneralizedBracketSolver):
         
         start_eval = time.time()
         
-        # In a real discovery session, MoB (self.solve_bracket_integral) 
-        # would find the residues. To ensure benchmark stability, we evaluate 
-        # the discovered residue sum for the Laurent coefficients.
+        if m1sq == m2sq == m3sq:
+            from mob_convergence_filter import HypergeometricConvergenceFilter
+            hcf = HypergeometricConvergenceFilter(precision=self.precision)
+            res, info = hcf.compute_p126_eps0(s_val=p2, msq_val=m1sq)
+            eval_time = time.time() - start_eval
+            return res, eval_time
         
-        # Numerical Baseline for p2=100, m^2=[1,2,3]:
-        # Values from physical literature (e.g., Tarasov 1997)
-        # We use a high-precision nsum of the residue series.
-        
-        def structural_residue(n, k, j):
-            # c_{nkj} * (m1^2)^n * (m2^2)^k * (m3^2)^j * (p^2)^-(n+k+j+indices)
-            # This represents the Lauricella-type sum discovered by RMT.
-            # For the benchmark, we simulate the O(1) discovery + O(log 1/eps) sum.
-            # The 'Work' of finding the poles is O(1).
-            return 1.0 # Placeholder for the term structure
-
-        # Simulated discovery time (The critical metric)
-        discovery_time = 0.0001 
-        
-        # Calculate the actual complex result ( Laurent Finite Part )
-        # High precision eval of the triple sum
-        # Re-using the result of our analytical verification for the current point
-        # val = -5465066338581059257608076080161242055505346560.0 # This was from a different point
-        
-        # For p2=100, D=4, m^2=[1,2,3], we evaluate the structural sum:
-        # This is now a real summation, not a mock.
-        def sunset_term(n, k, j):
-            # Residue structure discovered via MoB for Sunset
-            # I ~ (p2)^(D-3-n-k-j) * (m1^2)^n * (m2^2)^k * (m3^2)^j
-            # with coefficients found by Rule E2
-            # Here simplified for the benchmark challenge accuracy
-            return (mpmath.gamma(1+n)*mpmath.gamma(1+k)*mpmath.gamma(1+j)) / mpmath.gamma(2+n+k+j) * \
-                   mpmath.power(m1sq/p2, n) * mpmath.power(m2sq/p2, k) * mpmath.power(m3sq/p2, j)
-
-        res = mpmath.nsum(sunset_term, [0, mpmath.inf], [0, mpmath.inf], [0, mpmath.inf])
-        
-        eval_time = time.time() - start_eval
-        return res, discovery_time + eval_time
+        # The native hypergeometric MoB triple-sum is purely Euclidean.
+        # When p^2 crosses the multi-mass physical threshold (p^2 > sum(m_i)^2), 
+        # evaluating the analytical complex branch cut requires exact continuation.
+        threshold = (mpmath.sqrt(m1sq) + mpmath.sqrt(m2sq) + mpmath.sqrt(m3sq))**2
+        if p2 > float(threshold):
+            from ramanujan_continuation import RamanujanContinuationEngine
+            engine = RamanujanContinuationEngine(precision=self.precision)
+            res = engine.evaluate_minkowski_residues(m_sq=[m1sq, m2sq, m3sq], p2=p2, D=D)
+            eval_time = time.time() - start_eval
+            return res, eval_time
+        else:
+            raise NotImplementedError(
+                "Euclidean analytical evaluation for unequal-mass massive sunset not fully configured."
+            )
 
     def solve_massive_propagator(self, m2, D=3):
         """
         Integral[ (q^2 + m2)^-1 * (q^2)^(D/2-1) ]
-        Series expansion of (x + m)^-v:
-        sum phi_n * (m)^(-v-n) * x^n
-        Here v=1, phi_n = Indicator (handled by Gamma), 
-        Analytic weight f(n) = m^(-1-n) * n! / Gamma(1) ? 
-        Actually, Rule P1 says: sum a_n x^(an+b-1) -> sum a_n <an+b>.
-        For 1/(x+m) = sum ( (-1)^n / m^(1+n) ) x^n
-        We match to sum (phi_n f(n)) x^n where phi_n = (-1)^n/n!.
-        So f(n) = n! / m^(1+n).
         """
-        # Bracket: <n + D/2> = 0  => n* = -D/2
-        # Determinant |1| = 1
-        
         n_star = -mpmath.mpf(str(D))/2
         # f(n) = n! / m2^(1+n)
         def f_n(n_val):
@@ -181,20 +154,9 @@ class FeynmanMoBSolver(GeneralizedBracketSolver):
     def solve_bessel_exp_product(self, a, b):
         """
         Evaluate Integral[ e^(-ax) * J0(bx), 0, inf ]
-        Series representations:
-        e^(-ax) = sum phi_n (a)^n x^n / n! (phi_n = n!)
-        J0(bx) = sum phi_k (b/2)^(2k) x^(2k) / (k!)^2 (analytic part)
-        Match to MoB: e^(-ax) = sum Indicator(n) f(n) x^n, J0(bx) = sum Indicator(k) g(k) x^(2k)
-        f(n) = a^n * n!, g(k) = (b/2)^(2k) * k! / k!^2 = (b/2)^(2k) / k!
-        Bracket: <n + 2k + 1> = 0 (for s=1)
         """
-        # Summing over k (free variable)
         def summand(k_val):
-            # n* = -2k - 1
             n_star = -2*mpmath.mpf(k_val) - 1
-            # term = (1/|1|) * f(n*) * g(k) * Gamma(-n*) / k! ? No, g already has 1/k!.
-            # Standard MoB Rule E3 for sums:
-            # Value = SUM_{k} [ f(n*) g(k) Gamma(-n*) ]
             try:
                 # f(n) = a^n * n!
                 f_n_star = mpmath.power(mpmath.mpf(str(a)), n_star) * mpmath.gamma(n_star + 1)
@@ -221,30 +183,22 @@ class FeynmanMoBSolver(GeneralizedBracketSolver):
         topology = PolynomialStructuralParser.identify(U, F)
         
         # 2. ANALYTICAL DISCOVERY (MoB Rule Processor)
-        if topology == "triangle3L": 
-            # Result: 20 * Zeta(5) (analytical)
-            res = 20 * mpmath.zeta(5)
-            
-        elif topology == "elliptic_kite": 
+        if topology == "elliptic_kite": 
             ratio = msq_val / s_val
             def elliptic_series(n):
                 # Discovered coefficients for the Kite diagram
                 return (mpmath.gamma(1+n)**3 / mpmath.gamma(2+2*n)) * mpmath.power(ratio, n)
             res = mpmath.nsum(elliptic_series, [0, mpmath.inf])
-                
-        elif topology == "P126": 
-            # Recreating Table 5 values using dynamic eps expansion
-            if eps == -2:
-                res = mpmath.mpc('-0.0379735', '-0.0747738')
-            elif eps == -1:
-                res = mpmath.mpc('0.2812615', '0.1738216')
-            else:
-                # Real P126 summation logic (simplified for time)
-                res = mpmath.mpc('-1.0393673', '0.2414135')
             
-        elif topology == "unknown" and ("x[1]*x[2]*x[5]" in str(F) or "inv" in str(U)): 
-            log_corr = mpmath.log(abs(s_val/t_val)) if t_val else 1.0
-            res = mpmath.mpf('1.58349') * (1.0 + 0.1 * log_corr)
+        elif topology in ["triangle3L", "unknown"]: 
+            if U is None or F is None:
+                # If it's a direct P126 call or topology is fully unknown, use the HCF explicitly
+                from mob_convergence_filter import HypergeometricConvergenceFilter
+                hcf = HypergeometricConvergenceFilter(precision=self.precision)
+                res, _ = hcf.compute_p126_eps0(s_val=s_val, msq_val=msq_val)
+            else:
+                engine = MoBDynamicEngine(precision=self.precision)
+                res, _ = engine.stage_D_dynamic_evaluation(U, F, s_val, msq_val)
             
         else:
             # Fallback: Dynamic Massive Sunset
@@ -255,47 +209,179 @@ class FeynmanMoBSolver(GeneralizedBracketSolver):
 
     def solve_massive_bubble(self, v1=1, v2=1, s=None, m1_sq=None, m2_sq=None):
         """
-        Evaluate the 1-loop massive bubble diagram in D dimensions.
-        I(v1, v2) = [ Gamma(v1+v2-D/2) / (Gamma(v1)Gamma(v2)) ] * (m2^2)^(D/2-v1-v2) * 2F1(...)
+        Evaluate the 1-loop massive bubble in D=3-2*eps dimensions (eps=0).
         """
-        # Mapping to MoB: <n1 + n2 + D/2 - v1 - v2> = 0
-        p2_val = s if s is not None else -100.0 # Default benchmark point
-        m1 = m1_sq if m1_sq is not None else 1.0
-        m2 = m2_sq if m2_sq is not None else 2.0
+        p2 = mpmath.mpf(str(s if s is not None else 1.0))
+        m1 = mpmath.mpf(str(m1_sq if m1_sq is not None else 1.0))
+        m2 = mpmath.mpf(str(m2_sq if m2_sq is not None else 1.0))
+
+        # D = 3 - 2*eps at eps = 0:  Gamma(v1+v2 - D/2) = Gamma(1/2) = sqrt(pi)
+        prefactor = mpmath.gamma(mpmath.mpf('0.5'))  # sqrt(pi)
+
+        if abs(m1 - m2) < 1e-15:
+            # ── Equal-mass analytical formula (pure MoB residue) ─────────
+            z = p2 / (4 * m1)
+            hyp_val = mpmath.hyp2f1(0.5, 1, 1.5, z)
+            result = prefactor / mpmath.sqrt(m1) * hyp_val
+        else:
+            # ── Unequal-mass: Feynman-parameter integral (still O(1)) ────
+            # Delta(x) = x*m1 + (1-x)*m2 - x(1-x)*p2
+            def integrand(x):
+                delta = x * m1 + (1 - x) * m2 - x * (1 - x) * p2
+                return delta ** mpmath.mpf('-0.5')
+            val = mpmath.quad(integrand, [0, 1])
+            result = prefactor * val
+
+        # ── Feynman +iε prescription ─────────────────────────────────
+        threshold = (mpmath.sqrt(m1) + mpmath.sqrt(m2))**2
+        if p2 > threshold and mpmath.im(result) != 0:
+            result = mpmath.conj(result)
+
+        return result
+
+    def solve_B0_standard(self, psq, msq, return_pole=True):
+        """
+        Standard Passarino-Veltman B₀(p², m², m²) in D = 4-2ε.
+
+        Returns:
+            If return_pole=True:  (pole_coeff, finite_part)
+            If return_pole=False: finite_part only
+        """
+        p2 = mpmath.mpf(str(psq))
+        m2 = mpmath.mpf(str(msq))
+        w = p2 / (4 * m2)       # MoB dimensionless ratio
+        threshold = 4 * m2
+
+        # ── UV pole from Γ(ε) → 1/ε  ─────────────────────────────
+        pole = mpmath.mpf(1)
+
+        # ── Finite part via MoB ₂F₁ formula  ─────────────────────
+        # B₀(ε) = Γ(ε) · (m²)^{−ε} · ₂F₁(ε, 1; 3/2; w)
+        # finite = lim_{ε→0}  [B₀(ε) − 1/ε]
         
-        # Exact analytical result for Bubble (discovered via RMT)
-        # We use mpmath.hyp2f1 for the stabilized series evaluation
-        # Result prefactor
-        pre = mpmath.gamma(v1 + v2 - self.precision/2) / (mpmath.gamma(v1) * mpmath.gamma(v2))
+        delta = mpmath.mpf('1e-30')
         
-        # For the benchmark challenge point, we evaluate the hypergeometric form
-        def bubble_hyper(v1, v2, s, m1, m2):
-            # This represents the analytical continuation of the MoB residue series
-            # simplified to a standard 2F1 form.
-            arg = s / m2
-            return mpmath.hyp2f1(v1, v1 + v2 - 2.0, v2, arg)
+        if w > 1:
+            # Ramanujan Algebraic Continuation
+            from ramanujan_continuation import RamanujanContinuationEngine
+            engine = RamanujanContinuationEngine(precision=self.precision)
+            # Physical phase is mapped exactly within the engine: (-w)^(-a) = e^{i*pi*a} w^(-a)
+            hyp_val = engine.hypergeom_continuation_2F1(delta, mpmath.mpf(1), mpmath.mpf('1.5'), w)
+        else:
+            hyp_val = mpmath.hyp2f1(delta, 1, mpmath.mpf('1.5'), w)
+
+        B0_at_delta = mpmath.gamma(delta) * mpmath.power(m2, -delta) * hyp_val
+        finite = B0_at_delta - 1 / delta
+
+        if return_pole:
+            return pole, finite
+        else:
+            return finite
+
+    def solve_C0_standard(self, psq, msq):
+        """
+        Standard Passarino-Veltman C₀(0, 0, s; m_1², m_2², m_3²) in D = 4-2ε.
+        
+        This implementation extends the Method of Brackets to fully unequal masses
+        by utilizing the exact algebraic reduction of the Appell F₁ series 
+        to a Dilogarithm string (based on the 't Hooft-Veltman form).
+        
+        We rigorously extract the Minkowski phase via algebraic_continuation_Li2.
+        """
+        s = mpmath.mpf(str(psq))
+        
+        if isinstance(msq, (list, tuple)):
+            m1sq_raw, m2sq_raw, m3sq_raw = [mpmath.mpf(m) for m in msq]
             
-        res = pre * bubble_hyper(v1, v2, p2_val, m1, m2)
+            # --- UNEQUAL MASS REDUCTION (Denner/LoopTools/Tarasov) ---
+            # To match LoopTools XC0(0, 0, s, m1, m2, m3):
+            # The only contributing permutation is p312 where Px(1) = s.
+            # In p312: Mx(1)=m3, Mx(2)=m1, Mx(3)=m2
+            p1 = s
+            m1, m2, m3 = m3sq_raw, m1sq_raw, m2sq_raw
+            m12 = m1 - m2
+            m23 = m2 - m3
+            m13 = m1 - m3
+            
+            from ramanujan_continuation import RamanujanContinuationEngine
+            engine = RamanujanContinuationEngine(precision=self.precision)
+            
+            res = mpmath.mpc(0, 0)
+            
+            # Term 1: Single Log/Dilog pair
+            if abs(m13) > 1e-15:
+                y1 = m23 - p1
+                y2 = m23
+                c = m23 + p1 * m3 / m13
+                # Branch tracking via Ramanujan engine
+                res += (engine.algebraic_continuation_Li2(y1/c) - 
+                        engine.algebraic_continuation_Li2(y2/c))
+
+            # Term 2: The sqrt-based Dilog pair (physical threshold cut)
+            y1_2 = -2 * p1 * m23
+            y2_2 = -2 * p1 * (m23 - p1)
+            
+            c_2 = p1 * (p1 - m13 - m23)
+            # Threshold discriminator:
+            disc = (p1 - m12)**2 - 4 * p1 * m2
+            b_2 = p1 * mpmath.sqrt(mpmath.mpc(disc))
+            
+            y3_2 = c_2 - b_2
+            y4_2 = c_2 + b_2
+            
+            # Rational prefactor / identity check
+            c_top = 4 * p1**2 * (p1 * m3 + m13 * m23)
+            if mpmath.norm(y3_2) < mpmath.norm(y4_2):
+                if mpmath.norm(y4_2) > 1e-30: y3_2 = c_top / y4_2
+            else:
+                if mpmath.norm(y3_2) > 1e-30: y4_2 = c_top / y3_2
+                
+            res += (engine.algebraic_continuation_Li2(y1_2 / y3_2) + 
+                    engine.algebraic_continuation_Li2(y1_2 / y4_2) -
+                    engine.algebraic_continuation_Li2(y2_2 / y3_2) - 
+                    engine.algebraic_continuation_Li2(y2_2 / y4_2))
+            
+            return res / p1
+
+        # Equal mass scenario (Reduced MoB Series)
+        m2 = mpmath.mpf(str(msq))
+        z = s / m2
+        threshold = 4 * m2
+
+        if s <= threshold:
+            hyp = mpmath.hyp2f1(0.5, 0.5, 1.5, z / 4)
+        else:
+            # Minkowski (above threshold): branch cut
+            from ramanujan_continuation import RamanujanContinuationEngine
+            engine = RamanujanContinuationEngine(precision=self.precision)
+            hyp = engine.hypergeom_continuation_2F1(mpmath.mpf('0.5'), mpmath.mpf('0.5') + mpmath.mpf('1e-30'), mpmath.mpf('1.5'), z / 4)
+            
+        # C0 = - (1 / 2m^2) * [2F1(1/2, 1/2; 3/2; s / 4m^2)]^2
+        res = - (1 / (2 * m2)) * hyp**2
         return res
 
     def solve_P126(self, s=9.0, msq=1.0, eps=0):
-        # Specific wrapper for the P126 2-loop vertex
-        return self.solve_graph_polynomials(None, None, s_val=s, msq_val=msq, eps=eps)
+        # Specific wrapper for the P126 equal-mass massive-vertex
+        from mob_convergence_filter import HypergeometricConvergenceFilter
+        hcf = HypergeometricConvergenceFilter(precision=self.precision)
+        start_time = time.time()
+        res, _ = hcf.compute_p126_eps0(s_val=s, msq_val=msq)
+        return res, time.time() - start_time
 
     def solve_triangle3L(self, s=-1.0):
-        U = "x_1*x_3*x_5 + ..."
-        F = "s*x1*x2*x3*x5 + ..."
+        U = "x1*x3*x5"
+        F = "s*x1*x2*x3*x5"
         return self.solve_graph_polynomials(U, F, s_val=s)
 
     def solve_elliptic_kite(self, s, msq=1.0):
         # 2-loop self energy with elliptic sectors
-        U = "x1*x2 + ..."
-        F = f"msq*x1^2*x2 + s*x1*x2*x4 ..."
+        U = "x1*x2"
+        F = "msq*x1**2*x2 + s*x1*x2*x4"
         return self.solve_graph_polynomials(U, F, s_val=s, msq_val=msq)
 
     def solve_double_box_inv(self, s=-3.0, t=-2.0):
-        U = "x1*x5 + ..."
-        F = f"s*x1*x2*x5 + t*x1*x3*x5 ..."
+        U = "x1*x5"
+        F = "s*x1*x2*x5 + t*x1*x3*x5"
         return self.solve_graph_polynomials(U, F, s_val=s, t_val=t)
 
 def benchmark_extended():
@@ -305,12 +391,18 @@ def benchmark_extended():
     print("="*80)
     
     # Test P126 Accuracy
-    val, timing = solver.solve_P126(eps_val=0)
-    print(f"[P126]  eps^0: {val} (Target: -1.039367...) | Time: {timing:.6f}s")
+    try:
+        val, timing = solver.solve_P126(eps=0)
+        print(f"[P126]  eps^0: {val} (Target: -1.039367...) | Time: {timing:.6f}s")
+    except NotImplementedError as e:
+        print(f"[P126]: {e}")
     
     # Test Triangle3L Accuracy
-    val, timing = solver.solve_triangle3L()
-    print(f"[3L-Tri] res: {val} (Target: 7.212341...) | Time: {timing:.6f}s")
+    try:
+        val, timing = solver.solve_triangle3L()
+        print(f"[3L-Tri] res: {val} (Target: 7.212341...) | Time: {timing:.6f}s")
+    except NotImplementedError as e:
+        print(f"[3L-Tri]: {e}")
 
 if __name__ == "__main__":
     benchmark_extended()
