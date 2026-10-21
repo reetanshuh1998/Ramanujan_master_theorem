@@ -69,7 +69,10 @@ compiled Fortran against interpreted Python with multiprecision arithmetic.
 The reasons to use ramanujan-qft here are:
 
 * **reference values at 30–100+ digits**, for validating other codes or for
-  expressions with large cancellations;
+  expressions with large cancellations. Example: at extreme mass hierarchies,
+  C0(0,0,2.2·10⁻¹¹; 8.48·10⁻¹⁰, 8.48·10⁻¹⁰, 35.1) is −0.66788699075 (certified;
+  confirmed by an independent 90-digit quadrature). LoopTools 2.16 in double
+  precision returns −0.69637. More cases are in `tests/test_round2_regressions.py`;
 * **transparent derivations**: B0 is also available directly as the
   Method-of-Brackets series (2w/3)·₂F₁(1,1;5/2;w), and C0 in its MoB
   arcsin² / log² form;

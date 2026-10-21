@@ -198,3 +198,23 @@ def test_hcf_geometric_series():
 def test_invalid_mu2(call):
     with pytest.raises(ValueError):
         call()
+
+
+# --- extreme mass hierarchies: certified values where double-precision LoopTools fails ----
+# References: independent Feynman-parameter quadrature at 90 digits (audit round 3).
+# LoopTools 2.16 (double precision) returns e.g. -0.69637136327 for the first point.
+
+@pytest.mark.parametrize("args,exact", [
+    ((2.1973609307495493e-11, 8.481053224196959e-10, 8.48190132951938e-10, 35.105214341025246),
+     "-0.6678869907504131244618851622388848841794"),
+    ((0.23068649900452262, 7.453834940279327e-12, 7.6877769131395e-10, 382004099.8120761),
+     "-1.065479955896065292224866693068252671117e-7"),
+    ((1.6282575484974433, 1.7286689346893866e-07, 1.728670663358321e-07, 1628259.1769357012),
+     "-1.773291349979849617407423267650933088734e-5"),
+    ((0.44193463574276, 1.1842635981356399e-11, 1.1842635981356399e-11, 71704438.32072394),
+     "-5.89187771323343839445894666411609270483e-7"),
+])
+def test_C0_extreme_hierarchies(args, exact):
+    assert rel(C0(*args), mp.mpf(exact)) < 1e-14
+    with mp.workdps(45):
+        assert rel(C0(*args, dps=35), mp.mpf(exact)) < mp.mpf(10)**-33
