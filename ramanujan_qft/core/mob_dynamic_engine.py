@@ -11,7 +11,6 @@ class MoBDynamicEngine:
     """
     def __init__(self, precision=30):
         self.precision = precision
-        mpmath.mp.dps = precision
         
     def stage_A_polynomial_expansion(self, U_expr, F_expr, U_power, F_power, x_vars):
         """
@@ -145,8 +144,11 @@ class MoBDynamicEngine:
         # Test Convergence bounds
         self.stage_C_convergence_filter(valid_subs, n_free)
         
-        # If we pass the filter, we would sum. For >3 it throws NotImplemented.
-        return complex(0), 1.0 # If not implemented, it throws earlier.
+        # Stages A-C only analyse the bracket system; the residue summation (stage D)
+        # is not implemented, so no numerical value is produced.
+        raise NotImplementedError(
+            f"bracket system analysed ({len(valid_subs)} admissible index choices, {n_free} free "
+            "indices) but the multi-series summation is not implemented")
 
 if __name__ == "__main__":
     engine = MoBDynamicEngine()

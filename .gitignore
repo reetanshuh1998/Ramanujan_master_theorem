@@ -47,3 +47,4 @@ env/
 venv/
 .vscode/
 .idea/
+benchmarks/looptools/_build/
