@@ -59,7 +59,7 @@ class TripleProductEngine(AnalyticalConvolutionEngine):
                                        s=s_target, dps=self.precision)
 
     def solve_triple_bessel(self, k, a, b, nu=0, s=1.0):
-        """Alias of :meth:`solve_trio_benchmark`."""
+        """Same integral as :meth:`solve_trio_benchmark` (note the different default nu = 0)."""
         return self.solve_trio_benchmark(k, a, b, nu=nu, s_target=s)
 
 

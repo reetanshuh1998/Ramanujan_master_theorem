@@ -47,7 +47,7 @@ mpmath, …). The contribution here is a careful, tested, open implementation.
 ## What it is not
 
 It is **not** a faster replacement for LoopTools, COLLIER, pySecDec, FIESTA,
-AMFlow or TSIL. Compiled one-loop libraries are about 100× faster at double
+AMFlow or TSIL. Compiled one-loop libraries are several hundred times faster at double
 precision. Closed-form symbolic integration (SymPy `meijerint`, Mathematica) is
 faster wherever it applies, and general multi-loop integrals are beyond the
 current scope. See [docs/COMPARISON.md](docs/COMPARISON.md) and
@@ -122,10 +122,10 @@ explanation (see [CHANGELOG.md](CHANGELOG.md)).
 ## Validation
 
 ```bash
-pytest -m "not slow"     # 153 tests, ~5 s
-pytest                   # + independent 2-D Feynman-parameter checks, ~1.5 min
+pytest -m "not slow"     # 238 tests, ~20 s
+pytest                   # 250 tests, + independent 2-D Feynman-parameter checks, ~3 min
 bash benchmarks/looptools/compare_looptools.sh   # builds LoopTools (gfortran) and compares
-python benchmarks/bench_vs_scipy.py
+python benchmarks/bench_fair.py      # RACE vs closed forms and mpmath.quadosc at 30 digits
 ```
 
 * B0 and C0 agree with LoopTools 2.16 to double-precision round-off at 15, 30
@@ -134,6 +134,15 @@ python benchmarks/bench_vs_scipy.py
   above threshold.
 * The sunset's Im S, S″ and twice-subtracted S agree with independent
   Feynman-parameter integrations to 10⁻⁸ to 10⁻¹⁴.
+* One-loop results are *certified*: each is evaluated at two working precisions,
+  raised until they agree, which removes cancellation at extreme kinematics
+  (p² ≪ m², mass hierarchies, s ≫ m²).
+* RACE went through two independent adversarial audits, of about 4,000 cases each,
+  against closed forms and quadrature. All 47 confirmed defects were fixed and
+  turned into regression tests (`tests/test_mellin_regressions.py`,
+  `tests/test_round2_regressions.py`). In the final random sweeps it either
+  returned the correct value or raised; no silent wrong result remained. See
+  [AUDIT.md](AUDIT.md).
 
 ## Roadmap
 

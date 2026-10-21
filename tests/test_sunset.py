@@ -41,9 +41,13 @@ def test_im_vs_feynman(s, m):
 
 
 def test_im_mass_symmetry():
-    a = sunset_im(60, 1, 2, 3)
-    for perm in [(3, 2, 1), (2, 3, 1), (1, 3, 2)]:
-        assert abs(sunset_im(60, *perm) - a) < 1e-12 * abs(a)
+    """Im S must not depend on which mass is integrated outside (three different integrals)."""
+    from ramanujan_qft.sunset import _im_outer
+    with mp.workdps(25):
+        s, m = mp.mpf(60), [mp.mpf(1), mp.mpf(2), mp.mpf(3)]
+        vals = [_im_outer(s, m[i], *[m[j] for j in range(3) if j != i]) for i in range(3)]
+        assert max(abs(v - vals[0]) for v in vals) < 1e-20 * abs(vals[0])
+        assert abs(sunset_im(60, 3, 1, 2, dps=25) - vals[0]) < 1e-20 * abs(vals[0])
 
 
 @pytest.mark.slow

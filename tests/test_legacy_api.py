@@ -49,7 +49,8 @@ def test_withdrawn_methods_raise(solver, call):
 def test_phase_space_normalisation():
     # 0.1 was 16x too small with the wrong sign
     eng = RamanujanContinuationEngine(precision=15)
-    assert abs(eng.phase_space_3body(100, 1, 2, 3) - mp.mpf("-88.1849955506")) < 1e-8
+    ref = mp.mpf("-88.18499555155591")    # 35-digit value: -88.18499555155591472...
+    assert abs(eng.phase_space_3body(100, 1, 2, 3) - ref) < 1e-13 * abs(ref)
 
 
 def test_Li2_continuation_agree():

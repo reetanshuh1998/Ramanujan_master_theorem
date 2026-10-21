@@ -31,10 +31,85 @@ reproduced with the scripts in `tests/` and `benchmarks/`.
 | 10 | `MoBDynamicEngine` | Analyses the bracket matrix, then returns `complex(0)`. | Source | **Raises** `NotImplementedError` |
 | 11 | `solve_bessel_exp_product` | Returned 0 for every input (the residue formula evaluated Γ at its poles, and a bare `except` returned 0). | `(3,4) -> 0.0` instead of 0.2 | **Fixed** via `mellin.product_integral` |
 | 12 | RACE (`solve_product`) | Correct for exp × J0 / Gaussian away from the convergence boundary. Near it, accuracy degraded silently: exp(-3x)J0(4x) gave 0.2000042 instead of 0.2. Errors were returned as strings. Poles from the large-x expansion of a factor were ignored, so factors such as 1/(x+m) gave wrong results. | Closed forms | **Rewritten:** both expansions, convergence control, pole collisions, exceptions |
-| 13 | Speed claims ("O(1)", faster than LoopTools) | LoopTools: C0 ≈ 24 µs, B0 ≈ 0.8 µs per call. RAF 0.1: C0 ≈ 22 ms, B0 up to 4.5 ms. 0.2: C0 ≈ 2.5 ms, B0 ≈ 0.12 ms. Evaluation is not O(1) in any meaningful sense: it calls special functions and series of growing length. | `benchmarks/looptools/compare_looptools.sh` | **Claims removed** from README |
+| 13 | Speed claims ("O(1)", faster than LoopTools) | LoopTools: C0 ≈ 24 µs, B0 ≈ 0.8 µs per call. RAF 0.1: C0 ≈ 22 ms, B0 up to 4.5 ms. 0.2 (certified): C0 ≈ 11 ms, B0 ≈ 0.27 ms. Evaluation is not O(1) in any meaningful sense: it calls special functions and series of growing length. | `benchmarks/looptools/compare_looptools.sh` | **Claims removed** from README |
 | 14 | pySecDec "fails at the branch cut" (C0 table) | The value -0.1474950302 is not a pySecDec limitation. LoopTools and the independent integration both give -0.4219-0.3367i, and pySecDec handles this case with contour deformation. The run was most likely misconfigured (parameter order or missing contour deformation). | — | **Claim removed** |
-| 15 | Tests | The `test_*.py` files in the root contained no assertions. Some printed hard-coded "Target" values for competitors. | Source | **New suite** in `tests/`: 164 tests |
+| 15 | Tests | The `test_*.py` files in the root contained no assertions. Some printed hard-coded "Target" values for competitors. | Source | **New suite** in `tests/`: 250 tests |
 | 16 | Benchmark scripts in the root | Require pySecDec libraries that are not in the repository (`RECREATION/`, `pysecdec_*`). Several print fixed reference numbers and labels such as "Competitor Killer". | Source | **Left untouched;** listed below for you to decide |
+
+## Originality review
+
+A literature review (references checked online or against local copies) found
+that RACE and the other methods in the package are **classical**. Credit goes
+to Hardy, Marichev and Adamchik–Marichev, Slater, Fikioris, SymPy
+`meijerint`, mpmath `meijerg`, Gonzalez–Moll–Schmidt, Prausa,
+Ananthanarayan–Banik–Friot–Ghosh and others. No copied code was found. The
+contribution is the implementation. See [docs/PRIOR_ART.md](docs/PRIOR_ART.md).
+
+## RACE (Mellin residue engine): two adversarial audits
+
+Each round used independent hunters that tried to break the engine with
+about 2,000–4,000 cases checked against closed forms (DLMF, Gradshteyn–Ryzhik,
+SymPy) and independent quadratures (contour rotation, Gauss–Legendre,
+QUADPACK). Separate agents then reproduced every claimed defect with a
+different method.
+
+**Round 1 (19 confirmed defects in the first rewrite), all fixed:**
+
+* Invalid contour closures: the asymptotic "expand the Gaussian" series
+  returned silent zeros, e.g. ∫e^(−x²)cos x dx = 0.
+* Wrong branch of the Weber–Schafheitlin discontinuous integrals.
+* Divergent integrals returned as finite numbers.
+* Uncompensated cancellation, losing 7–10 digits.
+* Near pole collisions accepted with errors up to 10¹³.
+* Tiny results accepted with only absolute accuracy.
+* Parameters frozen at 15 digits.
+* A dead `nsum` fallback.
+* A leaked private exception.
+* Quadratic-time summation.
+
+**Round 2 (28 confirmed defects after the fixes), all fixed:**
+
+*RACE:*
+
+* Inputs within 10⁻¹⁶ of a lattice point (e.g. s = 10⁻⁴⁰, ν = 10⁻²⁵) were rounded,
+  returning 0. Inputs are now represented exactly.
+* A late peak of the terms (`gaussian_bessel`) stopped the summation early. An
+  a-priori peak estimate now guards the stopping rule.
+* An over-optimistic Wynn-ε error estimate. Wynn is now used only for
+  alternating series, with disjoint-window checks.
+* Collisions near a singularity of I(s). The step δ is now scaled to the
+  distance from the singularity, with Richardson extrapolation.
+* Equal-frequency integrals with a vanishing beat term were called divergent.
+  The strip check now uses the asymptotic phases.
+* The precision cap gave up too early, with a misleading message.
+* A raw mpmath `NoConvergence` leaked out.
+* `error_estimate` ignored the final rounding.
+
+*One-loop and sunset:*
+
+* Catastrophic cancellation in B0 and C0 at extreme kinematics: B0(10⁻¹²; 1, 10⁶)
+  was 330% off. All one-loop functions are now certified by two-precision agreement.
+* C0 raised ZeroDivisionError at regular points.
+* The all-massless sunset returned an undefined quantity.
+* A quadrature node landing on t = s caused a crash.
+* The massless D=3 bubble crashed.
+
+*Helpers and tests:*
+
+* `mellin_numeric` accepted integrals divergent at x = 0.
+* A complex-z misuse of the 2F1 continuation gave the wrong branch.
+* The legacy HCF series summation was inaccurate.
+* Missing input validation.
+* Test-suite flaws: a vacuous symmetry test, a wrong reference constant, a wrong
+  closed form in a comment.
+
+Final random sweeps: every result was either correct to the requested
+accuracy or a raised `SeriesConvergenceError` / `ValueError`. **No silent wrong
+result remained.** Known, documented refusals: the convergence boundary ρ = 1
+(e.g. e^(−x) J₀(x), equal-scale products), fixed-sign series with ρ very close
+to 1, and cases needing more than `max_terms` terms. All 47 cases are
+regression tests (`tests/test_mellin_regressions.py`,
+`tests/test_round2_regressions.py`).
 
 ## Repository hygiene: actions for the owner before going public
 

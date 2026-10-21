@@ -42,6 +42,20 @@ def _ordered(msq):
     return sorted(mpmath.mpf(m) for m in msq)
 
 
+def _im_outer(s, mo, ma, mb):
+    """Im S with mass mo integrated outside: -(pi/s) Int dt lambda^(1/2)(s,t,mo) lambda^(1/2)(t,ma,mb)/t."""
+    def integrand(t):
+        l1 = _kallen(s, t, mo)
+        l2 = _kallen(t, ma, mb)
+        if l1 <= 0 or l2 <= 0:
+            return mpmath.mpf(0)
+        return mpmath.sqrt(l1 * l2) / t
+
+    lo = (mpmath.sqrt(ma) + mpmath.sqrt(mb))**2
+    hi = (mpmath.sqrt(s) - mpmath.sqrt(mo))**2
+    return -mpmath.pi / s * mpmath.quad(integrand, [lo, hi])
+
+
 def sunset_im(s, m1sq, m2sq, m3sq, dps=None):
     """Imaginary part of the sunset (zero below the three-particle threshold)."""
     with mpmath.workdps(dps if dps is not None else mpmath.mp.dps):
@@ -51,17 +65,7 @@ def sunset_im(s, m1sq, m2sq, m3sq, dps=None):
             raise ValueError("squared masses must be non-negative")
         if s <= sunset_threshold(m1, m2, m3):
             return mpmath.mpf(0)
-
-        def integrand(t):
-            l1 = _kallen(s, t, m1)
-            l2 = _kallen(t, m2, m3)
-            if l1 <= 0 or l2 <= 0:
-                return mpmath.mpf(0)
-            return mpmath.sqrt(l1 * l2) / t
-
-        lo = (mpmath.sqrt(m2) + mpmath.sqrt(m3))**2
-        hi = (mpmath.sqrt(s) - mpmath.sqrt(m1))**2
-        return -mpmath.pi / s * mpmath.quad(integrand, [lo, hi])
+        return _im_outer(s, m1, m2, m3)
 
 
 def _dispersion(s, msq, kernel_power, dps):
@@ -77,8 +81,15 @@ def _dispersion(s, msq, kernel_power, dps):
     if s == th:
         raise ValueError("the dispersion integral is evaluated off the threshold point")
     hs = h(s)
+    eps = s * mpmath.mpf(10)**(-(mpmath.mp.dps // 2))
+    dh = (h(s + eps) - h(s - eps)) / (2 * eps) if s - eps > th else mpmath.mpf(0)
+
+    def near_integrand(t):
+        # removable singularity at t = s (a quadrature node can round onto it)
+        return dh if t == s else (h(t) - hs) / (t - s)
+
     # symmetric subtraction around the pole, then the tail
-    near = mpmath.quad(lambda t: (h(t) - hs) / (t - s), [th, s, 2 * s - th])
+    near = mpmath.quad(near_integrand, [th, s, 2 * s - th])
     far = mpmath.quad(lambda t: h(t) / (t - s), [2 * s - th, mpmath.inf])
     return mpmath.mpc((near + far) / mpmath.pi, hs)
 
@@ -94,6 +105,8 @@ def sunset_subtracted(s, m1sq, m2sq, m3sq, dps=15):
         if s == 0:
             return mpmath.mpc(0)
         msq = [mpmath.mpf(m) for m in (m1sq, m2sq, m3sq)]
+        if sunset_threshold(*msq) == 0:
+            raise ValueError("all-massless sunset: S'(0) does not exist, so S(s) - S(0) - s S'(0) is undefined")
         return +(s * s * _dispersion(s, msq, 2, dps))
 
 

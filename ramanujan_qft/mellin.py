@@ -20,17 +20,23 @@ picks up
 Closing the contour is legitimate only when the integrand decays on the arc.
 Each atlas factor carries its Gamma-order L (|r(p)| ~ c^p / Gamma(p)^L) and R
 (|M(w)| ~ Gamma(w)^R / c^w for w -> +oo). Expanding f against g is valid iff
-L_f > R_g, or L_f == R_g with rho = c_f / c_g < 1 (rho = 1 is the convergence
-boundary, treated by Wynn-epsilon summation). Invalid orderings, which give
-divergent asymptotic series (and silently wrong results if summed), are never
-used.
+L_f > R_g, or L_f == R_g with rho = c_f / c_g < 1. rho = 1 is the convergence
+boundary, where no value is returned. Invalid orderings, which give divergent
+asymptotic series (and silently wrong results if summed), are never used.
 
 Robustness:
-  * the integral's existence (fundamental strip in s) is checked first;
+  * the integral's existence (fundamental strip in s) is checked first, including
+    equal-frequency oscillatory products whose non-oscillating beat term vanishes;
+  * inputs are represented exactly next to the integer shifts p_n (so s + p_n near a
+    zero or pole of a Gamma/trigonometric factor is formed without rounding);
+  * the stopping rule waits until the terms are past their a-priori peak;
   * the cancellation Sum|t_n| / |Sum t_n| is monitored and the working precision
     raised until the requested number of digits is guaranteed against rounding;
+  * slowly convergent alternating series (rho > 0.85) are accelerated by the Wynn
+    epsilon algorithm with a conservative, disjoint-window error estimate;
   * coinciding poles (logarithmic results) are handled by symmetric evaluation at
-    s +- delta, using the analyticity of I(s);
+    s +- delta (Richardson-extrapolated, delta scaled to the distance from the
+    nearest singularity of I(s));
   * factor parameters are stored exactly and converted at the working precision.
 """
 
@@ -38,6 +44,7 @@ from dataclasses import dataclass, field
 from typing import Callable, Optional
 
 import mpmath
+from mpmath.libmp import NoConvergence
 
 __all__ = [
     "MellinFunction", "SeriesConvergenceError", "product_integral",
@@ -73,8 +80,8 @@ class MellinFunction:
     L, R   : Gamma-orders of the Taylor coefficients and of M at +oo (see module doc)
     p0     : leading exponent of f at x = 0
     tail   : behaviour at x -> oo: ("fast",) for faster than any power, or
-             ("power", alpha, frequency) for amplitude x^(-alpha), oscillating with
-             the given angular frequency (0: not oscillating)
+             ("power", alpha, frequency, phase) for amplitude x^(-alpha) cos(w x + phase),
+             frequency 0 meaning not oscillating; phase in units of pi/4
     params : raw parameters, for reference
     """
     name: str
@@ -149,7 +156,7 @@ def bessel_j(nu, b):
                                       / (mpmath.factorial(n) * mpmath.gamma(n + n_ + 1))),
                       scale=bb)
     return MellinFunction(f"J_{nu}({b} x)" if sign == 1 else f"-J_{nu}({b} x)", build, L=1, R=1,
-                          p0=nu_, tail=("power", mpmath.mpf(1) / 2, _m(b)), params={"nu": nu, "b": b})
+                          p0=nu_, tail=("power", mpmath.mpf(1) / 2, b, -(2 * nu_ + 1)), params={"nu": nu, "b": b})
 
 
 def cosine(b):
@@ -162,7 +169,7 @@ def cosine(b):
                       lambda s: bb**(-s) * mpmath.gamma(s) * mpmath.cospi(s / 2),
                       left=lambda n: (2 * n, (-1)**n * bb**(2 * n) / mpmath.factorial(2 * n)),
                       scale=bb)
-    return MellinFunction(f"cos({b} x)", build, L=1, R=1, p0=0, tail=("power", 0, _m(b)), params={"b": b})
+    return MellinFunction(f"cos({b} x)", build, L=1, R=1, p0=0, tail=("power", 0, b, 0), params={"b": b})
 
 
 def sine(b):
@@ -175,7 +182,7 @@ def sine(b):
                       lambda s: bb**(-s) * mpmath.gamma(s) * mpmath.sinpi(s / 2),
                       left=lambda n: (2 * n + 1, (-1)**n * bb**(2 * n + 1) / mpmath.factorial(2 * n + 1)),
                       scale=bb)
-    return MellinFunction(f"sin({b} x)", build, L=1, R=1, p0=1, tail=("power", 0, _m(b)), params={"b": b})
+    return MellinFunction(f"sin({b} x)", build, L=1, R=1, p0=1, tail=("power", 0, b, -2), params={"b": b})
 
 
 def inverse_power(m, v):
@@ -191,7 +198,7 @@ def inverse_power(m, v):
                       left=lambda n: (n, coef(n) * mm**(-vv - n)),
                       right=lambda n: (vv + n, coef(n) * mm**n),
                       scale=1 / mm)
-    return MellinFunction(f"(x + {m})^(-{v})", build, L=0, R=0, p0=0, tail=("power", _m(v), 0),
+    return MellinFunction(f"(x + {m})^(-{v})", build, L=0, R=0, p0=0, tail=("power", _m(v), 0, None),
                           params={"m": m, "v": v})
 
 
@@ -220,21 +227,38 @@ def gaussian_bessel(a, b, nu):
 #  existence of the integral
 # ---------------------------------------------------------------------------
 
+def _same(x, y):
+    with mpmath.workdps(60):
+        return _m(x) == _m(y)
+
+
 def _strip(f, g):
-    """(lower, upper, upper_inclusive?) bounds on Re s for Int x^(s-1) f g dx to exist."""
+    """(lower, upper) bounds on Re s for Int x^(s-1) f g dx to exist."""
     lower = -(mpmath.re(f.p0) + mpmath.re(g.p0))
     if f.tail[0] == "fast" or g.tail[0] == "fast":
         return lower, mpmath.inf
     alpha = f.tail[1] + g.tail[1]
-    w1, w2 = f.tail[2], g.tail[2]
-    oscillating = (w1 > 0 or w2 > 0) and not (w1 > 0 and w2 > 0 and w1 == w2)
-    # x^(s-1-alpha) e^(i w x): converges iff Re s < alpha + 1 when w > 0, Re s < alpha otherwise
-    return lower, alpha + 1 if oscillating else alpha
+    (w1, ph1), (w2, ph2) = f.tail[2:4], g.tail[2:4]
+    o1, o2 = _m(w1) > 0, _m(w2) > 0
+    if not (o1 or o2):
+        return lower, alpha                      # non-oscillating power law
+    if o1 and o2 and _same(w1, w2):
+        # cos(wx + ph1) cos(wx + ph2) = [cos(ph1 - ph2) + cos(2wx + ph1 + ph2)]/2:
+        # a non-oscillating x^-alpha term survives unless cos(ph1 - ph2) = 0
+        dq = _m(ph1) - _m(ph2)                   # in units of pi/4
+        if mpmath.isint(dq) and int(dq) % 4 == 2:
+            return lower, alpha + 1
+        return lower, alpha
+    return lower, alpha + 1                      # x^(s-1-alpha) e^(iwx) converges for Re s < alpha + 1
 
 
 # ---------------------------------------------------------------------------
 #  summation
 # ---------------------------------------------------------------------------
+
+class _OrderingFailed(Exception):
+    pass
+
 
 def _validity(A, B, a, b):
     """rho for expanding A against B (built data a, b); None if the ordering is invalid."""
@@ -250,6 +274,18 @@ def _validity(A, B, a, b):
     return rho if rho < 1 else None
 
 
+def _min_terms(A, B, a, b, rho):
+    """Index beyond which the terms are in their asymptotic (decaying) regime."""
+    if rho == 0:
+        ratio = a.scale / b.scale
+        if ratio <= 1:
+            return 10
+        p_star = ratio**(1 / (A.L - B.R))       # peak of ratio^p Gamma(p)^(R-L)
+        step = a.left(1)[0] - a.left(0)[0]
+        return int(2 * p_star / step) + 10
+    return 10 + int(3 / (1 - rho))
+
+
 def _terms(a, b, s):
     """n -> (t_n, |pieces of t_n|) of the residue series expanding a against b."""
     def term(n):
@@ -262,6 +298,8 @@ def _terms(a, b, s):
                 u = q * a.M(s - aa)
                 t += u
                 size += abs(u)
+        except NoConvergence as exc:
+            raise _OrderingFailed("a special-function evaluation did not converge") from exc
         except (ValueError, ZeroDivisionError) as exc:      # gamma pole: coinciding poles
             raise _PoleCollision from exc
         if not mpmath.isfinite(t):
@@ -271,35 +309,37 @@ def _terms(a, b, s):
 
 
 def _wynn(partials):
-    """Wynn epsilon algorithm; returns (estimate, error estimate)."""
+    """Wynn epsilon algorithm; returns the last even-column estimate. A vanishing
+    difference means that column has converged numerically: its value is returned
+    as the estimate (its reliability is judged by the caller, not here)."""
     eps_prev = [mpmath.mpf(0)] * (len(partials) + 1)
     eps_cur = list(partials)
-    best, prev_best = partials[-1], partials[-2] if len(partials) > 1 else partials[-1]
+    best = partials[-1]
     k = 0
     while len(eps_cur) > 1:
         nxt = []
         for i in range(len(eps_cur) - 1):
             d = eps_cur[i + 1] - eps_cur[i]
             if d == 0:
-                return eps_cur[i + 1], mpmath.mpf(0) if k % 2 == 0 else mpmath.inf
+                return eps_cur[-1] if k % 2 == 0 else best
             nxt.append(eps_prev[i + 1] + 1 / d)
         eps_prev, eps_cur = eps_cur, nxt
         k += 1
         if k % 2 == 0 and eps_cur:
-            prev_best, best = best, eps_cur[-1]
-    return best, abs(best - prev_best)
+            best = eps_cur[-1]
+    return best
 
 
-def _sum(term, rho, tol, max_terms):
+def _sum(term, rho, tol, max_terms, n_min):
     """
     Sum a valid residue series. Returns (value, tail_error, sum_abs, n_terms, accelerated).
-    rho: geometric decay per term index (0 for factorial convergence; 1 at the boundary).
+    rho: geometric decay per term index (0 for factorial convergence).
     """
     S, sum_abs, n_zero_run = mpmath.mpf(0), mpmath.mpf(0), 0
-    peak, peak_n, recent = mpmath.mpf(0), 0, []
-    partials = []
-    slow = rho is not None and rho > mpmath.mpf("0.85")
-    tail_factor = 1 / (1 - rho) if (rho is not None and rho < 1) else mpmath.mpf(1)
+    peak, peak_n, recent, last_terms = mpmath.mpf(0), 0, [], []
+    partials, wynn_prev = [], None
+    slow = rho > mpmath.mpf("0.85")
+    tail_factor = 1 / (1 - rho)
     for n in range(max_terms):
         t, size = term(n)
         S += t
@@ -307,64 +347,113 @@ def _sum(term, rho, tol, max_terms):
         sum_abs += size
         if size == 0:
             n_zero_run += 1
-            if n_zero_run >= 6 and n >= 11:
+            if n_zero_run >= 6 and n >= max(11, n_min):
                 return S, mpmath.mpf(0), sum_abs, n + 1, False
             continue
         n_zero_run = 0
         partials.append(S)
+        last_terms = (last_terms + [t])[-31:]
         if a > peak:
             peak, peak_n = a, n
         recent = (recent + [a])[-6:]
-        if n >= peak_n + 6 and len(recent) == 6:
+        if n >= max(peak_n + 6, n_min) and len(recent) == 6:
             tail = max(recent) * tail_factor
             if tail <= tol * abs(S):
                 return S, tail, sum_abs, n + 1, False
-        if slow and len(partials) >= 60 and len(partials) % 30 == 0:
-            v1, e1 = _wynn(partials[-60:])
-            v2, e2 = _wynn(partials[-40:])
-            err = max(e1, abs(v1 - v2))
-            if mpmath.isfinite(err) and err <= tol * abs(v1):
-                return v1, err, sum_abs, n + 1, True
+        if slow and len(partials) >= 90 and len(partials) % 30 == 0:
+            # Wynn epsilon is reliable for alternating-type series only
+            ratios = [last_terms[i + 1] / last_terms[i] for i in range(len(last_terms) - 1)]
+            alternating = sum(1 for r in ratios if mpmath.re(r) < 0) >= 0.8 * len(ratios)
+            v1, v2 = _wynn(partials[-60:]), _wynn(partials[-90:-30])
+            if alternating and v1 is not None and v2 is not None:
+                err = 10 * abs(v1 - v2)
+                if wynn_prev is not None:
+                    err = max(err, 10 * abs(v1 - wynn_prev))
+                if err <= tol * abs(v1) and wynn_prev is not None:
+                    return v1, err, sum_abs, n + 1, True
+                wynn_prev = v1
     return None, mpmath.inf, sum_abs, max_terms, False
 
 
-def _evaluate(f, g, s, dps, tol, max_terms):
-    """All valid orderings at working precision; precision raised against cancellation."""
+def _input_dps(f, g, s):
+    """Digits needed to represent all inputs exactly next to the integer shifts p_n
+    (so that s + p_n, nu - s, ... are formed without rounding near lattice points)."""
+    need = 0
+    vals = list(f.params.values()) + list(g.params.values()) + [s]
+    for x in vals:
+        if isinstance(x, (mpmath.mpc, complex)):
+            parts = (mpmath.re(x), mpmath.im(x))
+        else:
+            parts = (x,)
+        for y in parts:
+            if isinstance(y, str):
+                with mpmath.workdps(30):
+                    v = _m(y)
+                    if v != 0 and abs(v) < 1:
+                        need = max(need, 30 + int(-mpmath.log10(abs(v))))
+                continue
+            with mpmath.workdps(4000):
+                v = _m(y)
+            if not isinstance(v, mpmath.mpf) or v == 0:
+                continue
+            sign, man, exp, bc = v._mpf_
+            bits = max(exp + bc, 12) - exp
+            need = max(need, int(bits * 0.30103) + 3)
+    return need
+
+
+def _evaluate(f, g, s, dps, tol, max_terms, max_dps):
+    """All valid orderings, with working precision raised against cancellation.
+    Returns a list of (value-or-None, err, method, n, wp, accelerated, rho, reason)."""
     results = []
+    base = max(dps + 15, _input_dps(f, g, s) + 10)
     for A, B in ((f, g), (g, f)):
-        wp = dps + 15
-        for _ in range(6):
+        wp = base
+        with mpmath.workdps(wp):
+            rho = _validity(A, B, A.build(), B.build())
+        if rho is None:
+            continue
+        how = f"expand {A.name}"
+        for _ in range(12):
+            if wp > max_dps:
+                results.append((None, None, how, 0, wp, False, rho, f"needs more than max_dps={max_dps} digits"))
+                break
             with mpmath.workdps(wp):
                 a, b = A.build(), B.build()
-                rho = _validity(A, B, a, b)
-                if rho is None:
-                    break
                 ss = mpmath.mpmathify(s)
-                val, err, sum_abs, n, acc = _sum(_terms(a, b, ss), rho, tol, max_terms)
+                n_min = _min_terms(A, B, a, b, rho)
+                if rho > mpmath.mpf("0.85"):
+                    n_min = min(n_min, max_terms)      # slow geometric series: Wynn may still succeed
+                if n_min > max_terms:
+                    results.append((None, None, how, n_min, wp, False, rho,
+                                    f"needs about {n_min} terms (max_terms={max_terms})"))
+                    break
+                try:
+                    val, err, sum_abs, n, acc = _sum(_terms(a, b, ss), rho, tol, max_terms, n_min)
+                except _OrderingFailed as exc:
+                    results.append((None, None, how, 0, wp, False, rho, str(exc)))
+                    break
                 if val is None:
-                    results.append((None, f"expand {A.name}", n, wp, acc, rho))
+                    results.append((None, None, how, n, wp, acc, rho,
+                                    f"not converged after {n} terms (rho = {mpmath.nstr(rho, 4)})"))
                     break
                 if val == 0 and sum_abs > 0:
-                    # non-zero residues cancelling to zero: not certifiable at this precision
-                    if wp > 8 * dps + 100:
-                        results.append((None, f"expand {A.name}", n, wp, acc, rho))
-                        break
-                    wp = 2 * wp
+                    wp = 2 * wp          # non-zero residues cancelling to zero: not yet resolved
                     continue
                 cancel = sum_abs / abs(val) if val != 0 else mpmath.mpf(1)
                 needed = dps + int(mpmath.log10(cancel)) + 10 if cancel > 1 else dps + 10
                 if needed <= wp:
                     rnd = cancel * mpmath.mpf(10)**(-wp)
-                    results.append(((+val, err + rnd * abs(val)), f"expand {A.name}", n, wp, acc, rho))
+                    results.append((+val, err + rnd * abs(val), how, n, wp, acc, rho, ""))
                     break
                 wp = needed + 5
         else:
-            results.append((None, f"expand {A.name}", max_terms, wp, False, None))
+            results.append((None, None, how, 0, wp, False, rho, "precision escalation did not settle"))
     return results
 
 
 def product_integral(f, g, s=1, dps=None, tol=None, max_terms=4000, return_info=False,
-                     continuation=False):
+                     continuation=False, max_dps=None):
     """
     Evaluate Int_0^oo x^(s-1) f(x) g(x) dx by Mellin residue summation.
 
@@ -377,6 +466,7 @@ def product_integral(f, g, s=1, dps=None, tol=None, max_terms=4000, return_info=
     return_info : also return a dict (method, error estimate, terms, working precision)
     continuation : if True, s outside the region where the integral exists is allowed
                    and the analytic continuation in s is returned
+    max_dps : cap on the internal working precision (default max(20*dps, 1000))
 
     Raises
     ------
@@ -384,9 +474,10 @@ def product_integral(f, g, s=1, dps=None, tol=None, max_terms=4000, return_info=
     SeriesConvergenceError   if no valid expansion reaches the accuracy target
     """
     dps = dps if dps is not None else mpmath.mp.dps
-    with mpmath.workdps(dps + 15):
+    max_dps = max_dps if max_dps is not None else max(20 * dps, 1000)
+    tol_ = mpmath.mpf(tol) if tol is not None else mpmath.mpf(10)**(-dps)
+    with mpmath.workdps(max(dps + 15, _input_dps(f, g, s) + 10)):
         s = mpmath.mpmathify(s)
-        tol_ = mpmath.mpf(tol) if tol is not None else mpmath.mpf(10)**(-dps)
         lo, hi = _strip(f, g)
         if not continuation and not (lo < mpmath.re(s) < hi):
             raise ValueError(
@@ -396,41 +487,52 @@ def product_integral(f, g, s=1, dps=None, tol=None, max_terms=4000, return_info=
 
     note = ""
     try:
-        res = _evaluate(f, g, s, dps, tol_, max_terms)
+        res = _evaluate(f, g, s, dps, tol_, max_terms, max_dps)
     except _PoleCollision:
-        # Coinciding poles (logarithmic result): I(s) is analytic, so average
-        # I(s + d) and I(s - d); the error is O(d^2).
+        # Coinciding poles (logarithmic result). I(s) is analytic in the strip, so use
+        # A(d) = (I(s+d) + I(s-d))/2 = I(s) + O(d^2) and Richardson-extrapolate with A(2d).
+        # d is scaled by the distance to the nearest singularity of I (the strip edges).
         note = " (coinciding poles: symmetric evaluation at s +- delta)"
         with mpmath.workdps(2 * dps + 20):
-            d = mpmath.mpf(10)**(-(dps // 2 + 5))
+            dist = min(mpmath.re(s) - lo, hi - mpmath.re(s)) if not continuation else mpmath.mpf(1)
+            d = min(mpmath.mpf(1), dist) * mpmath.mpf(10)**(-(dps // 2 + 5))
+            sub = dps + dps // 2 + 10
             try:
-                rp = _evaluate(f, g, s + d, dps + dps // 2 + 10, tol_ / 100, max_terms)
-                rm = _evaluate(f, g, s - d, dps + dps // 2 + 10, tol_ / 100, max_terms)
+                parts = [_evaluate(f, g, s + k * d, sub, tol_ / 100, max_terms, max_dps) for k in (1, -1, 2, -2)]
             except _PoleCollision:
                 raise SeriesConvergenceError("pole collision could not be resolved") from None
             res = []
-            for (vp, how, n, wp, acc, rho), (vm, how2, *_rest) in zip(rp, rm):
-                assert how == how2
-                if vp is None or vm is None:
-                    res.append((None, how, n, wp, acc, rho))
-                else:
-                    res.append((((vp[0] + vm[0]) / 2, max(vp[1], vm[1]) + d * abs(vp[0] - vm[0])),
-                                how, n, wp, acc, rho))
+            for p1, m1, p2, m2 in zip(*parts):
+                how, n, wp, acc, rho = p1[2], p1[3], p1[4], p1[5], p1[6]
+                if any(r[0] is None for r in (p1, m1, p2, m2)):
+                    reason = next(r[7] for r in (p1, m1, p2, m2) if r[0] is None)
+                    res.append((None, None, how, n, wp, acc, rho, reason))
+                    continue
+                A1 = (p1[0] + m1[0]) / 2
+                A2 = (p2[0] + m2[0]) / 2
+                val = (4 * A1 - A2) / 3
+                err = max(p1[1], m1[1], p2[1], m2[1]) + abs(A1 - A2)
+                res.append((val, err, how, n, wp, acc, rho, ""))
 
     good = [r for r in res if r[0] is not None]
     if not good:
-        tried = ", ".join(f"{how} (rho = {mpmath.nstr(rho, 4)})" for _, how, _, _, _, rho in res if rho is not None)
+        if res:
+            why = "; ".join(f"{r[2]}: {r[7]}" for r in res)
+            raise SeriesConvergenceError(f"valid residue expansion of {f.name} * {g.name} did not reach "
+                                         f"the target ({why}). Use quadrature or a closed form.")
         raise SeriesConvergenceError(
-            f"no valid residue expansion of {f.name} * {g.name} converged"
-            + (f"; tried {tried}" if tried else "; neither ordering is a convergent expansion for these factors")
-            + ". The expansion parameter is at or near the convergence boundary: use quadrature or a closed form.")
-    (val, err), how, n, wp, acc, rho = min(good, key=lambda r: r[0][1] / max(abs(r[0][0]), mpmath.mpf(10)**(-2 * dps)))
+            f"neither ordering of {f.name} * {g.name} is a convergent residue expansion (the scales are at the "
+            "convergence boundary rho = 1, or the factors cannot be expanded). Use quadrature or a closed form.")
+    val, err, how, n, wp, acc, rho, _ = min(good, key=lambda r: r[1] / max(abs(r[0]), mpmath.mpf(10)**(-2 * dps)))
     if val != 0 and err > tol_ * abs(val) * 10:
         raise SeriesConvergenceError(
             f"residue series for {f.name} * {g.name} reached only relative error ~{mpmath.nstr(err / abs(val), 3)}")
+    full = val
     with mpmath.workdps(dps):
         val = +val
     if return_info:
+        with mpmath.workdps(wp):
+            err_out = err + abs(full - val)
         return val, {"method": how + (" + Wynn-epsilon" if acc else "") + note,
-                     "error_estimate": err, "terms": n, "working_dps": wp}
+                     "error_estimate": err_out, "terms": n, "working_dps": wp}
     return val

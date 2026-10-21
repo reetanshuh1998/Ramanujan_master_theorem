@@ -25,6 +25,9 @@ class RamanujanContinuationEngine:
         with (-z - i0)^(-a) = e^(i pi a) z^(-a).
         """
         with mpmath.workdps(self.precision):
+            zz = mpmath.mpmathify(z)
+            if mpmath.im(zz) != 0 or not zz > 1:
+                raise ValueError("hypergeom_continuation_2F1 is defined for real z > 1 (z + i0) only")
             if mpmath.isint(a - b):
                 raise ValueError("a - b is an integer: the 1/z formula degenerates; "
                                  "use mpmath.hyp2f1 and take the conjugate for z > 1")

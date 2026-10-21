@@ -61,10 +61,10 @@ Speed per call (measured):
 
 | | LoopTools 2.16 | ramanujan-qft 0.2 (15 / 50 digits) |
 |---|---|---|
-| C0(0,0,10;1,2,3) | 24 µs | 2.5 ms / 6.9 ms |
-| B0(5;1,1) | 0.8 µs | 0.12 ms / 0.13 ms |
+| C0(0,0,10;1,2,3) | 24 µs | 11 ms / 25 ms |
+| B0(5;1,1) | 0.8 µs | 0.27 ms / 0.31 ms |
 
-LoopTools is roughly 100–150× faster at double precision. That is expected:
+LoopTools is roughly 300–450× faster at double precision. That is expected:
 compiled Fortran against interpreted Python with multiprecision arithmetic.
 The reasons to use ramanujan-qft here are:
 

@@ -13,8 +13,14 @@ reproduces LoopTools' default output.
     C0(0, 0, s; m1sq, m2sq, m3sq)  -- UV and IR finite for non-zero masses.
 
 All internal masses are *squared* masses. The Feynman ``+i0`` prescription is
-implemented exactly (no small numerical imaginary parts), so results are
-reliable at any working precision.
+implemented exactly (no small numerical imaginary parts).
+
+Every public function is *certified*: the formula is evaluated at two working
+precisions, which are raised until the results agree to the requested number
+of digits (inputs are exact binary or decimal numbers, so this removes the
+cancellation that closed forms suffer for p2 << m^2, hierarchical or nearly
+degenerate masses, or s >> m^2). If agreement cannot be reached an
+ArithmeticError is raised.
 
 Two evaluation strategies are offered for B0:
 
@@ -87,7 +93,7 @@ def _int_log_delta(p2, m1, m2):
     return mpmath.mpc(re, -mpmath.pi * negative_len)
 
 
-def B0(p2, m1sq, m2sq, mu2=1, delta=0, dps=None):
+def _B0_kernel(p2, m1sq, m2sq, mu2=1, delta=0, dps=None):
     """
     Finite part (plus ``delta`` times the pole) of the scalar two-point function.
 
@@ -112,13 +118,15 @@ def B0(p2, m1sq, m2sq, mu2=1, delta=0, dps=None):
         p2, m1, m2 = (mpmath.mpf(x) for x in (p2, m1sq, m2sq))
         mu2, delta = mpmath.mpf(mu2), mpmath.mpf(delta)
         _check_masses(m1, m2)
+        if not mu2 > 0:
+            raise ValueError("mu2 must be positive")
         if p2 == 0 and m1 == 0 and m2 == 0:
             raise ValueError("B0(0; 0, 0) is scaleless (zero in dimensional regularisation)")
         res = delta + mpmath.log(mu2) - _int_log_delta(p2, m1, m2)
         return +mpmath.mpc(res)
 
 
-def B0_mob(p2, msq, mu2=1, delta=0, dps=None):
+def _B0_mob_kernel(p2, msq, mu2=1, delta=0, dps=None):
     """
     Equal-mass B0 from its Method-of-Brackets hypergeometric representation.
 
@@ -137,6 +145,8 @@ def B0_mob(p2, msq, mu2=1, delta=0, dps=None):
         mu2, delta = mpmath.mpf(mu2), mpmath.mpf(delta)
         if m <= 0:
             raise ValueError("B0_mob requires a positive mass")
+        if not mu2 > 0:
+            raise ValueError("mu2 must be positive")
         w = p2 / (4 * m)
         hyp = mpmath.hyp2f1(1, 1, mpmath.mpf(5) / 2, w)
         if w > 1:
@@ -159,7 +169,7 @@ def _Li2(z):
     return mpmath.polylog(2, z)
 
 
-def C0_mob(s, msq, dps=None):
+def _C0_mob_kernel(s, msq, dps=None):
     """
     Equal-mass C0(0, 0, s; m^2, m^2, m^2).
 
@@ -228,7 +238,7 @@ def _C0_unequal(s, ma, mb, mc):
     return mpmath.mpc(res.real / p1, im)
 
 
-def C0(s, m1sq, m2sq, m3sq, dps=None):
+def _C0_kernel(s, m1sq, m2sq, m3sq, dps=None):
     """
     Scalar three-point function C0(0, 0, s; m1sq, m2sq, m3sq).
 
@@ -243,7 +253,7 @@ def C0(s, m1sq, m2sq, m3sq, dps=None):
         if min(ma, mb, mc) == 0:
             raise ValueError("C0(0,0,s) with a vanishing internal mass is IR divergent; not supported")
         if ma == mb == mc:
-            return C0_mob(s, ma)
+            return _C0_mob_kernel(s, ma, dps=mpmath.mp.dps)
         if s == 0:
             # C0(0,0,0) = -Int dx dy 1/(x1 ma + x2 mb + x3 mc): elementary closed form
             # via divided differences of m log m; use a regular 1-D integral for safety.
@@ -252,14 +262,28 @@ def C0(s, m1sq, m2sq, m3sq, dps=None):
                 be = (1 - b) * mb + b * mc
                 return (1 - b) / be if al == 0 else (mpmath.log(al * (1 - b) + be) - mpmath.log(be)) / al
             return mpmath.mpc(-mpmath.quad(inner, [0, 1]))
-        return +_C0_unequal(s, ma, mb, mc)
+        try:
+            return +_C0_unequal(s, ma, mb, mc)
+        except ZeroDivisionError:
+            pass
+        try:   # C0(0,0,s; m1,m2,m3) is symmetric under m1 <-> m3
+            return +_C0_unequal(s, mc, mb, ma)
+        except ZeroDivisionError:
+            pass
+        # an intermediate of the dilogarithm form vanishes at this regular point:
+        # C0 is analytic in s here, so average s(1 +- d) (error O(d^2))
+        wp = mpmath.mp.dps
+        with mpmath.workdps(3 * wp):
+            d = s * mpmath.mpf(10)**(-(wp + 5))
+            v = (_C0_unequal(s + d, ma, mb, mc) + _C0_unequal(s - d, ma, mb, mc)) / 2
+        return +v
 
 
 # ---------------------------------------------------------------------------
 #  Bubble in D = 3
 # ---------------------------------------------------------------------------
 
-def bubble_3d(p2, m1sq, m2sq, dps=None):
+def _bubble_3d_kernel(p2, m1sq, m2sq, dps=None):
     """
     Finite D = 3 bubble  Gamma(1/2) Int_0^1 dx (Delta(x) - i0)^(-1/2)
     (measure d^3q / (i pi^(3/2)), propagators 1/(q^2 - m^2)).
@@ -281,10 +305,81 @@ def bubble_3d(p2, m1sq, m2sq, dps=None):
             return mpmath.mpc(pref * 2 / M)
         if p2 < 0:
             Q = mpmath.sqrt(-p2)
+            if M == 0:
+                return mpmath.mpc(pref * mpmath.pi / Q)
             return mpmath.mpc(pref * 2 / Q * mpmath.atan(Q / M))
+        if M == 0:
+            return mpmath.mpc(0, pref * mpmath.pi / mpmath.sqrt(p2))
         k = mpmath.sqrt(p2)
         if k < M:
             return mpmath.mpc(pref * 2 / k * mpmath.atanh(k / M))
         if k == M:
             raise ValueError("bubble_3d is singular exactly at threshold p2 = (m1 + m2)^2")
         return +mpmath.mpc(pref * 2 / k * mpmath.log((k + M) / (k - M)) / 2, pref * mpmath.pi / k)
+
+
+# ---------------------------------------------------------------------------
+#  certified public functions
+# ---------------------------------------------------------------------------
+
+def _certified(kernel, *args, dps=None, **kw):
+    """Evaluate kernel at increasing working precision until two consecutive
+    results agree to the requested digits."""
+    dps = dps if dps is not None else mpmath.mp.dps
+    wp = dps + 10
+    prev = kernel(*args, dps=wp, **kw)
+    for _ in range(14):
+        wp2 = wp + max(20, wp // 2)
+        cur = kernel(*args, dps=wp2, **kw)
+        with mpmath.workdps(wp2):
+            if (cur == 0 and prev == 0) or abs(cur - prev) <= mpmath.mpf(10)**(-(dps + 2)) * abs(cur):
+                with mpmath.workdps(dps):
+                    return +cur
+        prev, wp = cur, wp2
+    raise ArithmeticError(f"{kernel.__name__}: could not certify {dps} digits (working precision {wp})")
+
+
+def B0(p2, m1sq, m2sq, mu2=1, delta=0, dps=None):
+    """
+    Finite part (plus ``delta`` times the pole) of the scalar two-point function.
+
+    Parameters
+    ----------
+    p2 : real
+        External momentum squared (Minkowski metric, p2 > 0 is time-like).
+    m1sq, m2sq : real >= 0
+        Internal squared masses.
+    mu2 : real > 0
+        Renormalisation scale squared.
+    delta : real
+        Value assigned to the UV divergence ``1/eps - gamma_E + log 4pi``.
+    dps : int, optional
+        Decimal digits requested (default: ``mpmath.mp.dps``).
+
+    Returns
+    -------
+    mpmath.mpc
+    """
+    return _certified(_B0_kernel, p2, m1sq, m2sq, mu2=mu2, delta=delta, dps=dps)
+
+
+def B0_mob(p2, msq, mu2=1, delta=0, dps=None):
+    return _certified(_B0_mob_kernel, p2, msq, mu2=mu2, delta=delta, dps=dps)
+
+
+def C0_mob(s, msq, dps=None):
+    return _certified(_C0_mob_kernel, s, msq, dps=dps)
+
+
+def C0(s, m1sq, m2sq, m3sq, dps=None):
+    return _certified(_C0_kernel, s, m1sq, m2sq, m3sq, dps=dps)
+
+
+def bubble_3d(p2, m1sq, m2sq, dps=None):
+    return _certified(_bubble_3d_kernel, p2, m1sq, m2sq, dps=dps)
+
+
+for _pub, _ker in ((B0_mob, _B0_mob_kernel), (C0_mob, _C0_mob_kernel), (C0, _C0_kernel),
+                   (bubble_3d, _bubble_3d_kernel)):
+    _pub.__doc__ = _ker.__doc__
+del _pub, _ker

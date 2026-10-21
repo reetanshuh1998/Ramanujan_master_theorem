@@ -55,11 +55,11 @@ def ramanujan_master_theorem(phi, s, dps=None):
 def mellin_numeric(f, s, dps=None):
     """
     Numerical Mellin transform Int_0^oo x^(s-1) f(x) dx, intended for cross-checks
-    of non-oscillatory f with Re s > 0, f regular at 0 and power-law (or faster)
-    decay at infinity.
+    of non-oscillatory f with power-law behaviour x^p0 at 0 and power-law (or
+    faster) decay at infinity.
 
     Algebraic endpoint behaviour is removed by substitution before tanh-sinh
-    quadrature: x = y^(1/sigma) on [0, 1] (sigma = Re s), and x = y^(-1/c) on
+    quadrature: x = y^(1/sigma) on [0, 1] (sigma = Re s + p0), and x = y^(-1/c) on
     [1, oo), where c = a - sigma is estimated from the decay f(x) ~ x^(-a) at large x
     (sampled over several decades). Raises ValueError when the decay estimate is
     inconsistent or insufficient, and ArithmeticError when the quadrature error
@@ -71,7 +71,19 @@ def mellin_numeric(f, s, dps=None):
         if sig <= 0:
             raise ValueError("mellin_numeric requires Re(s) > 0")
         tol = mpmath.mpf(10)**(-(mpmath.mp.dps // 2))
-        inner, e1 = mpmath.quad(lambda y: y**(s / sig - 1) * f(y**(1 / sig)) / sig if y > 0 else 0,
+        # leading behaviour f(x) ~ x^p0 at x -> 0, from samples over several decades
+        Y = [mpmath.mpf(10)**(-k) for k in (4, 6, 8, 10, 12)]
+        fy = [abs(f(y)) for y in Y]
+        if any(v == 0 for v in fy):
+            raise ValueError("cannot estimate the behaviour of f at x -> 0 (zeros at sample points)")
+        sl = [mpmath.log(fy[i + 1] / fy[i]) / mpmath.log(Y[i + 1] / Y[i]) for i in range(len(Y) - 1)]
+        if max(sl) - min(sl) > mpmath.mpf("0.05") * max(1, abs(sl[-1])):
+            raise ValueError("f is not in its power-law regime for x in [1e-12, 1e-4]")
+        p0 = mpmath.nint(sl[-1] * 1000) / 1000      # snap to the nearest 1e-3
+        sig0 = sig + p0
+        if sig0 <= mpmath.mpf("0.01"):
+            raise ValueError("the Mellin integral diverges (or nearly so) at x = 0 for this s")
+        inner, e1 = mpmath.quad(lambda y: y**(s / sig0 - 1) * f(y**(1 / sig0)) / sig0 if y > 0 else 0,
                                 [0, 1], error=True)
 
         X = [mpmath.mpf(10)**k for k in (4, 6, 8, 10, 12)]
@@ -112,5 +124,7 @@ def massive_propagator_rmt(msq, D, dps=None):
     """
     with mpmath.workdps(dps if dps is not None else mpmath.mp.dps):
         m2, D = mpmath.mpf(msq), mpmath.mpmathify(D)
+        if not m2 > 0:
+            raise ValueError("msq must be positive")
         phi = lambda n: mpmath.gamma(n + 1) / m2**(n + 1)
         return ramanujan_master_theorem(phi, D / 2)

@@ -123,7 +123,8 @@ class HypergeometricConvergenceFilter:
             except Exception:
                 return mpmath.mpf(0)
 
-        method = 'euler-maclaurin' if conv['converges'] else 'levin'
+        # term() is defined on integers only, so use integer-sampling methods
+        method = 'r+s' if conv['converges'] else 'levin'
         result = mpmath.nsum(term, [0, mpmath.inf], method=method)
 
         pf = mpmath.mpc(prefactor.real, prefactor.imag) if isinstance(prefactor, complex) else mpmath.mpf(str(prefactor))

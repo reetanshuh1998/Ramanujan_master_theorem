@@ -43,7 +43,9 @@ class DispersionMoBEngine:
                 raise ValueError("evaluate off the threshold point")
             else:
                 hs = h(s)
-                near = mpmath.quad(lambda t: (h(t) - hs) / (t - s), [th, s, 2 * s - th])
+                e = s * mpmath.mpf(10)**(-(mpmath.mp.dps // 2))
+                dh = (h(s + e) - h(s - e)) / (2 * e) if s - e > th else mpmath.mpf(0)
+                near = mpmath.quad(lambda t: dh if t == s else (h(t) - hs) / (t - s), [th, s, 2 * s - th])
                 far = mpmath.quad(lambda t: h(t) / (t - s), [2 * s - th, mpmath.inf])
                 disp = (near + far) / mpmath.pi
                 im = hs

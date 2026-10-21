@@ -1,5 +1,5 @@
 """
-Product integrals by Mellin residue summation, compared with SciPy.
+Product integrals by Mellin residue summation (accuracy and timing against exact values).
 
 Int_0^oo e^(-x) J0(w x) dx = 1/sqrt(1 + w^2). For large w the integrand oscillates
 w/(2 pi) times per unit length, so adaptive quadrature needs ~w subintervals,

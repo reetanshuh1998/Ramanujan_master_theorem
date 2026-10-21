@@ -48,10 +48,11 @@ def test_weber_schafheitlin(f, g, exact):
 
 
 def test_bessel_times_bessel_continuous_case():
-    # Int J0(x) J0(2x) dx = (2/(pi*3)) K(4/9)  [Gradshteyn-Ryzhik 6.512.1 with a=1, b=2]
+    # Int J0(ax) J0(bx) dx = 2/(pi(a+b)) K(k), k = 2 sqrt(ab)/(a+b)  [GR 6.512.1];
+    # a=1, b=2: (2/(3 pi)) K(m = k^2 = 8/9)   (mpmath.ellipk takes the parameter m)
     v = product_integral(bessel_j(0, 1), bessel_j(0, 2))
-    exact = mp.quadosc(lambda x: mp.besselj(0, x) * mp.besselj(0, 2 * x), [0, mp.inf], omega=1)
-    assert rel(v, exact) < 1e-10
+    exact = 2 / (3 * mp.pi) * mp.ellipk(mp.mpf(8) / 9)
+    assert rel(v, exact) < 1e-13
 
 
 # --- cancellation, near collisions, tiny values, complex s ---------------------------
@@ -135,9 +136,15 @@ def test_boundary_raises_quickly(f, g):
     assert time.perf_counter() - t < 2
 
 
-def test_near_boundary_uses_acceleration():
-    v, info = product_integral(exponential(1), bessel_j(0, 1.05), return_info=True)
+def test_near_boundary():
+    v = product_integral(exponential(1), bessel_j(0, 1.05))
     assert rel(v, 1 / mp.sqrt(1 + mp.mpf(1.05)**2)) < 1e-13
+
+
+def test_wynn_acceleration_alternating():
+    # e^-x cos(1.02 x): rho = 1/1.02, alternating residue series -> Wynn epsilon
+    v, info = product_integral(exponential(1), cosine(1.02), return_info=True)
+    assert rel(v, 1 / (1 + mp.mpf(1.02)**2)) < 1e-13
 
 
 def test_log_case_fast():
