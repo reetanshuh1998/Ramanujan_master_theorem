@@ -31,6 +31,15 @@ def ramanujan_master_theorem(phi, s, dps=None):
     s : number
         Mellin variable, inside the fundamental strip of the integral.
 
+    Notes
+    -----
+    The theorem holds only for the continuation of phi that satisfies Hardy's
+    growth condition (|phi(v)| <= C e^(P Re v + A |Im v|) with A < pi, for Re v
+    > -delta). A function agreeing with phi on the integers but growing faster
+    (e.g. phi(v) + sin(pi v)) gives a wrong result, and no implementation can
+    detect this from a black-box callable. See Amdeberhan et al., Ramanujan J.
+    29 (2012) 103, Theorem 1.2.
+
     Examples
     --------
     >>> import mpmath
@@ -45,30 +54,50 @@ def ramanujan_master_theorem(phi, s, dps=None):
 
 def mellin_numeric(f, s, dps=None):
     """
-    Numerical Mellin transform Int_0^oo x^(s-1) f(x) dx (for cross-checks of
-    non-oscillatory f, Re s > 0, f regular at 0).
+    Numerical Mellin transform Int_0^oo x^(s-1) f(x) dx, intended for cross-checks
+    of non-oscillatory f with Re s > 0, f regular at 0 and power-law (or faster)
+    decay at infinity.
 
     Algebraic endpoint behaviour is removed by substitution before tanh-sinh
     quadrature: x = y^(1/sigma) on [0, 1] (sigma = Re s), and x = y^(-1/c) on
-    [1, oo), where c = a - sigma is estimated from the power-law decay
-    f(x) ~ x^(-a) at large x.
+    [1, oo), where c = a - sigma is estimated from the decay f(x) ~ x^(-a) at large x
+    (sampled over several decades). Raises ValueError when the decay estimate is
+    inconsistent or insufficient, and ArithmeticError when the quadrature error
+    estimate does not reach about half of the working digits.
     """
     with mpmath.workdps(dps if dps is not None else mpmath.mp.dps):
         s = mpmath.mpmathify(s)
         sig = mpmath.re(s)
         if sig <= 0:
             raise ValueError("mellin_numeric requires Re(s) > 0")
-        inner = mpmath.quad(lambda y: y**(s / sig - 1) * f(y**(1 / sig)) / sig if y > 0 else 0, [0, 1])
+        tol = mpmath.mpf(10)**(-(mpmath.mp.dps // 2))
+        inner, e1 = mpmath.quad(lambda y: y**(s / sig - 1) * f(y**(1 / sig)) / sig if y > 0 else 0,
+                                [0, 1], error=True)
 
-        X1, X2 = mpmath.mpf(10)**6, mpmath.mpf(10)**8
-        f1, f2 = abs(f(X1)), abs(f(X2))
-        a = mpmath.inf if f2 == 0 or f1 == 0 else -mpmath.log(f2 / f1) / mpmath.log(X2 / X1)
+        X = [mpmath.mpf(10)**k for k in (4, 6, 8, 10, 12)]
+        vals = [abs(f(x)) for x in X]
+        if all(v == 0 for v in vals[1:]):
+            a = mpmath.inf                     # faster than any power
+        else:
+            if any(v == 0 for v in vals):
+                raise ValueError("cannot estimate the decay of f at infinity (zeros at sample points)")
+            slopes = [-mpmath.log(vals[i + 1] / vals[i]) / mpmath.log(X[i + 1] / X[i]) for i in range(len(X) - 1)]
+            if min(slopes) > 20:
+                a = mpmath.inf                 # decays faster than x^-20 over the whole range
+            elif max(slopes) - min(slopes) > mpmath.mpf("0.05") * max(1, abs(slopes[-1])):
+                raise ValueError("f is not in its power-law regime for x in [1e4, 1e12]; decay estimate unreliable")
+            else:
+                a = slopes[-1]
         c = a - sig
-        if c <= 0:
-            raise ValueError("the Mellin integral diverges at infinity for this s")
+        if c <= mpmath.mpf("0.01"):
+            raise ValueError("the Mellin integral diverges (or nearly so) at infinity for this s")
         c = min(c, mpmath.mpf(1))
-        outer = mpmath.quad(lambda y: y**((-s - 1) / c + 1 / c - 1) * f(y**(-1 / c)) / c if y > 0 else 0, [0, 1])
-        return inner + outer
+        outer, e2 = mpmath.quad(lambda y: y**((-s - 1) / c + 1 / c - 1) * f(y**(-1 / c)) / c if y > 0 else 0,
+                                [0, 1], error=True)
+        val = inner + outer
+        if e1 + e2 > tol * max(abs(val), tol):
+            raise ArithmeticError(f"quadrature did not converge (error estimate {mpmath.nstr(e1 + e2, 3)})")
+        return val
 
 
 def massive_propagator_rmt(msq, D, dps=None):
