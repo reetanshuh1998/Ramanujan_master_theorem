@@ -3,26 +3,48 @@
 The aim of this page is an accurate map, so you can pick the right tool for a
 job. Measured numbers are from `benchmarks/` on one Linux machine, Python 3.13.
 
-## 1. Product integrals over (0, ∞): RMT / Mellin residues vs quadrature
+## 1. Product integrals over (0, ∞): Mellin residues vs the alternatives
+
+RACE (`product_integral`) implements the classical Mellin-convolution /
+Meijer-G residue method. See [PRIOR_ART.md](PRIOR_ART.md) for Marichev,
+Adamchik–Marichev, Slater, Fikioris, SymPy `meijerint` and mpmath `meijerg`.
 
 | Tool | Approach | Strength | Weakness |
 |------|----------|----------|----------|
-| SciPy `quad` (QUADPACK) | adaptive Gauss–Kronrod, double precision | fast, general | cost grows with the number of oscillations; tolerance-limited |
-| mpmath `quad` / `quadosc` | tanh-sinh / Gauss–Legendre, arbitrary precision | general, high precision | slow for oscillatory or slowly decaying integrands |
-| Mathematica `NIntegrate` / `Integrate`, Wolfram Alpha | numeric strategies + symbolic closed forms | broad coverage | proprietary; closed forms not always available |
-| **ramanujan-qft `product_integral`** | Mellin–Parseval, residues = Taylor / asymptotic coefficients (RMT) | converges *faster* as oscillation increases; arbitrary precision; handles log-producing pole collisions | only for factors in the Mellin atlas; fails (with an exception) near the convergence boundary k ≈ b |
+| closed form (SymPy `integrate`/`meijerint`, Mathematica, tables) | symbolic Mellin convolution of G-functions | exact; evaluation takes µs | not every product has a closed form |
+| mpmath `meijerg` | Slater residue series of a G-function | arbitrary precision, both expansions | requires the G-function representation |
+| SciPy `quad` (QUADPACK, QAWO/QAWF) | adaptive quadrature, Fourier weights | fast, general, double precision | loses digits on oscillatory, cancelling integrands |
+| Ooura–Mori, Ogata double-exponential | DE quadrature for Fourier / Hankel integrals | fast and robust in double precision | needs node tables; slower at high precision |
+| mpmath `quadosc` | oscillatory quadrature, arbitrary precision | general | slow |
+| **ramanujan-qft `product_integral`** | numerical Mellin residue summation with validity check, cancellation control and honest refusal | arbitrary precision; cost nearly independent of the oscillation frequency; three-factor products without closed forms | only atlas factors; raises at the convergence boundary (e.g. e^(−x) J₀(x)); slower than closed forms |
 
-Measured on ∫ e^(-x) J₀(w x) dx (exact 1/√(1+w²)):
+Measured at 30 digits (`benchmarks/bench_fair.py`; relative error, best-of-3 time):
 
-| w | ramanujan-qft | SciPy quad (properly configured) |
-|---|---------------|----------------------------------|
-| 10 | exact, 2.0 ms | 4e-10, 0.3 ms |
-| 10³ | exact, 1.6 ms | 2e-6, 17 ms |
-| 10⁵ | exact, 1.7 ms | 2e-5, 2.7 s |
+| integral | RACE | closed form (mpmath) | mpmath.quadosc |
+|---|---|---|---|
+| e^(−x) J₀(3x) | exact, 5.1 ms | exact, 0.010 ms | exact, 905 ms |
+| e^(−x) J₀(10³x) | exact, 1.1 ms | exact, 0.012 ms | exact, 1618 ms |
+| e^(−x) J₀(10⁶x) | exact, 0.8 ms | exact, 0.010 ms | — |
+| e^(−x) cos(10⁶x) | exact, 0.6 ms | exact, 0.006 ms | — |
+| e^(−2x) e^(−x²/2) J₁(x) (no closed form) | 7e-35, 6.5 ms | — | exact, 1.6 s |
+| e^(−2x) e^(−x²/2) J₁(100x) (no closed form) | 6e-33, 6.2 ms | — | exact, 4.3 s |
 
-This regime (large oscillation parameter, or many digits) is where the
-Ramanujan approach gives a real advantage. For smooth, non-oscillatory
-integrands, use SciPy.
+A wider audit benchmark (double precision, with QUADPACK QAWO/QAWF,
+Ooura–Mori, Ogata, Levin and contour rotation) found:
+
+* RACE is **never the fastest at 15 digits**. Compiled double-precision methods
+  take 5–300 µs, against RACE's milliseconds.
+* Closed forms are 100–40,000× faster wherever they exist.
+* At 30 digits, RACE beats every general-purpose alternative measured, by 2–30×
+  over the best (Ogata DE in mpmath, after an 83 s table build). This is
+  clearest for three-factor products that have no closed form.
+* Fourier-weighted quadrature loses digits on e^(−x)cos(bx) at large b, where the
+  value ~1/b² cancels. RACE and contour rotation do not.
+
+**Honest positioning:** a reliable arbitrary-precision evaluator for products of
+atlas functions, most useful where no closed form exists. It is not faster than
+symbolic integration where a closed form exists, and the method itself is
+classical.
 
 ## 2. One-loop Feynman integrals
 

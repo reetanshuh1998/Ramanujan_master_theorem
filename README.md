@@ -8,39 +8,50 @@ f(x) = Σ φ(n) (-x)ⁿ / n!     ⟹     ∫₀^∞ x^(s-1) f(x) dx = Γ(s) φ(-
 ```
 
 Ramanujan's Master Theorem (RMT) turns an integral into an evaluation of
-Taylor coefficients. This library uses it in three ways:
+Taylor coefficients. This library implements **classical** methods built on
+it, in pure Python, at arbitrary precision, and with explicit convergence
+control:
 
 1. **`rmt`**: the theorem itself, with a numerical Mellin transform to check
    every use.
-2. **`mellin.product_integral`**: ∫ x^(s-1) f(x) g(x) dx as a residue series.
-   The residues are exactly the Taylor (and asymptotic) coefficients of f and g.
-   For oscillatory integrands the series converges *faster* as the oscillation
-   grows, which is where ordinary quadrature struggles.
-3. **Feynman integrals** whose Method-of-Brackets (MoB) representation is
-   known in closed form: one-loop B0 and C0, the D=3 bubble, and the
+2. **`mellin.product_integral`**: ∫ x^(s-1) f(x) g(x) dx as a residue series,
+   using the Mellin-convolution (Meijer-G / Slater) method of Marichev and others.
+   Before summing, it checks which expansion legitimately closes the contour.
+   It compensates cancellation by raising the working precision, and it raises
+   an error rather than return a number it cannot certify.
+3. **Feynman integrals** with known hypergeometric or dispersive
+   representations: one-loop B0 and C0, the D=3 bubble, and the
    scheme-independent part of the two-loop sunset. Available at any precision,
    and checked against LoopTools.
 
-## Why it was needed
+**Originality.** The methods are not new. [docs/PRIOR_ART.md](docs/PRIOR_ART.md)
+credits the earlier work (Hardy, Marichev, Adamchik–Marichev, Slater,
+Gonzalez–Moll–Schmidt, Prausa, Ananthanarayan–Banik–Friot–Ghosh, SymPy,
+mpmath, …). The contribution here is a careful, tested, open implementation.
+
+*Dedicated to the memory of Srinivasa Ramanujan.*
+
+## Why it can be useful
 
 * **Precision.** Standard one-loop libraries work in double (sometimes
   quadruple) precision. Validating them, or evaluating expressions with large
   cancellations, needs reference values with 30–100 digits.
-* **Transparency.** MoB/RMT gives each integral as an explicit hypergeometric
-  series, for example B0 = Δ − log(m²/μ²) + (2w/3)·₂F₁(1,1;5/2;w) with
-  w = p²/4m². The analytic structure, thresholds included, is visible and
-  testable.
-* **Oscillatory integrals.** For ∫ e^(-x) J₀(wx) dx at w = 10⁵, the residue
-  series is exact in 1.7 ms. SciPy's adaptive quadrature needs 2.7 s and is
-  accurate to 2×10⁻⁵.
+* **Transparency.** Each integral is an explicit hypergeometric series, for
+  example B0 = Δ − log(m²/μ²) + (2w/3)·₂F₁(1,1;5/2;w) with w = p²/4m². The
+  analytic structure, thresholds included, is visible and testable.
+* **Oscillatory products without closed forms, at high precision.** At 30
+  digits, ∫ e^(−2x) e^(−x²/2) J₁(100x) dx takes 6 ms. `mpmath.quadosc` takes
+  4.3 s. See [docs/COMPARISON.md](docs/COMPARISON.md) for the fair benchmark;
+  where a closed form exists, SymPy/Mathematica plus mpmath is faster.
 
 ## What it is not
 
 It is **not** a faster replacement for LoopTools, COLLIER, pySecDec, FIESTA,
 AMFlow or TSIL. Compiled one-loop libraries are about 100× faster at double
-precision, and general multi-loop integrals are beyond the current scope. See
-[docs/COMPARISON.md](docs/COMPARISON.md) for an honest map of the field, and
-[AUDIT.md](AUDIT.md) for the validation of earlier claims.
+precision. Closed-form symbolic integration (SymPy `meijerint`, Mathematica) is
+faster wherever it applies, and general multi-loop integrals are beyond the
+current scope. See [docs/COMPARISON.md](docs/COMPARISON.md) and
+[AUDIT.md](AUDIT.md).
 
 ## Install
 
@@ -61,6 +72,8 @@ ramanujan_master_theorem(lambda n: mp.gamma(3 + n) / 2, 1.25)     # = B(1.25, 1.
 
 # Oscillatory product integral by Mellin residues: ∫ e^(-x) J0(1e5 x) dx
 product_integral(exponential(1), bessel_j(0, 1e5), dps=30)
+# ... refuses (SeriesConvergenceError) at the convergence boundary e^(-x) J0(x),
+# and raises ValueError for divergent integrals such as ∫ cos(x) cos(2x) dx
 
 # One-loop integrals, LoopTools conventions (Δ = 0, μ² = 1 by default)
 B0(5, 1, 1)                 # (1.5695910590 + 1.4049629462j)   = LoopTools
@@ -86,7 +99,7 @@ More in [`examples/`](examples/):
 | `rmt` | `ramanujan_master_theorem(phi, s)` | Γ(s)·φ(−s) | numerical Mellin transforms, DLMF |
 | | `mellin_numeric(f, s)` | numerical Mellin transform | — |
 | | `massive_propagator_rmt(m², D)` | ∫dq² (q²)^(D/2−1)/(q²+m²) | closed form, quadrature |
-| `mellin` | `product_integral(f, g, s)` | Mellin residue summation, both expansions, pole collisions | closed forms, mpmath quadrature |
+| `mellin` | `product_integral(f, g, s)` | Mellin residue summation: validity check of the contour closure, existence check, cancellation-compensated precision, pole collisions | closed forms (DLMF, Gradshteyn–Ryzhik), quadrature; adversarial audit |
 | | atlas: `exponential, gaussian, bessel_j, cosine, sine, inverse_power, gaussian_bessel` | Mellin data of each factor | |
 | `one_loop` | `B0(p², m1², m2², mu2, delta)` | two-point function, all masses | LoopTools, independent quadrature |
 | | `B0_mob(p², m²)` | equal-mass MoB ₂F₁ series, continued across threshold | `B0` to 50 digits |
