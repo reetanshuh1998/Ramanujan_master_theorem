@@ -21,7 +21,7 @@ control:
    an error rather than return a number it cannot certify.
 3. **Feynman integrals** with known hypergeometric or dispersive
    representations: one-loop B0 and C0, the D=3 bubble, and the
-   scheme-independent part of the two-loop sunset. Available at any precision,
+   scheme-independent part of the two-loop sunset. Results are certified to the requested precision,
    and checked against LoopTools.
 
 **Originality.** The methods are not new. [docs/PRIOR_ART.md](docs/PRIOR_ART.md)
@@ -79,7 +79,7 @@ product_integral(exponential(1), bessel_j(0, 1e5), dps=30)
 B0(5, 1, 1)                 # (1.5695910590 + 1.4049629462j)   = LoopTools
 C0(10, 1, 2, 3, dps=50)     # C0(0,0,s; m1², m2², m3²) to 50 digits
 
-# Two-loop sunset: exact imaginary part
+# Two-loop sunset: imaginary part (certified)
 sunset_im(100, 1, 2, 3)     # -88.1849955516
 ```
 
@@ -103,7 +103,7 @@ More in [`examples/`](examples/):
 | | atlas: `exponential, gaussian, bessel_j, cosine, sine, inverse_power, gaussian_bessel` | Mellin data of each factor | |
 | `one_loop` | `B0(p², m1², m2², mu2, delta)` | two-point function, all masses | LoopTools, independent quadrature |
 | | `B0_mob(p², m²)` | equal-mass MoB ₂F₁ series, continued across threshold | `B0` to 50 digits |
-| | `C0(s, m1², m2², m3²)` | C0(0,0,s; m1², m2², m3²), non-zero masses | LoopTools, independent quadrature |
+| | `C0(s, m1², m2², m3²)` | C0(0,0,s; m1², m2², m3²); massless lines allowed when IR finite | LoopTools, independent quadrature |
 | | `C0_mob(s, m²)` | equal-mass closed MoB form | arcsin² identity, `C0` |
 | | `bubble_3d(p², m1², m2²)` | finite D=3 bubble | quadrature with −i0 |
 | `sunset` | `sunset_im`, `sunset_subtracted`, `sunset_d2` | Im S, S(s)−S(0)−sS′(0), S″(s) | 2-D Feynman-parameter integrals |
@@ -122,8 +122,8 @@ explanation (see [CHANGELOG.md](CHANGELOG.md)).
 ## Validation
 
 ```bash
-pytest -m "not slow"     # 238 tests, ~20 s
-pytest                   # 250 tests, + independent 2-D Feynman-parameter checks, ~3 min
+pytest -m "not slow"     # 273 tests, ~20 s
+pytest                   # 296 tests, + independent Feynman-parameter / closed-form checks, ~10 min
 bash benchmarks/looptools/compare_looptools.sh   # builds LoopTools (gfortran) and compares
 python benchmarks/bench_fair.py      # RACE vs closed forms and mpmath.quadosc at 30 digits
 ```

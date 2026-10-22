@@ -103,8 +103,8 @@ def _m(x):
 
 def _positive(name, value):
     v = _m(value)
-    if not (mpmath.im(v) == 0 and v > 0):
-        raise ValueError(f"{name} must be real and positive, got {value!r}")
+    if not (mpmath.im(v) == 0 and mpmath.isfinite(v) and v > 0):
+        raise ValueError(f"{name} must be real, finite and positive, got {value!r}")
 
 
 def exponential(k):
@@ -476,6 +476,8 @@ def product_integral(f, g, s=1, dps=None, tol=None, max_terms=4000, return_info=
     dps = dps if dps is not None else mpmath.mp.dps
     max_dps = max_dps if max_dps is not None else max(20 * dps, 1000)
     tol_ = mpmath.mpf(tol) if tol is not None else mpmath.mpf(10)**(-dps)
+    if not mpmath.isfinite(mpmath.mpmathify(s)):
+        raise ValueError(f"s must be finite, got {s!r}")
     with mpmath.workdps(max(dps + 15, _input_dps(f, g, s) + 10)):
         s = mpmath.mpmathify(s)
         lo, hi = _strip(f, g)

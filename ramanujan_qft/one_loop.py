@@ -10,7 +10,8 @@ with D = 4 - 2 eps. The UV pole is returned through the parameter ``delta``
 (LoopTools' ``Delta = 1/eps - gamma_E + log(4 pi)``); the default ``delta=0``
 reproduces LoopTools' default output.
 
-    C0(0, 0, s; m1sq, m2sq, m3sq)  -- UV and IR finite for non-zero masses.
+    C0(0, 0, s; m1sq, m2sq, m3sq)  -- UV finite; IR finite unless m1 = m2 = 0 or m2 = m3 = 0
+                                      (and, at s = 0, unless two masses vanish).
 
 All internal masses are *squared* masses. The Feynman ``+i0`` prescription is
 implemented exactly (no small numerical imaginary parts).
@@ -46,7 +47,14 @@ def _xlogabs(x):
     return mpmath.mpf(0) if x == 0 else x * mpmath.log(abs(x))
 
 
+def _check_finite(*vals):
+    for v in vals:
+        if not mpmath.isfinite(v):
+            raise ValueError(f"inputs must be finite, got {v}")
+
+
 def _check_masses(*msq):
+    _check_finite(*msq)
     for m in msq:
         if m < 0:
             raise ValueError(f"squared masses must be non-negative, got {m}")
@@ -118,6 +126,7 @@ def _B0_kernel(p2, m1sq, m2sq, mu2=1, delta=0, dps=None):
         p2, m1, m2 = (mpmath.mpf(x) for x in (p2, m1sq, m2sq))
         mu2, delta = mpmath.mpf(mu2), mpmath.mpf(delta)
         _check_masses(m1, m2)
+        _check_finite(p2, mu2, delta)
         if not mu2 > 0:
             raise ValueError("mu2 must be positive")
         if p2 == 0 and m1 == 0 and m2 == 0:
@@ -143,6 +152,7 @@ def _B0_mob_kernel(p2, msq, mu2=1, delta=0, dps=None):
     with _prec(dps):
         p2, m = mpmath.mpf(p2), mpmath.mpf(msq)
         mu2, delta = mpmath.mpf(mu2), mpmath.mpf(delta)
+        _check_finite(p2, m, mu2, delta)
         if m <= 0:
             raise ValueError("B0_mob requires a positive mass")
         if not mu2 > 0:
@@ -180,6 +190,7 @@ def _C0_mob_kernel(s, msq, dps=None):
     """
     with _prec(dps):
         s, m = mpmath.mpf(s), mpmath.mpf(msq)
+        _check_finite(s, m)
         if m <= 0:
             raise ValueError("C0_mob requires a positive mass")
         if s == 0:
@@ -225,17 +236,47 @@ def _C0_unequal(s, ma, mb, mc):
     else:
         y4 = ctop / y3
     res += _Li2(y1 / y3) + _Li2(y1 / y4) - _Li2(y2 / y3) - _Li2(y2 / y4)
+    return res.real / p1
 
-    # Imaginary part: exact residue at the roots of s x^2 + (m1 - m2 - s) x + m2
-    im = mpmath.mpf(0)
-    bq = m1 - m2 - s
-    dq = bq * bq - 4 * s * m2
-    if dq > 0:
-        sq = mpmath.sqrt(dq)
-        xp, xm = (-bq + sq) / (2 * s), (-bq - sq) / (2 * s)
-        if 0 < xp < 1 and 0 < xm < 1:
-            im = -(mpmath.pi / s) * mpmath.log(abs((m2 - m3 - s * xp) / (m2 - m3 - s * xm)))
-    return mpmath.mpc(res.real / p1, im)
+
+def _C0_im(s, m1, m2, m3):
+    """
+    Im C0(0,0,s; m1,m2,m3) (LoopTools mass order), from the Feynman-parameter form
+    C0 = -Int_0^1 db [log(top(b) - i0) - log(beta(b))] / alpha(b), with
+    alpha = m1 - m2 - b s, beta = (1-b) m2 + b m3, top = s b^2 - (s + m1 - m3) b + m1:
+    Im C0 = pi Int db theta(-top)/alpha = -(pi/s) log|alpha(b+)/alpha(b-)|,
+    b- < b+ the roots of top, clipped to [0, 1].
+    """
+    if s <= 0:
+        return mpmath.mpf(0)
+    B = -(s + m1 - m3)
+    disc = B * B - 4 * s * m1
+    if disc <= 0:
+        return mpmath.mpf(0)
+    sq = mpmath.sqrt(disc)
+    q = -(B - sq) / 2 if B < 0 else -(B + sq) / 2          # stable roots
+    r1 = q / s
+    r2 = m1 / q if q != 0 else -B / s - r1
+    lo, hi = max(min(r1, r2), mpmath.mpf(0)), min(max(r1, r2), mpmath.mpf(1))
+    if hi <= lo:
+        return mpmath.mpf(0)
+    alpha = lambda b: m1 - m2 - b * s
+    return -(mpmath.pi / s) * (mpmath.log(abs(alpha(hi))) - mpmath.log(abs(alpha(lo))))
+
+
+def _C0_s0(a, b, c):
+    """C0(0,0,0; a,b,c) = -f[a,b,c], the second divided difference of f(m) = m log m."""
+    f = _xlogabs
+    df = lambda m: mpmath.log(m) + 1
+    if a == b == c:
+        return -1 / (2 * a)
+    if a == b or b == c or a == c:
+        x, y = (a, c) if a == b else ((b, a) if b == c else (a, b))   # x is the repeated mass
+        if x == 0:
+            raise ValueError("C0(0,0,0) with two vanishing internal masses is IR divergent")
+        f_xy = (f(y) - f(x)) / (y - x)
+        return -(f_xy - df(x)) / (y - x)
+    return -(f(a) / ((a - b) * (a - c)) + f(b) / ((b - a) * (b - c)) + f(c) / ((c - a) * (c - b)))
 
 
 def _C0_kernel(s, m1sq, m2sq, m3sq, dps=None):
@@ -250,33 +291,26 @@ def _C0_kernel(s, m1sq, m2sq, m3sq, dps=None):
         s = mpmath.mpf(s)
         ma, mb, mc = (mpmath.mpf(x) for x in (m1sq, m2sq, m3sq))
         _check_masses(ma, mb, mc)
-        if min(ma, mb, mc) == 0:
-            raise ValueError("C0(0,0,s) with a vanishing internal mass is IR divergent; not supported")
+        _check_finite(s)
+        if (ma == 0 and mb == 0) or (mb == 0 and mc == 0):
+            raise ValueError("C0(0,0,s) with m1 = m2 = 0 or m2 = m3 = 0 is IR (collinear) divergent")
         if ma == mb == mc:
             return _C0_mob_kernel(s, ma, dps=mpmath.mp.dps)
         if s == 0:
-            # C0(0,0,0) = -Int dx dy 1/(x1 ma + x2 mb + x3 mc): elementary closed form
-            # via divided differences of m log m; use a regular 1-D integral for safety.
-            def inner(b):
-                al = ma - mb
-                be = (1 - b) * mb + b * mc
-                return (1 - b) / be if al == 0 else (mpmath.log(al * (1 - b) + be) - mpmath.log(be)) / al
-            return mpmath.mpc(-mpmath.quad(inner, [0, 1]))
-        try:
-            return +_C0_unequal(s, ma, mb, mc)
-        except ZeroDivisionError:
-            pass
-        try:   # C0(0,0,s; m1,m2,m3) is symmetric under m1 <-> m3
-            return +_C0_unequal(s, mc, mb, ma)
-        except ZeroDivisionError:
-            pass
+            return mpmath.mpc(_C0_s0(ma, mb, mc))
+        im = _C0_im(s, ma, mb, mc)
+        for args in ((ma, mb, mc), (mc, mb, ma)):    # C0 is symmetric under m1 <-> m3
+            try:
+                return mpmath.mpc(_C0_unequal(s, *args), im)
+            except ZeroDivisionError:
+                pass
         # an intermediate of the dilogarithm form vanishes at this regular point:
-        # C0 is analytic in s here, so average s(1 +- d) (error O(d^2))
+        # Re C0 is analytic in s here, so average s(1 +- d) (error O(d^2))
         wp = mpmath.mp.dps
         with mpmath.workdps(3 * wp):
             d = s * mpmath.mpf(10)**(-(wp + 5))
-            v = (_C0_unequal(s + d, ma, mb, mc) + _C0_unequal(s - d, ma, mb, mc)) / 2
-        return +v
+            re = (_C0_unequal(s + d, ma, mb, mc) + _C0_unequal(s - d, ma, mb, mc)) / 2
+        return mpmath.mpc(+re, im)
 
 
 # ---------------------------------------------------------------------------
@@ -297,6 +331,7 @@ def _bubble_3d_kernel(p2, m1sq, m2sq, dps=None):
         p2 = mpmath.mpf(p2)
         m1, m2 = (mpmath.mpf(x) for x in (m1sq, m2sq))
         _check_masses(m1, m2)
+        _check_finite(p2)
         M = mpmath.sqrt(m1) + mpmath.sqrt(m2)
         pref = mpmath.sqrt(mpmath.pi)
         if p2 == 0:
@@ -322,14 +357,14 @@ def _bubble_3d_kernel(p2, m1sq, m2sq, dps=None):
 #  certified public functions
 # ---------------------------------------------------------------------------
 
-def _certified(kernel, *args, dps=None, **kw):
+def _certified(kernel, *args, dps=None, cert_step=20, **kw):
     """Evaluate kernel at increasing working precision until two consecutive
     results agree to the requested digits."""
     dps = dps if dps is not None else mpmath.mp.dps
     wp = dps + 10
     prev = kernel(*args, dps=wp, **kw)
     for _ in range(14):
-        wp2 = wp + max(20, wp // 2)
+        wp2 = wp + max(cert_step, wp // 2)
         cur = kernel(*args, dps=wp2, **kw)
         with mpmath.workdps(wp2):
             if (cur == 0 and prev == 0) or abs(cur - prev) <= mpmath.mpf(10)**(-(dps + 2)) * abs(cur):

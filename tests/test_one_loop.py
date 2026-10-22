@@ -104,9 +104,36 @@ def test_C0_mob_arcsin_form():
     assert abs(C0_mob(s, m) - (-2 / s * mp.asin(mp.sqrt(s / (4 * m)))**2)) < 1e-14
 
 
-def test_C0_massless_rejected():
+@pytest.mark.parametrize("args", [(1, 0, 1, 1), (5, 1, 0, 1), (5, 0, 1, 2), (20, 0, 1, 2), (5, 1, 2, 0), (5, 0, 1, 0),
+                                  (-3, 2, 0, 1)])
+def test_C0_massless_line_ir_finite(args):
+    with mp.workdps(30):
+        assert abs(C0(*args, dps=30) - _C0_quad(*args)) < 1e-18 * abs(_C0_quad(*args))
+
+
+@pytest.mark.parametrize("args", [(1, 0, 0, 1), (5, 1, 0, 0), (0, 0, 0, 1), (0, 0, 2, 0)])
+def test_C0_ir_divergent_rejected(args):
     with pytest.raises(ValueError):
-        C0(1, 0, 1, 1)
+        C0(*args)
+
+
+@pytest.mark.parametrize("args", [(0, 1, 2, 3), (0, 1, 1, 2), (0, 0, 1, 2), (0, 2.0**140, 2.0**141, 3 * 2.0**140)])
+def test_C0_at_zero_momentum(args):
+    with mp.workdps(160):
+        a, b, c = (mp.mpf(x) for x in args[1:])
+        f = lambda m: 0 if m == 0 else m * mp.log(m)
+        if a == b:
+            exact = -((f(c) - f(a)) / (c - a) - (mp.log(a) + 1)) / (c - a)
+        else:
+            exact = -(f(a) / ((a - b) * (a - c)) + f(b) / ((b - a) * (b - c)) + f(c) / ((c - a) * (c - b)))
+        assert abs(C0(*args) - exact) < 1e-14 * abs(exact)
+
+
+@pytest.mark.parametrize("call", [lambda: B0(float("nan"), 1, 1), lambda: C0(1, 1, 2, float("inf")),
+                                  lambda: bubble_3d(float("inf"), 1, 1), lambda: C0_mob(float("nan"), 1)])
+def test_non_finite_inputs(call):
+    with pytest.raises(ValueError):
+        call()
 
 
 # ---- D = 3 bubble ----------------------------------------------------------

@@ -12,7 +12,7 @@
   in LoopTools conventions, certified to the requested digits (evaluation at two
   working precisions, raised until they agree).
 - `ramanujan_qft.sunset`: `sunset_im`, `sunset_subtracted`, `sunset_d2`.
-- Test suite (250 tests) with LoopTools 2.16 reference values, independent
+- Test suite (296 tests) with LoopTools 2.16 reference values, independent
   integrations and regression tests from two adversarial audits; GitHub Actions workflow; `pyproject.toml`; examples; benchmarks.
 
 ### Fixed
@@ -39,6 +39,13 @@
   - honest `error_estimate`.
 - B0/C0 cancellation at extreme kinematics (certification), C0 ZeroDivisionError at
   regular points, massless D=3 bubble, sunset edge cases, `mellin_numeric` checks.
+- Round 3:
+  - sunset functions rewritten (scaling, factored Kallen functions, normalised
+    and error-checked quadrature, certification); accurate at threshold and for
+    scales 1e-12..1e12;
+  - C0 with IR-finite massless internal lines;
+  - exact C0 at s = 0;
+  - non-finite inputs rejected.
 
 ### Withdrawn (raise `NotImplementedError`; see AUDIT.md)
 - `FeynmanMoBSolver.massive_sunset_residue`, `solve_massive_sunset`,

@@ -167,6 +167,7 @@ def test_sunset_massless_raises():
         sunset_subtracted(5, 0, 0, 0)
 
 
+@pytest.mark.slow
 def test_sunset_just_above_threshold():
     th = sunset_threshold(1, 2, 3)
     v = sunset_subtracted(th + 1e-4, 1, 2, 3)

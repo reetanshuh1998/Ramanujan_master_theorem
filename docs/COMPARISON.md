@@ -55,7 +55,7 @@ classical.
 | OneLOop (van Hameren) | Fortran | double and higher | scalar integrals, complex masses, IR divergent cases |
 | QCDLoop 2 (Carrazza, Ellis, Zanderighi) | C++ | double and quadruple | scalar integrals incl. IR divergent |
 | Package-X (Patel) | Mathematica | analytic | analytic one-loop expressions |
-| **ramanujan-qft `one_loop`** | Python (mpmath) | **arbitrary** | B0 (all masses), C0(0,0,s; m1,m2,m3) for non-zero masses, D=3 bubble |
+| **ramanujan-qft `one_loop`** | Python (mpmath) | **arbitrary, certified** | B0 (all masses), C0(0,0,s; m1,m2,m3) (massless lines allowed when IR finite), D=3 bubble |
 
 Speed per call (measured):
 
@@ -69,10 +69,11 @@ compiled Fortran against interpreted Python with multiprecision arithmetic.
 The reasons to use ramanujan-qft here are:
 
 * **reference values at 30–100+ digits**, for validating other codes or for
-  expressions with large cancellations. Example: at extreme mass hierarchies,
-  C0(0,0,2.2·10⁻¹¹; 8.48·10⁻¹⁰, 8.48·10⁻¹⁰, 35.1) is −0.66788699075 (certified;
-  confirmed by an independent 90-digit quadrature). LoopTools 2.16 in double
-  precision returns −0.69637. More cases are in `tests/test_round2_regressions.py`;
+  expressions with large cancellations. Example at an extreme mass hierarchy:
+  `C0(2.1973609307495493e-11, 8.481053224196959e-10, 8.48190132951938e-10, 35.105214341025246)`
+  = −0.66788699075041312… (certified; an independent 90-digit quadrature agrees).
+  LoopTools 2.16 in double precision returns −0.69637. More cases are in
+  `tests/test_round2_regressions.py`;
 * **transparent derivations**: B0 is also available directly as the
   Method-of-Brackets series (2w/3)·₂F₁(1,1;5/2;w), and C0 in its MoB
   arcsin² / log² form;
@@ -91,11 +92,14 @@ The reasons to use ramanujan-qft here are:
 | Kira, FIRE, LiteRed | IBP reduction to master integrals (complementary to all of the above) |
 
 ramanujan-qft currently provides, for the two-loop sunset, only the
-**scheme-independent** pieces: the exact Im S and the twice-subtracted
-dispersion relation S(s) − S(0) − s·S′(0). Both are validated against
-independent Feynman-parameter integration. This is a small, correct building
+**scheme-independent** pieces: Im S from its exact phase-space representation,
+and the twice-subtracted dispersion relation S(s) − S(0) − s·S′(0). Both are
+certified numerical integrations. They are validated against independent
+Feynman-parameter integration and a closed form for masses (0, 0, M), at
+thresholds and at scales from 10⁻¹² to 10¹². This is a small, correct building
 block, **not** a replacement for the tools above. For production two-loop
-self-energies, TSIL is the natural comparison, and it is much faster.
+self-energies, TSIL is the natural comparison, and it is much faster: a certified
+`sunset_subtracted` call takes about 10 s here.
 
 ### Why "O(1) multi-loop via RMT" does not hold in general
 
