@@ -1,0 +1,27 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        run: python -m pip install ".[test]"
+      - name: Fast tests
+        run: python -m pytest -m "not slow" -q
+      - name: Docstring examples
+        run: python -m pytest -q --doctest-modules ramanujan_qft/rmt.py ramanujan_qft/mellin.py ramanujan_qft/one_loop.py ramanujan_qft/sunset.py
+      - name: Slow validation tests
+        if: matrix.python-version == '3.13'
+        run: python -m pytest -m slow -q

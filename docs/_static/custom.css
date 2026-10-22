@@ -1,0 +1,18 @@
+/* ramanujan-qft documentation */
+.rq-hero { padding: 2.5rem 0 1.5rem; text-align: center; }
+.rq-hero h1 { font-size: 2.6rem; margin-bottom: .3rem; }
+.rq-hero .rq-tagline { font-size: 1.2rem; opacity: .85; }
+.rq-hero .rq-formula { font-size: 1.15rem; margin: 1rem 0; }
+.rq-dedication { font-style: italic; opacity: .8; text-align: center; margin-top: 2rem; }
+
+/* Landing page (docs/index.md) */
+.rq-landing > h1 { text-align: center; font-size: 2.6rem; margin: 1.5rem 0 .3rem; }
+.rq-landing > h1 .headerlink { display: none; }
+.rq-hero { padding: 0 0 1.5rem; border-bottom: 1px solid var(--pst-color-border); margin-bottom: 1.5rem; }
+.rq-hero p.rq-tagline { max-width: 40rem; margin: 0 auto; }
+.rq-hero .rq-formula { overflow-x: auto; }
+.rq-hero p.rq-formula-caption { font-size: .9rem; opacity: .7; margin-top: -.5rem; }
+.rq-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin-top: 1rem; }
+.rq-buttons p { margin: 0; }
+.rq-dedication > h2 { font-style: normal; }
+.rq-dedication > p { max-width: 42rem; margin-left: auto; margin-right: auto; }

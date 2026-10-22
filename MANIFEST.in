@@ -1,5 +1,4 @@
 include README.md
-include PAPER_DRAFT.md
 include LICENSE
-include THIRD_PARTY_NOTICES.md
+include CHANGELOG.md
 recursive-include ramanujan_qft *.py

@@ -7,6 +7,8 @@ Stage C of the Method of Brackets (MoB) Engine:
 
 import math
 from typing import Dict, List, Optional, Tuple, Union
+import functools
+
 import mpmath
 
 def _to_mpf(x: Union[float, complex, str]) -> mpmath.mpf:
@@ -14,10 +16,18 @@ def _to_mpf(x: Union[float, complex, str]) -> mpmath.mpf:
         return mpmath.mpc(x.real, x.imag)
     return mpmath.mpf(str(x))
 
+def _with_precision(method):
+    """Run a method at self.precision without changing the global mpmath context."""
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        with mpmath.workdps(self.precision):
+            return method(self, *args, **kwargs)
+    return wrapper
+
+
 class HypergeometricConvergenceFilter:
     def __init__(self, precision: int = 50) -> None:
         self.precision = precision
-        mpmath.mp.dps = precision
 
     @staticmethod
     def stirling_asymptotic_power(shifts_num: List[float],
@@ -37,9 +47,9 @@ class HypergeometricConvergenceFilter:
             den *= abs(b + n)
         return num / den if den != 0 else float('inf')
 
+    @_with_precision
     def check_convergence(self, shifts_num: List[float], shifts_den: List[float],
                           x: Union[float, complex], verbose: bool = False) -> Dict:
-        mpmath.mp.dps = self.precision
         power = self.stirling_asymptotic_power(shifts_num, shifts_den)
         abs_x = abs(x)
 
@@ -60,7 +70,7 @@ class HypergeometricConvergenceFilter:
             desc = f"[HCF] p-q-1 = {power} > 0 => series diverges. Analytic continuation required."
 
         if power == 0:
-            kind = 'conditional'
+            kind = 'conditional' if converges else 'divergent'
 
         result: Dict = {
             'converges': converges, 'L': L, 'power': power,
@@ -89,10 +99,10 @@ class HypergeometricConvergenceFilter:
             'description': f"Joint convergence: {'YES' if joint else 'NO'} (n: {res_n['type']}, k: {res_k['type']})",
         }
 
+    @_with_precision
     def evaluate_series(self, shifts_num: List[float], shifts_den: List[float],
                         x: Union[float, complex], prefactor: Union[float, complex] = 1.0,
                         force: bool = False) -> Tuple[Optional[object], Dict]:
-        mpmath.mp.dps = self.precision
         conv = self.check_convergence(shifts_num, shifts_den, x)
 
         if not conv['converges'] and not force:
@@ -113,15 +123,16 @@ class HypergeometricConvergenceFilter:
             except Exception:
                 return mpmath.mpf(0)
 
-        method = 'euler-maclaurin' if conv['converges'] else 'levin'
+        # term() is defined on integers only, so use integer-sampling methods
+        method = 'r+s' if conv['converges'] else 'levin'
         result = mpmath.nsum(term, [0, mpmath.inf], method=method)
 
         pf = mpmath.mpc(prefactor.real, prefactor.imag) if isinstance(prefactor, complex) else mpmath.mpf(str(prefactor))
         return result * pf, conv
 
+    @_with_precision
     def evaluate_pFq(self, a_params: List[float], b_params: List[float],
                      z: Union[float, complex]) -> Tuple[Optional[object], Dict]:
-        mpmath.mp.dps = self.precision
         conv = self.check_convergence(a_params, b_params, z)
 
         z_mp = mpmath.mpc(z.real, z.imag) if isinstance(z, complex) else mpmath.mpf(str(z))
@@ -136,66 +147,22 @@ class HypergeometricConvergenceFilter:
         except Exception as exc:
             return None, {**conv, 'error': str(exc)}
 
-    def compute_p126_regular_series(self, s_val: float, msq_val: float) -> Tuple[object, Dict]:
-        mpmath.mp.dps = self.precision
-        s = mpmath.mpf(str(s_val))
-        m2 = mpmath.mpf(str(msq_val))
-        z = m2 / (27 * s)
-        
-        triplication_const = (
-            2 * mpmath.pi / (mpmath.power(3, mpmath.mpf('5') / 2) *
-            mpmath.gamma(mpmath.mpf('4') / 3) * mpmath.gamma(mpmath.mpf('5') / 3))
-        )
+    _P126_MSG = ("The P126 routines of version 0.1 used hard-coded logarithm coefficients "
+                 "(A = -1/(4s), B = 3/(2s)) and a fixed +i*pi phase, which gives a spurious imaginary "
+                 "part in the Euclidean region; the results did not match pySecDec. They are "
+                 "withdrawn until derived and validated - see AUDIT.md.")
 
-        shifts_num = [1.0, 1.0]
-        shifts_den = [4.0 / 3, 5.0 / 3]
+    def compute_p126_regular_series(self, s_val, msq_val):
+        raise NotImplementedError(self._P126_MSG)
 
-        conv = self.check_convergence(shifts_num, shifts_den, -z, verbose=True)
-        val = mpmath.hyper([mpmath.mpf(1), mpmath.mpf(1)], [mpmath.mpf('4') / 3, mpmath.mpf('5') / 3], -z)
+    def compute_p126_singular_logs(self, s_val, msq_val):
+        raise NotImplementedError(self._P126_MSG)
 
-        result = triplication_const * val / s
-        conv['z_argument'] = float(z)
-        conv['2F2_value'] = complex(val)
-        return result, conv
+    def compute_p126_eps0(self, s_val=9.0, msq_val=1.0):
+        raise NotImplementedError(self._P126_MSG)
 
-    def compute_p126_singular_logs(self, s_val: float, msq_val: float) -> object:
-        mpmath.mp.dps = self.precision
-        s = mpmath.mpf(str(s_val))
-        m2 = mpmath.mpf(str(msq_val))
-
-        log_ms = mpmath.log(s) + mpmath.mpc(0, mpmath.pi)
-        ratio_log = log_ms - mpmath.log(m2)
-
-        A = mpmath.mpf(-1) / (4 * s)
-        B = mpmath.mpf(3) / (2 * s)
-        return A * ratio_log ** 2 + B * ratio_log
-
-    def compute_p126_eps0(self, s_val: float = 9.0, msq_val: float = 1.0) -> Tuple[object, Dict]:
-        reg, conv = self.compute_p126_regular_series(s_val, msq_val)
-        sing = self.compute_p126_singular_logs(s_val, msq_val)
-        result = reg + sing
-        info = {
-            'regular_part': complex(reg), 'singular_part': complex(sing),
-            'total': complex(result), 'convergence': conv,
-        }
-        return result, info
-
-    def compute_p126_pole_terms(self, s_val: float, msq_val: float, eps_order: int) -> object:
-        mpmath.mp.dps = self.precision
-        s = mpmath.mpf(str(s_val))
-        m2 = mpmath.mpf(str(msq_val))
-
-        log_ms = mpmath.log(s) + mpmath.mpc(0, mpmath.pi)
-        log_m2 = mpmath.log(m2)
-
-        if eps_order == -2:
-            c_eucl = mpmath.mpf(3) / (2 * s)
-            return c_eucl
-        elif eps_order == -1:
-            c_eucl_m1 = mpmath.mpf(3) / (2 * s) * (log_m2 - log_ms)
-            return c_eucl_m1
-        else:
-            raise ValueError(f"eps_order must be -2 or -1; got {eps_order}")
+    def compute_p126_pole_terms(self, s_val, msq_val, eps_order):
+        raise NotImplementedError(self._P126_MSG)
 
 def apply_hcf_and_sum(shifts_num: List[float], shifts_den: List[float],
                       x: Union[float, complex], prefactor: Union[float, complex] = 1.0,

@@ -1,0 +1,8 @@
+sphinx>=8
+pydata-sphinx-theme>=0.16
+myst-parser>=4
+sphinx-design>=0.6
+sphinx-copybutton>=0.5
+sphinx-gallery>=0.17
+matplotlib
+build

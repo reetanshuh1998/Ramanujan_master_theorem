@@ -1,83 +1,65 @@
+"""
+Dispersion-Linked Method of Brackets (DL-MoB): generic subtracted dispersion relation
+
+    I(s) = Sum_{k<n} c_k s^k + (s^n/pi) Int_th^oo dt Im I(t) / (t^n (t - s - i0)),
+
+where the subtraction constants c_k = I^(k)(0)/k! come from a Euclidean (MoB)
+evaluation and Im I from the cut. The principal value above threshold is taken
+with a symmetric subtraction around t = s.
+
+For the sunset, see :mod:`ramanujan_qft.sunset`, which is validated against
+independent Feynman-parameter integrations.
+"""
+
 import mpmath
-import time
+
 
 class DispersionMoBEngine:
-    def __init__(self, precision=50):
+    def __init__(self, precision=15):
         self.precision = precision
-        mpmath.mp.dps = precision
 
     def compute_spectral_density(self, topology_res_func, s_val, params):
-        """
-        Generic wrapper for the 'Global Residue' channel.
-        Computes Im S(s) via the topological residue / phase space mapping.
-        """
-        # For Sunset, this is the 3-body phase space
+        """Im I(s) from a user-supplied cut function."""
         return topology_res_func(s_val, *params)
 
     def reconstruct_complex(self, s, threshold, subtractions, im_func, im_params):
         """
-        The Reconstructor: Performs the subtracted dispersion integral.
-        s: Physical kinematic point (p^2)
-        threshold: Threshold s_th
-        subtractions: List of [S(0), S'(0), ...] discovered by MoB
-        im_func: Function to compute Im S(t)
+        s            : kinematic point
+        threshold    : lowest threshold of the cut
+        subtractions : [c_0, c_1, ...] Taylor coefficients of I at s = 0 (c_k = I^(k)(0)/k!)
+        im_func      : t -> Im I(t) (called as im_func(t, *im_params))
         """
         n = len(subtractions)
         if n == 0:
-            raise ValueError("At least one subtraction constant (S(0)) is required.")
-
-        # 1. Polynomial part (from MoB discovery)
-        poly_part = mpmath.mpf(0)
-        for k, sk in enumerate(subtractions):
-            poly_part += (mpmath.power(s, k) / mpmath.factorial(k)) * sk
-
-        # 2. Dispersion integral (The Minkowski Mapping)
-        def integrand(t):
-            im_val = im_func(t, *im_params)
-            # Subtracted kernel: 1 / (t^n * (t - s))
-            return im_val / (mpmath.power(t, n) * (t - s))
-
-        # Handle Cauchy Principal Value if s > threshold
-        with mpmath.workdps(15): # Optimized precision for nested integral
-            if s > threshold:
-                integral = mpmath.quad(integrand, [threshold, s, mpmath.inf])
+            raise ValueError("at least one subtraction constant is required")
+        with mpmath.workdps(self.precision):
+            s, th = mpmath.mpf(s), mpmath.mpf(threshold)
+            poly = sum(mpmath.mpf(c) * s**k for k, c in enumerate(subtractions))
+            h = lambda t: im_func(t, *im_params) / t**n
+            if s < th:
+                disp = mpmath.quad(lambda t: h(t) / (t - s), [th, 2 * th, mpmath.inf]) / mpmath.pi
+                im = mpmath.mpf(0)
+            elif s == th:
+                raise ValueError("evaluate off the threshold point")
             else:
-                integral = mpmath.quad(integrand, [threshold, mpmath.inf])
-        
-        disp_part = (mpmath.power(s, n) / mpmath.pi) * integral
-        
-        # 3. Imaginary part (Phase Space)
-        im_part = im_func(s, *im_params)
-        
-        return mpmath.mpc(poly_part + disp_part, im_part)
+                hs = h(s)
+                e = s * mpmath.mpf(10)**(-(mpmath.mp.dps // 2))
+                dh = (h(s + e) - h(s - e)) / (2 * e) if s - e > th else mpmath.mpf(0)
+                near = mpmath.quad(lambda t: dh if t == s else (h(t) - hs) / (t - s), [th, s, 2 * s - th])
+                far = mpmath.quad(lambda t: h(t) / (t - s), [2 * s - th, mpmath.inf])
+                disp = (near + far) / mpmath.pi
+                im = hs
+            return mpmath.mpc(poly + s**n * disp, s**n * im)
+
 
 def demo_dl_mob_sunset():
-    engine = DispersionMoBEngine(precision=50)
-    
-    # 1. Discovery Phase (Mocking MoB output for S(0), S'(0))
-    # In production, these come from ramanujan_framework.py residues
-    s0 = mpmath.mpf('-0.5483') # Example finite part
-    s1 = mpmath.mpf('0.0123')   # Example slope
-    
-    # 2. Spectral mapping
-    from ramanujan_qft.utils.ramanujan_continuation import RamanujanContinuationEngine
-    continuation = RamanujanContinuationEngine(precision=50)
-    
-    # 3. Reconstruction
-    s_target = 100.0
+    """Twice-subtracted sunset, S(s) - S(0) - s S'(0), at s = 100, m^2 = (1, 2, 3)."""
+    from ramanujan_qft.sunset import sunset_im, sunset_threshold
     msq = [1.0, 2.0, 3.0]
-    m_sum = sum(mpmath.sqrt(m) for m in msq)
-    th = m_sum**2
-    
-    result = engine.reconstruct_complex(
-        s=s_target,
-        threshold=th,
-        subtractions=[s0, s1],
-        im_func=continuation.phase_space_3body,
-        im_params=msq
-    )
-    
-    print(f"DL-MoB Reconstructed Result: {result}")
+    engine = DispersionMoBEngine(precision=15)
+    res = engine.reconstruct_complex(100.0, sunset_threshold(*msq), [0, 0], sunset_im, msq)
+    print("S(100) - S(0) - 100 S'(0) =", res)
+
 
 if __name__ == "__main__":
     demo_dl_mob_sunset()

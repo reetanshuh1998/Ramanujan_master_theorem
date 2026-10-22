@@ -1,0 +1,92 @@
+/* ramanujan-qft "Try it" console; colours follow the pydata-sphinx-theme (light and dark) */
+.rq-console {
+  border: 1px solid var(--pst-color-border);
+  border-radius: .5rem;
+  background: var(--pst-color-surface);
+  padding: .75rem;
+  margin: 1rem 0 1.5rem;
+}
+.rq-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: .6rem;
+}
+.rq-toolbar label { font-weight: 600; margin: 0; }
+.rq-toolbar select {
+  flex: 1 1 14rem;
+  min-width: 0;
+  max-width: 100%;
+  padding: .3rem .4rem;
+  border: 1px solid var(--pst-color-border);
+  border-radius: .3rem;
+  background: var(--pst-color-background);
+  color: var(--pst-color-text-base);
+}
+.rq-toolbar button {
+  padding: .3rem .9rem;
+  border: 1px solid var(--pst-color-border);
+  border-radius: .3rem;
+  background: var(--pst-color-background);
+  color: var(--pst-color-text-base);
+  cursor: pointer;
+}
+.rq-toolbar button.rq-primary {
+  background: var(--pst-color-primary);
+  border-color: var(--pst-color-primary);
+  color: var(--pst-color-primary-text, #fff);
+  font-weight: 600;
+}
+.rq-toolbar button:disabled { opacity: .45; cursor: default; }
+.rq-toolbar button:focus-visible, .rq-toolbar select:focus-visible, .rq-console textarea:focus-visible {
+  outline: 2px solid var(--pst-color-accent, var(--pst-color-primary));
+  outline-offset: 1px;
+}
+.rq-console textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 16rem;
+  resize: vertical;
+  padding: .6rem;
+  border: 1px solid var(--pst-color-border);
+  border-radius: .3rem;
+  background: var(--pst-color-background);
+  color: var(--pst-color-text-base);
+  font-family: var(--pst-font-family-monospace, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: .85rem;
+  line-height: 1.45;
+  tab-size: 4;
+  white-space: pre;
+  overflow: auto;
+}
+.rq-status {
+  display: block;
+  margin: .5rem 0;
+  font-size: .85rem;
+  color: var(--pst-color-text-muted);
+}
+.rq-status[data-kind="loading"]::before { content: "⏳ "; }
+.rq-status[data-kind="ready"] { color: var(--pst-color-success, inherit); }
+.rq-status[data-kind="error"] { color: var(--pst-color-danger, inherit); }
+.rq-console pre.rq-output {
+  box-sizing: border-box;
+  min-height: 6rem;
+  max-height: 28rem;
+  overflow: auto;
+  margin: 0;
+  padding: .6rem;
+  border: 1px solid var(--pst-color-border);
+  border-radius: .3rem;
+  background: var(--pst-color-background);
+  color: var(--pst-color-text-base);
+  font-size: .82rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.rq-output .rq-stderr { color: var(--pst-color-danger, #c00); }
+.rq-output .rq-prompt { color: var(--pst-color-text-muted); }
+.rq-console:not(.rq-enabled) .rq-toolbar, .rq-console:not(.rq-enabled) textarea { opacity: .5; }
+.rq-busy textarea { opacity: .85; }
