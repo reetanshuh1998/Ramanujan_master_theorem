@@ -1,9 +1,12 @@
-"""
-Product integrals by Mellin residue summation (accuracy and timing against exact values).
+r"""
+Product integrals by Mellin residue summation
+=============================================
 
-Int_0^oo e^(-x) J0(w x) dx = 1/sqrt(1 + w^2). For large w the integrand oscillates
-w/(2 pi) times per unit length, so adaptive quadrature needs ~w subintervals,
-while the residue series converges like (1/w)^n.
+:math:`\int_0^\infty e^{-x} J_0(w x)\,dx = 1/\sqrt{1+w^2}`. For large *w* the
+integrand oscillates many times per unit length, while the residue series
+converges like :math:`(1/w)^n`. The example also shows a logarithmic case
+(coinciding poles), a three-factor product with no closed form, and the engine
+refusing a case at its convergence boundary instead of guessing.
 """
 import time
 

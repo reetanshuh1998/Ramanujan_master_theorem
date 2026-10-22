@@ -1,5 +1,12 @@
 # ramanujan-qft
 
+[![tests](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/workflows/tests.yml/badge.svg)](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/workflows/tests.yml)
+[![docs](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/workflows/docs.yml/badge.svg)](https://reetanshuh1998.github.io/Ramanujan_master_theorem/)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/reetanshuh1998/Ramanujan_master_theorem/blob/main/notebooks/quickstart.ipynb)
+
+**Documentation:** <https://reetanshuh1998.github.io/Ramanujan_master_theorem/>. It includes a user guide, an API reference, examples, and an in-browser console
+([Try it](https://reetanshuh1998.github.io/Ramanujan_master_theorem/try_it.html)) that needs no installation.
+
 **Ramanujan's Master Theorem, Mellin residue summation and arbitrary-precision
 Feynman integrals in pure Python.**
 
@@ -56,7 +63,8 @@ current scope. See [docs/COMPARISON.md](docs/COMPARISON.md) and
 ## Install
 
 ```bash
-pip install .            # from a clone; requires Python >= 3.9
+pip install "git+https://github.com/reetanshuh1998/Ramanujan_master_theorem"   # latest version, requires Python >= 3.9
+pip install .            # from a clone
 pip install ".[test]"    # + pytest, scipy for the test suite
 ```
 
@@ -137,11 +145,16 @@ python benchmarks/bench_fair.py      # RACE vs closed forms and mpmath.quadosc a
 * One-loop results are *certified*: each is evaluated at two working precisions,
   raised until they agree, which removes cancellation at extreme kinematics
   (p² ≪ m², mass hierarchies, s ≫ m²).
-* RACE went through two independent adversarial audits, of about 4,000 cases each,
-  against closed forms and quadrature. All 47 confirmed defects were fixed and
-  turned into regression tests (`tests/test_mellin_regressions.py`,
-  `tests/test_round2_regressions.py`). In the final random sweeps it either
-  returned the correct value or raised; no silent wrong result remained. See
+* RACE went through three adversarial audit rounds against closed forms and
+  independent quadrature: two of about 2,000–4,000 cases each, then a bounded
+  785-case round. All 50 confirmed defects (19 + 28 + 3) were fixed and turned
+  into regression tests (`tests/test_mellin_regressions.py`,
+  `tests/test_round2_regressions.py`, `tests/test_round3_regressions.py`). In
+  the final sweeps it either returned the correct value or raised; no silent
+  wrong result remained. Round 3 also covered the one-loop and sunset
+  functions (1,820 random cases plus a 24,000-point LoopTools comparison). It
+  found and fixed defects in the sunset functions and in C0 with massless
+  lines. See
   [AUDIT.md](AUDIT.md).
 
 ## Roadmap

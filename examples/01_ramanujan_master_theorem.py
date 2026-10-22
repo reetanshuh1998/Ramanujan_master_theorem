@@ -1,7 +1,14 @@
-"""
-Ramanujan's Master Theorem in three lines.
+r"""
+Ramanujan's Master Theorem
+==========================
 
-    f(x) = Sum_n phi(n) (-x)^n / n!   ==>   Int_0^oo x^(s-1) f(x) dx = Gamma(s) phi(-s)
+If :math:`f(x) = \sum_n \varphi(n) (-x)^n / n!`, then
+
+.. math:: \int_0^\infty x^{s-1} f(x)\,dx = \Gamma(s)\,\varphi(-s).
+
+This example applies the theorem to :math:`(1+x)^{-3}`, checks it against the
+Beta function and a numerical Mellin transform, and evaluates a dimensionally
+regulated radial integral, where the theorem *is* the analytic continuation in D.
 """
 import mpmath as mp
 

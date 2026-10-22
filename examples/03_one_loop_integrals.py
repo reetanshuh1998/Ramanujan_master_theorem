@@ -1,5 +1,10 @@
-"""
-One-loop scalar integrals in LoopTools conventions, at any precision.
+r"""
+One-loop integrals at any precision
+===================================
+
+Scalar :math:`B_0` and :math:`C_0` in LoopTools conventions, to double precision
+and to 50 digits, and the Method-of-Brackets series for :math:`B_0` compared with
+its closed form.
 """
 import mpmath as mp
 

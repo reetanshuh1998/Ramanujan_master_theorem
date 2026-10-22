@@ -30,6 +30,8 @@ benchmarks = ["scipy>=1.10"]
 
 [project.urls]
 Homepage = "https://github.com/reetanshuh1998/Ramanujan_master_theorem"
+Documentation = "https://reetanshuh1998.github.io/Ramanujan_master_theorem/"
+Issues = "https://github.com/reetanshuh1998/Ramanujan_master_theorem/issues"
 
 [tool.setuptools.packages.find]
 include = ["ramanujan_qft*"]

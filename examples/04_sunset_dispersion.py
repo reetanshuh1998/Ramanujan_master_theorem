@@ -1,8 +1,11 @@
-"""
-Two-loop sunset: imaginary part and the twice-subtracted dispersion relation
-(certified; validated against Feynman-parameter integrals and a closed form in
-tests/test_sunset.py and tests/test_round3_regressions.py). Each subtracted value
-takes about 10-20 s (the whole example about a minute).
+r"""
+Two-loop sunset: imaginary part and dispersion relation
+=======================================================
+
+The imaginary part of the massive sunset from its phase-space representation, and
+the twice-subtracted dispersion relation :math:`S(s) - S(0) - s S'(0)`. Both are
+certified numerical integrations, validated against Feynman-parameter integrals
+and a closed form. Each subtracted value takes 10-20 s.
 """
 import mpmath as mp
 

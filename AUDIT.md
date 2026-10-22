@@ -201,8 +201,9 @@ history:
    (13 MB): keep it only if you want it public.
 4. **Images** with superseded claims: `rmt_superiority_plot.png`, `RACE.png`
    (4.4 MB), `rmt_vs_scipy_stress_test.png`.
-5. **LICENSE copyright holder** reads "Antigravity AI", and the README said
-   "Developed by Antigravity AI". Put your own name there.
+5. **LICENSE copyright holder**: now reads "In memory of Ramanujan" (was
+   "Antigravity AI"). A copyright line normally names a legal holder; consider
+   "Copyright (c) 2026 <your name>, in memory of Srinivasa Ramanujan".
 6. **Git history** is 136 MB and contains all of the above, plus two author
    e-mail addresses. Removing files does not remove them from history. Either
    publish a fresh repository from a clean tree (simplest), or use
