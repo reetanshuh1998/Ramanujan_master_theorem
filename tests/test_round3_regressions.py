@@ -79,3 +79,21 @@ def test_general_masses_large_scale():
 def test_non_finite_rejected():
     with pytest.raises(ValueError):
         sunset_im(float("nan"), 1, 2, 3)
+
+
+# --- RACE: second peak of the residue terms for (x+m)^(-v) with large v --------------------
+# Int x^(s-1) e^(-kx) (x+m)^(-v) dx = Gamma(s) m^(s-v) U(s, s-v+1, k m); for v >> k m the terms
+# dip and peak again near n ~ v, and the summation used to stop in the dip (errors up to 1e21).
+
+from ramanujan_qft import exponential, inverse_power, product_integral  # noqa: E402
+
+
+@pytest.mark.parametrize("k,v,s", [(10, 50.37, 0.6), (15, 67.87, 2.7), (20, 80.37, 2.7), (50, 150.37, 2.7),
+                                   (50, 175.37, 0.6)])
+@pytest.mark.parametrize("dps", [15, 30])
+def test_inverse_power_large_v_second_peak(k, v, s, dps):
+    with mp.workdps(dps + 40):
+        exact = mp.gamma(s) * mp.hyperu(s, s - mp.mpf(v) + 1, k)
+    val = product_integral(exponential(k), inverse_power(1, v), s=s, dps=dps)
+    with mp.workdps(dps + 40):
+        assert rel(val, exact) < mp.mpf(10)**(1 - dps)

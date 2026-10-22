@@ -274,16 +274,31 @@ def _validity(A, B, a, b):
     return rho if rho < 1 else None
 
 
-def _min_terms(A, B, a, b, rho):
-    """Index beyond which the terms are in their asymptotic (decaying) regime."""
+def _offset(F):
+    """Size of the parameters that shift the Gamma arguments of a factor (v of an inverse
+    power, the Bessel order): the term asymptotics only set in once p_n exceeds them."""
+    total = mpmath.mpf(0)
+    for key in ("v", "nu"):
+        if key in F.params:
+            with mpmath.workdps(30):
+                total += abs(_m(F.params[key]))
+    return total
+
+
+def _min_terms(A, B, a, b, rho, s):
+    """Index beyond which the terms are in their asymptotic (decaying) regime: past the
+    a-priori peak of ratio^p Gamma(p)^(R-L) (or of the geometric series) and past every
+    shift of the Gamma arguments (s, v, nu), where a second peak can occur."""
+    step = a.left(1)[0] - a.left(0)[0]
+    shift = abs(s) + _offset(A) + _offset(B)
+    n_shift = int(2 * shift / step) + 10
     if rho == 0:
         ratio = a.scale / b.scale
         if ratio <= 1:
-            return 10
+            return max(10, n_shift)
         p_star = ratio**(1 / (A.L - B.R))       # peak of ratio^p Gamma(p)^(R-L)
-        step = a.left(1)[0] - a.left(0)[0]
-        return int(2 * p_star / step) + 10
-    return 10 + int(3 / (1 - rho))
+        return int(2 * (p_star + shift) / step) + 10
+    return max(10 + int(3 / (1 - rho)), n_shift)
 
 
 def _terms(a, b, s):
@@ -421,7 +436,7 @@ def _evaluate(f, g, s, dps, tol, max_terms, max_dps):
             with mpmath.workdps(wp):
                 a, b = A.build(), B.build()
                 ss = mpmath.mpmathify(s)
-                n_min = _min_terms(A, B, a, b, rho)
+                n_min = _min_terms(A, B, a, b, rho, ss)
                 if rho > mpmath.mpf("0.85"):
                     n_min = min(n_min, max_terms)      # slow geometric series: Wynn may still succeed
                 if n_min > max_terms:
