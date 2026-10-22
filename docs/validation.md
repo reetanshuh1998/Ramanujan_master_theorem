@@ -6,8 +6,10 @@ checks, and what the adversarial audits found before release.
 
 ## The test suite
 
-The repository has **311 tests** (`tests/`). The 288 fast tests take about 20 s.
-The 23 tests marked `slow` run independent nested quadratures and take about six
+The original 311 tests are supplemented by 58 hybrid graph-backend tests and
+52 multivariate sunset RMT tests, 15 equal-mass Taylor tests and four independent
+audit-reference checks (`tests/`).
+The 24 tests marked `slow` run independent nested quadratures and take several
 minutes. In addition, the examples in the docstrings and on these documentation
 pages are executed in CI.
 
@@ -21,6 +23,28 @@ pages are executed in CI.
 | `test_legacy_api.py` | 17 | the 0.1 interface delegates correctly, withdrawn methods raise | the new functions |
 | `test_sunset.py` | 11 | `sunset_im`, `sunset_subtracted`, `sunset_d2` | two-dimensional Feynman-parameter integrals (SciPy) |
 | `test_rmt.py` | 8 | Ramanujan's Master Theorem on classical cases | `mellin_numeric`; closed forms (Amdeberhan et al. 2012) |
+| `test_multiloop.py` | 58 | exact graph polynomials, UV subsets, normalization, fractional powers/dimension, budgets, and numerical graphs through four loops | weighted Laplacian; simplex quadrature; Clausen/zeta values; independent position-space integrals |
+| `test_sunset_rmt.py` | 52 | exact bracket matrices, Gamma-family collisions, both convergence charts, tail bounds, domain and budget refusals | independent 40/55-digit simplex references; live parameter quadrature; hybrid graph backend |
+| `test_sunset_taylor.py` | 15 | equal-mass continuation, recurrence precision, tails and budgets | Clausen vacuum; independent parameter quadrature; overlap with RMT |
+| `test_sunset_audit.py` | 4 | independent audit-reference formula | existing nested simplex fixtures |
+
+The experimental graph backend has statistical float64 error diagnostics.
+It has not undergone the historical adversarial audits described below, and
+its tests do not certify arbitrary topologies. See {doc}`/user_guide/multiloop`.
+
+The separate {doc}`/user_guide/sunset_rmt` backend uses an analytic series-tail
+bound and arithmetic diagnostics. Its high-precision reference data can be
+regenerated with `python tools/generate_sunset_rmt_references.py`, which imports
+no package evaluator. The 40- and 55-digit quadratures agree to better than 38
+relative digits; the stored 50-digit strings are not a claim of 50 verified
+digits. Tests use these references at 30 digits. Equal-mass vacuum lies outside
+the implemented RMT charts and is explicitly refused.
+
+The separate {doc}`user_guide/sunset_taylor` API now covers equal-mass vacuum.
+The reproducible audit driver `tools/audit_sunset.py` records a fixed benchmark
+grid, actual versus reported errors and source hashes in
+`benchmarks/data/sunset_audit.json`. See {doc}`SCIENTIFIC_REVIEW` for findings
+and the outstanding external-review step.
 
 ## LoopTools comparison
 
@@ -98,8 +122,8 @@ please report any case where a function returns a wrong value without raising.
 
 ```bash
 pip install ".[test]"
-python -m pytest -q -m "not slow" tests        # 288 tests, about 20 s
-python -m pytest -q tests                      # all 311 tests, about 6 minutes
+python -m pytest -q -m "not slow" tests        # includes the new series and audit checks
+python -m pytest -q tests                      # also the slow nested quadratures
 python -m pytest -q --doctest-modules ramanujan_qft/rmt.py ramanujan_qft/mellin.py \
        ramanujan_qft/one_loop.py ramanujan_qft/sunset.py   # docstring examples
 python tools/check_doc_snippets.py docs        # examples on the documentation pages

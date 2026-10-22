@@ -2,6 +2,45 @@
 
 ## Unreleased
 
+## 0.3.0a1 — prepared research-alpha candidate (not published)
+
+### Equal-mass continuation and release preparation
+- Added a separate D=2 equal-mass transformed Taylor series for vacuum and
+  finite Euclidean momentum, with an analytic tail bound and precision control
+  for the unstable coefficient recurrence. RMT calls retain their own domains.
+- Added a reproducible independent-parameter audit, capability table, scientific
+  review packet, research notebook and contribution instructions.
+- Publication now depends on tests, numerical audit, docs/notebook checks and
+  installed wheel/sdist checks across Linux, Windows and macOS. Added a manual
+  TestPyPI rehearsal. Hosted checks, external review and publication are pending.
+
+### Multivariate Ramanujan sunset series
+- Added exact Schwinger bracket matrices and basis solving with inspectable
+  Gamma-function summands; nonsingularity makes no convergence claim.
+- Added `compile_sunset_rmt` and `integrate_graph_rmt` for the massive,
+  unit-power two-loop sunset in D=2. The momentum-dominant and mass-dominant
+  Euclidean charts have explicit sufficient convergence domains.
+- Resolved coalescing poles analytically into logarithms and harmonic numbers.
+  Evaluation uses arbitrary-precision series summation, an analytic tail bound,
+  precision checks and bounded work, with no numerical integration fallback.
+- Added independent 40/55-digit simplex references, regulated Gamma-family
+  checks, boundary/budget tests, and comparisons with the hybrid graph backend.
+  Equal-mass vacuum and the gap between charts remain explicitly unsupported.
+
+### Multiloop graphs
+- Added immutable `ScalarEdge` and `ScalarGraph` objects with exact Symanzik
+  polynomials, conserved Euclidean external vectors, graph-derived loop counts,
+  and UV power counting over all cyclic edge subsets.
+- Added experimental `integrate_graph`: RMT integration of the Schwinger scale,
+  factored Hepp sectors with smooth boundary maps, and replicated scrambled
+  Sobol integration. Supports convergent massive scalar graphs and positive
+  fractional powers/dimension, subject to explicit work budgets.
+- Added `MultiloopResult` statistical diagnostics and strict convergence failure
+  via `MultiloopConvergenceError`; SciPy is an optional `multiloop` extra.
+- Added independent one- through four-loop checks, a graph example, and a guide
+  documenting Euclidean normalization and the remaining path to general
+  multivariate RMT, regulator expansions, and physical-region coverage.
+
 ### Documentation
 - Documentation website (Sphinx, pydata-sphinx-theme), deployed to GitHub Pages by
   `.github/workflows/docs.yml`: landing page, installation, quickstart, user guide

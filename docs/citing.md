@@ -9,7 +9,7 @@ If ramanujan-qft helps your work, please cite the software:
   author  = {Reet},
   title   = {ramanujan-qft: Ramanujan's Master Theorem, Mellin residue summation
              and arbitrary-precision Feynman integrals},
-  version = {0.2.0},
+  version = {0.3.0a1},
   year    = {2026},
   url     = {https://github.com/reetanshuh1998/Ramanujan_master_theorem},
   license = {MIT}
@@ -58,6 +58,13 @@ from, as appropriate for what you used ({doc}`PRIOR_ART` has the full review):
 
 * A. I. Davydychev, J. B. Tausk, *Two-loop self-energy diagrams with different
   masses and the momentum expansion*, Nucl. Phys. B 397 (1993) 123.
+* S. Laporta, E. Remiddi, *Analytic treatment of the two loop equal mass sunrise
+  graph*, [hep-ph/0406160](https://arxiv.org/abs/hep-ph/0406160).
+* S. Müller-Stach, S. Weinzierl, R. Zayadeh, *A second-order differential equation
+  for the two-loop sunrise graph with arbitrary masses*,
+  [arXiv:1112.4360](https://arxiv.org/abs/1112.4360).
+* B. Ananthanarayan, S. Friot, S. Ghosh, *New Series Representations for the
+  Two-Loop Massive Sunset Diagram*, [arXiv:1911.10096](https://arxiv.org/abs/1911.10096).
 
 **Arbitrary-precision arithmetic**
 

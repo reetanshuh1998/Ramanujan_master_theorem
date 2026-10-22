@@ -91,7 +91,7 @@ The reasons to use ramanujan-qft here are:
 | MoB literature (Gonzalez, Moll, Schmidt; Ananthanarayan et al.) | Method of Brackets → multivariate hypergeometric series in convergence regions |
 | Kira, FIRE, LiteRed | IBP reduction to master integrals (complementary to all of the above) |
 
-ramanujan-qft currently provides, for the two-loop sunset, only the
+In its four-dimensional sunset API, ramanujan-qft provides the
 **scheme-independent** pieces: Im S from its exact phase-space representation,
 and the twice-subtracted dispersion relation S(s) − S(0) − s·S′(0). Both are
 certified numerical integrations. They are validated against independent
@@ -100,6 +100,21 @@ thresholds and at scales from 10⁻¹² to 10¹². This is a small, correct buil
 block, **not** a replacement for the tools above. For production two-loop
 self-energies, TSIL is the natural comparison, and it is much faster: a certified
 `sunset_subtracted` call takes about 10 s here.
+
+The experimental [graph backend](user_guide/multiloop.md) also handles
+UV-convergent massive Euclidean scalar graphs with positive powers and real
+dimension. It uses RMT for the common Schwinger scale and numerical Hepp sectors
+for the remaining parameters. Results have statistical float64 error estimates;
+the factorial sector count limits practical graph size. This is an independent
+numerical reference for RMT-series work, without general regulator
+expansions, massless domains, tensors, or physical-region continuation.
+
+The separate [D=2 sunset RMT backend](user_guide/sunset_rmt.md) now generates
+exact bracket families, resolves coalescing Gamma poles analytically, and
+sums a multivariate series with an analytic tail bound. It covers unit powers
+in the strict regions $Q>m_1+m_2+m_3$ and $M>m_a+m_b+Q$. Equal-mass vacuum
+and the gap between the charts remain unsupported. No speed comparison with
+general-purpose multiloop tools is claimed.
 
 ### Why "O(1) multi-loop via RMT" does not hold in general
 
