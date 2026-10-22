@@ -163,8 +163,9 @@ at mpmath's *global* precision, `mp.dps`, which is 15 by default. Use
 ```
 
 Inputs are taken as exact numbers. A Python float such as `0.1` is the
-binary number nearest to 0.1; pass a string (or an `mpf`) to mean the decimal
-value:
+binary number nearest to 0.1. To mean the decimal value, pass a string. (An
+`mpf` is binary too: `mp.mpf("0.1")` made at the default 15 digits is the same
+number as the float.)
 
 ```pycon
 >>> mp.nstr(B0(0.1, 1, 2, dps=30), 30)
