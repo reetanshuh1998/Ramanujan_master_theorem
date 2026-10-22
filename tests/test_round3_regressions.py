@@ -97,3 +97,36 @@ def test_inverse_power_large_v_second_peak(k, v, s, dps):
     val = product_integral(exponential(k), inverse_power(1, v), s=s, dps=dps)
     with mp.workdps(dps + 40):
         assert rel(val, exact) < mp.mpf(10)**(1 - dps)
+
+
+# --- RACE: decimal-string inputs (round 3b) ------------------------------------------------
+
+from ramanujan_qft import bessel_j, gaussian_bessel, sine  # noqa: E402
+
+
+def test_long_string_s_next_to_pole():
+    # Int x^(s-1) e^(-2x) J_2(x) dx has a pole at s = -2 with residue 1/8
+    v = product_integral(exponential(2), bessel_j(2, 1), s="-1.99999999999999999999999999999")
+    assert rel(v, mp.mpf("1.25e28")) < 1e-14
+    with mp.workdps(120):   # s is 1e-38 from the pole: the reference needs > 38 + 30 digits
+        s = mp.mpf("-0.99999999999999999999999999999999999999")
+        exact = mp.gamma(s) * mp.im(mp.mpc(2, -1)**(-s))     # GR 3.944.5
+    v = product_integral(exponential(2), sine(1), s="-0.99999999999999999999999999999999999999", dps=30)
+    with mp.workdps(120):
+        assert rel(v, exact) < 1e-28
+
+
+@pytest.mark.parametrize("f,g,s", [
+    (exponential(2), bessel_j("0.99999999999999999999", 1), "-0.9999999999999999999995"),
+    (inverse_power(1, "0.99999999999999999999"), inverse_power(0.5, 2), "2.999999999999999999995"),
+    (exponential(1), gaussian_bessel(1, 2, "0.99999999999999999999"), "-0.9999999999999999999995"),
+])
+def test_string_parameters_strip_exact(f, g, s):
+    with pytest.raises(ValueError):          # these integrals diverge (by 5e-21)
+        product_integral(f, g, s=s)
+
+
+def test_string_parameter_existing_integral_not_refused():
+    # Re(s + nu) = +5e-21 > 0: the integral exists (pole-dominated, ~ 1/(s+nu))
+    v = product_integral(exponential(2), bessel_j("1.00000000000000000001", 1), s="-1.000000000000000000005")
+    assert 0.5e20 < abs(v) < 2e20

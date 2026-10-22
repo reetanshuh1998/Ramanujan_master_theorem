@@ -43,6 +43,8 @@ Robustness:
 from dataclasses import dataclass, field
 from typing import Callable, Optional
 
+from decimal import Decimal, InvalidOperation
+
 import mpmath
 from mpmath.libmp import NoConvergence
 
@@ -78,7 +80,7 @@ class MellinFunction:
     name   : display name
     build  : () -> _Built, evaluated at the current working precision
     L, R   : Gamma-orders of the Taylor coefficients and of M at +oo (see module doc)
-    p0     : leading exponent of f at x = 0
+    p0     : leading exponent of f at x = 0 (raw value; converted at the working precision)
     tail   : behaviour at x -> oo: ("fast",) for faster than any power, or
              ("power", alpha, frequency, phase) for amplitude x^(-alpha) cos(w x + phase),
              frequency 0 meaning not oscillating; phase in units of pi/4
@@ -156,7 +158,7 @@ def bessel_j(nu, b):
                                       / (mpmath.factorial(n) * mpmath.gamma(n + n_ + 1))),
                       scale=bb)
     return MellinFunction(f"J_{nu}({b} x)" if sign == 1 else f"-J_{nu}({b} x)", build, L=1, R=1,
-                          p0=nu_, tail=("power", mpmath.mpf(1) / 2, b, -(2 * nu_ + 1)), params={"nu": nu, "b": b})
+                          p0=nu, tail=("power", mpmath.mpf(1) / 2, b, ("J", nu)), params={"nu": nu, "b": b})
 
 
 def cosine(b):
@@ -198,7 +200,7 @@ def inverse_power(m, v):
                       left=lambda n: (n, coef(n) * mm**(-vv - n)),
                       right=lambda n: (vv + n, coef(n) * mm**n),
                       scale=1 / mm)
-    return MellinFunction(f"(x + {m})^(-{v})", build, L=0, R=0, p0=0, tail=("power", _m(v), 0, None),
+    return MellinFunction(f"(x + {m})^(-{v})", build, L=0, R=0, p0=0, tail=("power", v, 0, None),
                           params={"m": m, "v": v})
 
 
@@ -220,7 +222,7 @@ def gaussian_bessel(a, b, nu):
         return _Built(lambda x: mpmath.exp(-aa * x * x) * mpmath.besselj(nn, bb * x), M,
                       scale=mpmath.sqrt(2 * aa))
     return MellinFunction(f"exp(-{a} x^2) J_{nu}({b} x)", build, L=None, R=mpmath.mpf(1) / 2,
-                          p0=_m(nu), tail=("fast",), params={"a": a, "b": b, "nu": nu})
+                          p0=nu, tail=("fast",), params={"a": a, "b": b, "nu": nu})
 
 
 # ---------------------------------------------------------------------------
@@ -232,12 +234,20 @@ def _same(x, y):
         return _m(x) == _m(y)
 
 
+def _phase(ph):
+    """Asymptotic phase in units of pi/4 (J_nu: -(2 nu + 1))."""
+    if isinstance(ph, tuple):
+        return -(2 * _m(ph[1]) + 1)
+    return _m(ph)
+
+
 def _strip(f, g):
-    """(lower, upper) bounds on Re s for Int x^(s-1) f g dx to exist."""
-    lower = -(mpmath.re(f.p0) + mpmath.re(g.p0))
+    """(lower, upper) bounds on Re s for Int x^(s-1) f g dx to exist. All edge data are
+    converted from the raw parameters at the current (input-sized) precision."""
+    lower = -(mpmath.re(_m(f.p0)) + mpmath.re(_m(g.p0)))
     if f.tail[0] == "fast" or g.tail[0] == "fast":
         return lower, mpmath.inf
-    alpha = f.tail[1] + g.tail[1]
+    alpha = _m(f.tail[1]) + _m(g.tail[1])
     (w1, ph1), (w2, ph2) = f.tail[2:4], g.tail[2:4]
     o1, o2 = _m(w1) > 0, _m(w2) > 0
     if not (o1 or o2):
@@ -245,7 +255,7 @@ def _strip(f, g):
     if o1 and o2 and _same(w1, w2):
         # cos(wx + ph1) cos(wx + ph2) = [cos(ph1 - ph2) + cos(2wx + ph1 + ph2)]/2:
         # a non-oscillating x^-alpha term survives unless cos(ph1 - ph2) = 0
-        dq = _m(ph1) - _m(ph2)                   # in units of pi/4
+        dq = _phase(ph1) - _phase(ph2)           # in units of pi/4
         if mpmath.isint(dq) and int(dq) % 4 == 2:
             return lower, alpha + 1
         return lower, alpha
@@ -390,9 +400,25 @@ def _sum(term, rho, tol, max_terms, n_min):
     return None, mpmath.inf, sum_abs, max_terms, False
 
 
-def _input_dps(f, g, s):
-    """Digits needed to represent all inputs exactly next to the integer shifts p_n
-    (so that s + p_n, nu - s, ... are formed without rounding near lattice points)."""
+def _decimal_digits(text):
+    """Digits needed to hold a decimal string exactly next to integers (integer digits
+    plus decimal places), or None if the string is not a plain decimal number."""
+    try:
+        d = Decimal(text.strip())
+    except (InvalidOperation, ValueError):
+        return None
+    if not d.is_finite() or d == 0:
+        return 0
+    sign, digits, exp = d.as_tuple()
+    int_digits = max(len(digits) + exp, 1)
+    frac_digits = max(-exp, 0)
+    return int_digits + frac_digits
+
+
+def _input_dps(f, g, s, dps=15):
+    """Digits needed to represent all inputs next to the integer shifts p_n to dps + 15
+    significant digits of their distance from any lattice point or strip edge (so that
+    s + p_n, nu - s, s + nu, ... are formed without rounding error that matters)."""
     need = 0
     vals = list(f.params.values()) + list(g.params.values()) + [s]
     for x in vals:
@@ -402,10 +428,10 @@ def _input_dps(f, g, s):
             parts = (x,)
         for y in parts:
             if isinstance(y, str):
-                with mpmath.workdps(30):
-                    v = _m(y)
-                    if v != 0 and abs(v) < 1:
-                        need = max(need, 30 + int(-mpmath.log10(abs(v))))
+                nd = _decimal_digits(y)
+                if nd is None:          # e.g. '1/3' or an mpmath constant string
+                    nd = 30
+                need = max(need, nd + dps + 15)
                 continue
             with mpmath.workdps(4000):
                 v = _m(y)
@@ -421,7 +447,7 @@ def _evaluate(f, g, s, dps, tol, max_terms, max_dps):
     """All valid orderings, with working precision raised against cancellation.
     Returns a list of (value-or-None, err, method, n, wp, accelerated, rho, reason)."""
     results = []
-    base = max(dps + 15, _input_dps(f, g, s) + 10)
+    base = max(dps + 15, _input_dps(f, g, s, dps) + 10)
     for A, B in ((f, g), (g, f)):
         wp = base
         with mpmath.workdps(wp):
@@ -493,13 +519,13 @@ def product_integral(f, g, s=1, dps=None, tol=None, max_terms=4000, return_info=
     tol_ = mpmath.mpf(tol) if tol is not None else mpmath.mpf(10)**(-dps)
     if not mpmath.isfinite(mpmath.mpmathify(s)):
         raise ValueError(f"s must be finite, got {s!r}")
-    with mpmath.workdps(max(dps + 15, _input_dps(f, g, s) + 10)):
+    with mpmath.workdps(max(dps + 15, _input_dps(f, g, s, dps) + 10)):
         s = mpmath.mpmathify(s)
         lo, hi = _strip(f, g)
         if not continuation and not (lo < mpmath.re(s) < hi):
             raise ValueError(
-                f"Int x^(s-1) {f.name} * {g.name} dx diverges for Re s = {mpmath.nstr(mpmath.re(s), 6)}; "
-                f"it exists for {mpmath.nstr(lo, 6)} < Re s < {mpmath.nstr(hi, 6)} "
+                f"Int x^(s-1) {f.name} * {g.name} dx diverges for Re s = {mpmath.nstr(mpmath.re(s), 30)}; "
+                f"it exists for {mpmath.nstr(lo, 30)} < Re s < {mpmath.nstr(hi, 30)} "
                 "(pass continuation=True for the analytic continuation)")
 
     note = ""

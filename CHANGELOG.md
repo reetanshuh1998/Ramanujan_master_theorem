@@ -12,7 +12,7 @@
   in LoopTools conventions, certified to the requested digits (evaluation at two
   working precisions, raised until they agree).
 - `ramanujan_qft.sunset`: `sunset_im`, `sunset_subtracted`, `sunset_d2`.
-- Test suite (296 tests) with LoopTools 2.16 reference values, independent
+- Test suite (311 tests) with LoopTools 2.16 reference values, independent
   integrations and regression tests from two adversarial audits; GitHub Actions workflow; `pyproject.toml`; examples; benchmarks.
 
 ### Fixed
@@ -45,7 +45,9 @@
     scales 1e-12..1e12;
   - C0 with IR-finite massless internal lines;
   - exact C0 at s = 0;
-  - non-finite inputs rejected.
+  - non-finite inputs rejected;
+  - RACE: Gamma-argument offsets in the peak estimate (second peak for large v),
+    exact sizing of decimal-string inputs, strip edges from raw parameters.
 
 ### Withdrawn (raise `NotImplementedError`; see AUDIT.md)
 - `FeynmanMoBSolver.massive_sunset_residue`, `solve_massive_sunset`,

@@ -122,8 +122,8 @@ explanation (see [CHANGELOG.md](CHANGELOG.md)).
 ## Validation
 
 ```bash
-pytest -m "not slow"     # 273 tests, ~20 s
-pytest                   # 296 tests, + independent Feynman-parameter / closed-form checks, ~6 min
+pytest -m "not slow"     # 288 tests, ~20 s
+pytest                   # 311 tests, + independent Feynman-parameter / closed-form checks, ~6 min
 bash benchmarks/looptools/compare_looptools.sh   # builds LoopTools (gfortran) and compares
 python benchmarks/bench_fair.py      # RACE vs closed forms and mpmath.quadosc at 30 digits
 ```

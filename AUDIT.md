@@ -33,7 +33,7 @@ reproduced with the scripts in `tests/` and `benchmarks/`.
 | 12 | RACE (`solve_product`) | Correct for exp × J0 / Gaussian away from the convergence boundary. Near it, accuracy degraded silently: exp(-3x)J0(4x) gave 0.2000042 instead of 0.2. Errors were returned as strings. Poles from the large-x expansion of a factor were ignored, so factors such as 1/(x+m) gave wrong results. | Closed forms | **Rewritten:** both expansions, convergence control, pole collisions, exceptions |
 | 13 | Speed claims ("O(1)", faster than LoopTools) | LoopTools: C0 ≈ 24 µs, B0 ≈ 0.8 µs per call. RAF 0.1: C0 ≈ 22 ms, B0 up to 4.5 ms. 0.2 (certified): C0 ≈ 11 ms, B0 ≈ 0.27 ms. Evaluation is not O(1) in any meaningful sense: it calls special functions and series of growing length. | `benchmarks/looptools/compare_looptools.sh` | **Claims removed** from README |
 | 14 | pySecDec "fails at the branch cut" (C0 table) | The value -0.1474950302 is not a pySecDec limitation. LoopTools and the independent integration both give -0.4219-0.3367i, and pySecDec handles this case with contour deformation. The run was most likely misconfigured (parameter order or missing contour deformation). | — | **Claim removed** |
-| 15 | Tests | The `test_*.py` files in the root contained no assertions. Some printed hard-coded "Target" values for competitors. | Source | **New suite** in `tests/`: 296 tests |
+| 15 | Tests | The `test_*.py` files in the root contained no assertions. Some printed hard-coded "Target" values for competitors. | Source | **New suite** in `tests/`: 311 tests |
 | 16 | Benchmark scripts in the root | Require pySecDec libraries that are not in the repository (`RECREATION/`, `pysecdec_*`). Several print fixed reference numbers and labels such as "Competitor Killer". | Source | **Left untouched;** listed below for you to decide |
 
 ## Originality review
@@ -150,11 +150,38 @@ A third round targeted silent wrong results only.
 **Cost.** Certified `sunset_subtracted` / `sunset_d2` take about 10 s per value
 (up to ~40 s for |s| ≫ threshold).
 
-**Still open.** The round-3 RACE hunter did not complete: the run hit a usage
-limit twice. RACE's latest evidence is therefore the round-2 fixes, their
-regression tests, and a 200-case random sweep in the Wynn regime that found no
-silent wrong result. A further independent RACE round is recommended before
-publication.
+## Round 3: RACE
+
+The first two RACE hunters were stopped by usage limits, so the round was
+completed by a smaller, bounded run: one hunter and one independent reproducer.
+
+**Defect from the interrupted hunter (fixed).** For (x+m)^(−v) with v ≫ k·m, the
+residue terms dip and then peak again near n ≈ v. The stopping rule fired in the
+dip, so wrong values were returned silently: relative errors up to 10²¹ while
+claiming 10⁻¹⁶. The a-priori peak estimate now includes the Gamma-argument
+offsets |s|, v and |ν|. The hunter's lead maps now pass:
+
+| Map | Before | After |
+|---|---|---|
+| exp × inverse_power, large v | 34 + 21 bad | 0 bad of 288 |
+| hump / inverse-power-pair scans | 18 + 2 bad | 0 bad |
+| exp × ip and ip × ip at 15/30/50 digits | 60 bad (at 50 digits) | 0 bad of 2,880 |
+
+**Bounded hunter: 785 cases.** 700 correct and 31 honest refusals. No silent
+error for large Bessel orders (up to 200), large or complex s (|Im s| up to 400),
+inverse-power pairs with large v, `gaussian_bessel` with large ν, Wynn on growing
+alternating series, `continuation=True`, exact and near collisions, or the
+legacy engines. It found two defects, both confirmed by the reproducer with
+independent closed forms, and both fixed:
+
+1. **Long decimal-string s next to a pole of I(s).** Up to 1.4% error at dps 15.
+   String inputs are now sized by their digits and the requested precision.
+2. **Strip edges frozen at construction precision.** For string ν or v, some
+   divergent integrals returned values, and one existing integral was reported
+   divergent. The strip is now computed from the raw parameters at
+   input-sized precision.
+
+Regression tests for all of these are in `tests/test_round3_regressions.py`.
 
 ## Repository hygiene: actions for the owner before going public
 
