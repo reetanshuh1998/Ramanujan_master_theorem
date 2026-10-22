@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+### Documentation
+- Documentation website (Sphinx, pydata-sphinx-theme), deployed to GitHub Pages by
+  `.github/workflows/docs.yml`: landing page, installation, quickstart, user guide
+  (Master Theorem, product integrals, one-loop, sunset, precision, conventions),
+  API reference, example gallery, validation, comparison, prior art, citing.
+- "Try it in your browser": an in-browser console (Pyodide in a Web Worker) that
+  runs the package without installation; a Colab quickstart notebook
+  (`notebooks/quickstart.ipynb`).
+- NumPy-style docstrings with examples for every public function; the examples run
+  as doctests in CI, and `tools/check_doc_snippets.py` runs the examples on the
+  documentation pages.
+- `CITATION.cff`; `publish.yml` for PyPI trusted publishing on a GitHub release.
+- LICENSE: the copyright line reads "In memory of Ramanujan".
+
 ## 0.2.0
 
 ### Added
