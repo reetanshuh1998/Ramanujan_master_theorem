@@ -25,8 +25,10 @@ Feynman integrals in pure Python.
 
 :::{container} rq-formula
 $$
-\int_0^\infty x^{s-1}\left(\sum_{n=0}^{\infty}\frac{\varphi(n)}{n!}\,(-x)^n\right)dx
-\;=\;\Gamma(s)\,\varphi(-s)
+\begin{gathered}
+f(x) = \sum_{n=0}^{\infty}\frac{\varphi(n)}{n!}\,(-x)^n \\[4pt]
+\int_0^\infty x^{s-1} f(x)\,dx \;=\; \Gamma(s)\,\varphi(-s)
+\end{gathered}
 $$
 :::
 
