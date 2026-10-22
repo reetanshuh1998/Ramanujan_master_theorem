@@ -11,8 +11,8 @@ auto_examples/index
 try_it
 api/index
 validation
-COMPARISON
-PRIOR_ART
+Comparison <COMPARISON>
+Prior art <PRIOR_ART>
 citing
 changelog
 ```

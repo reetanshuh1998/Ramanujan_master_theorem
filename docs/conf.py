@@ -61,10 +61,13 @@ html_theme_options = {
     "github_url": "https://github.com/reetanshuh1998/Ramanujan_master_theorem",
     "logo": {"text": "ramanujan-qft"},
     "navbar_align": "left",
-    "header_links_before_dropdown": 7,
+    "header_links_before_dropdown": 6,
     "show_toc_level": 2,
     "navigation_with_keys": False,
     "footer_start": ["copyright"],
     "footer_end": ["sphinx-version"],
 }
 html_context = {"default_mode": "auto"}
+# single pages without sub-pages: no (empty) section navigation on the left
+html_sidebars = {page: [] for page in ("index", "try_it", "validation", "COMPARISON", "PRIOR_ART",
+                                       "citing", "changelog")}
