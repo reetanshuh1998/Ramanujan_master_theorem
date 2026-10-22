@@ -38,7 +38,24 @@ __all__ = ["sunset_threshold", "sunset_im", "sunset_subtracted", "sunset_d2"]
 
 
 def sunset_threshold(m1sq, m2sq, m3sq):
-    """Three-particle threshold (m1 + m2 + m3)^2."""
+    """
+    The three-particle threshold :math:`(m_1 + m_2 + m_3)^2` of the sunset.
+
+    Parameters
+    ----------
+    m1sq, m2sq, m3sq : number
+        Squared masses.
+
+    Returns
+    -------
+    mpmath.mpf
+        At the current ``mpmath.mp.dps``.
+
+    Examples
+    --------
+    >>> sunset_threshold(1, 2, 3)
+    mpf('17.191508225450303')
+    """
     return (mpmath.sqrt(m1sq) + mpmath.sqrt(m2sq) + mpmath.sqrt(m3sq))**2
 
 
@@ -166,20 +183,117 @@ def _d2_kernel(s, m1sq, m2sq, m3sq, dps=None):
 
 
 def sunset_im(s, m1sq, m2sq, m3sq, dps=None):
-    """Imaginary part of the sunset (zero below the three-particle threshold); certified."""
+    r"""
+    Imaginary part of the two-loop sunset, certified.
+
+    .. math::
+
+        \operatorname{Im} S(s) = -\frac{\pi}{s}\int_{(m_2+m_3)^2}^{(\sqrt s - m_1)^2} dt\,
+        \frac{\lambda^{1/2}(s, t, m_1^2)\,\lambda^{1/2}(t, m_2^2, m_3^2)}{t}
+
+    above the threshold :math:`s > (m_1+m_2+m_3)^2`, and zero below it. The sunset is
+    normalised with :math:`d^Dk\,d^Dl/(i\pi^{D/2})^2` and propagators :math:`1/(q^2 - m^2 + i0)`.
+
+    Parameters
+    ----------
+    s : number or str
+        External momentum squared.
+    m1sq, m2sq, m3sq : number or str
+        Internal squared masses, :math:`\ge 0` (the result is symmetric in them).
+    dps : int, optional
+        Decimal digits requested (default: ``mpmath.mp.dps``).
+
+    Returns
+    -------
+    mpmath.mpf
+
+    Raises
+    ------
+    ValueError
+        For a negative squared mass or a non-finite input.
+    ArithmeticError
+        If a quadrature or the certification fails.
+
+    Examples
+    --------
+    >>> sunset_im(100, 1, 2, 3)
+    mpf('-88.184995551555915')
+    >>> sunset_im(10, 1, 2, 3)      # below threshold
+    mpf('0.0')
+    """
     return _certified(_sunset_im_kernel, s, m1sq, m2sq, m3sq, dps=dps)
 
 
 def sunset_subtracted(s, m1sq, m2sq, m3sq, dps=None):
-    """
-    S(s) - S(0) - s S'(0) = (s^2/pi) Int_th^oo dt Im S(t) / (t^2 (t - s - i0)).
+    r"""
+    The finite, scheme-independent :math:`S(s) - S(0) - s\,S'(0)` of the sunset, certified.
 
-    Finite and scheme independent; certified. Cost: a nested 1-D quadrature at two
-    working precisions (seconds).
+    Computed from the twice-subtracted dispersion relation
+
+    .. math::
+
+        S(s) - S(0) - s\,S'(0) = \frac{s^2}{\pi}\int_{s_{\rm th}}^\infty dt\,
+        \frac{\operatorname{Im} S(t)}{t^2\,(t - s - i0)},
+
+    so the result is complex above threshold, with imaginary part :func:`sunset_im`.
+    The constants :math:`S(0)` and :math:`S'(0)` themselves are not provided.
+
+    Parameters
+    ----------
+    s : number or str
+        External momentum squared (not exactly at threshold).
+    m1sq, m2sq, m3sq : number or str
+        Internal squared masses, :math:`\ge 0`, not all zero.
+    dps : int, optional
+        Decimal digits requested (default: ``mpmath.mp.dps``).
+
+    Returns
+    -------
+    mpmath.mpc
+
+    Raises
+    ------
+    ValueError
+        For invalid inputs, or all masses zero (then :math:`S'(0)` does not exist).
+    ArithmeticError
+        If a quadrature or the certification fails, for example exactly at threshold.
+
+    Notes
+    -----
+    A nested quadrature evaluated at two working precisions: about 10-20 s per value,
+    up to about 40 s far above threshold.
     """
     return _certified(_sub_kernel, s, m1sq, m2sq, m3sq, dps=dps, cert_step=12)
 
 
 def sunset_d2(s, m1sq, m2sq, m3sq, dps=None):
-    """d^2 S/ds^2 = (2/pi) Int_th^oo dt Im S(t) / (t - s)^3, for s below threshold; certified."""
+    r"""
+    Second derivative :math:`S''(s)` of the sunset below threshold, certified.
+
+    .. math:: S''(s) = \frac{2}{\pi}\int_{s_{\rm th}}^\infty dt\,\frac{\operatorname{Im} S(t)}{(t - s)^3}.
+
+    Parameters
+    ----------
+    s : number or str
+        External momentum squared, below the threshold :math:`(m_1+m_2+m_3)^2`.
+    m1sq, m2sq, m3sq : number or str
+        Internal squared masses, :math:`\ge 0`.
+    dps : int, optional
+        Decimal digits requested (default: ``mpmath.mp.dps``).
+
+    Returns
+    -------
+    mpmath.mpf
+
+    Raises
+    ------
+    ValueError
+        At or above threshold, or for invalid inputs.
+    ArithmeticError
+        If a quadrature or the certification fails.
+
+    Notes
+    -----
+    About 10-20 s per value, like :func:`sunset_subtracted`.
+    """
     return _certified(_d2_kernel, s, m1sq, m2sq, m3sq, dps=dps, cert_step=12)

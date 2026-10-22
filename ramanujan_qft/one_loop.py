@@ -375,46 +375,210 @@ def _certified(kernel, *args, dps=None, cert_step=20, **kw):
 
 
 def B0(p2, m1sq, m2sq, mu2=1, delta=0, dps=None):
-    """
-    Finite part (plus ``delta`` times the pole) of the scalar two-point function.
+    r"""
+    Scalar two-point function :math:`B_0(p^2; m_1^2, m_2^2)`, certified to ``dps`` digits.
+
+    .. math::
+
+        B_0 = \Delta - \int_0^1 dx\,\log\frac{x m_1^2 + (1-x) m_2^2 - x(1-x)p^2 - i0}{\mu^2},
+
+    in the LoopTools normalisation (measure :math:`\mu^{4-D}\,d^Dq/(i\pi^{D/2} r_\Gamma)`,
+    propagators :math:`1/(q^2 - m^2 + i0)`, :math:`D = 4 - 2\epsilon`). The
+    Feynman-parameter integral is done in closed form.
 
     Parameters
     ----------
-    p2 : real
-        External momentum squared (Minkowski metric, p2 > 0 is time-like).
-    m1sq, m2sq : real >= 0
-        Internal squared masses.
-    mu2 : real > 0
-        Renormalisation scale squared.
-    delta : real
-        Value assigned to the UV divergence ``1/eps - gamma_E + log 4pi``.
+    p2 : number or str
+        External momentum squared (Minkowski metric, ``p2 > 0`` is time-like).
+    m1sq, m2sq : number or str
+        Internal squared masses, :math:`\ge 0`.
+    mu2 : number or str, default 1
+        Renormalisation scale squared, :math:`\mu^2 > 0`.
+    delta : number or str, default 0
+        Value assigned to the UV divergence :math:`\Delta = 1/\epsilon - \gamma_E + \log 4\pi`.
     dps : int, optional
         Decimal digits requested (default: ``mpmath.mp.dps``).
 
     Returns
     -------
     mpmath.mpc
+
+    Raises
+    ------
+    ValueError
+        For a negative squared mass, a non-finite input, ``mu2 <= 0``, or the
+        scaleless :math:`B_0(0; 0, 0)`.
+    ArithmeticError
+        If certification fails.
+
+    See Also
+    --------
+    B0_mob : the equal-mass Method-of-Brackets series.
+
+    Examples
+    --------
+    >>> B0(5, 1, 1)          # LoopTools 2.16: 1.56959105903599583 + 1.40496294620814521 i
+    mpc(real='1.5695910590359961', imag='1.4049629462081452')
+    >>> import mpmath
+    >>> mpmath.nstr(B0(10, 1, 2, dps=30), 30)
+    '(0.6225920730905419577001843621 + 2.01160080643417843946062487128j)'
     """
     return _certified(_B0_kernel, p2, m1sq, m2sq, mu2=mu2, delta=delta, dps=dps)
 
 
 def B0_mob(p2, msq, mu2=1, delta=0, dps=None):
+    r"""
+    Equal-mass :math:`B_0(p^2; m^2, m^2)` from its Method-of-Brackets series, certified.
+
+    The Method of Brackets gives :math:`B_0(\epsilon) = \Gamma(\epsilon)(m^2)^{-\epsilon}\,
+    {}_2F_1(\epsilon, 1; 3/2; w)`. Its :math:`\epsilon` expansion is the exact series
+
+    .. math::
+
+        B_0 = \Delta - \log\frac{m^2}{\mu^2} + \frac{2w}{3}\,{}_2F_1(1, 1; 5/2; w),
+        \qquad w = \frac{p^2}{4m^2},
+
+    continued across the threshold :math:`w = 1` with :math:`w \to w + i0`.
+
+    Parameters
+    ----------
+    p2 : number or str
+        External momentum squared.
+    msq : number or str
+        The common squared mass, :math:`> 0`.
+    mu2, delta, dps
+        As in :func:`B0`.
+
+    Returns
+    -------
+    mpmath.mpc
+
+    Raises
+    ------
+    ValueError
+        For ``msq <= 0``, ``mu2 <= 0`` or a non-finite input.
+
+    Examples
+    --------
+    >>> B0_mob(8, 1) == B0(8, 1, 1)
+    True
+    """
     return _certified(_B0_mob_kernel, p2, msq, mu2=mu2, delta=delta, dps=dps)
 
 
 def C0_mob(s, msq, dps=None):
+    r"""
+    Equal-mass :math:`C_0(0, 0, s; m^2, m^2, m^2)` in closed form, certified.
+
+    The Method of Brackets gives :math:`C_0 = -\frac{1}{2m^2}\,[{}_2F_1(\tfrac12, \tfrac12;
+    \tfrac32; \tfrac{s}{4m^2})]^2 = -\frac{2}{s}\arcsin^2\sqrt{s/4m^2}`, continued to all
+    real :math:`s` as
+
+    .. math::
+
+        C_0 = \frac{1}{2s}\log^2\frac{\beta - 1}{\beta + 1}, \qquad
+        \beta = \sqrt{1 - \frac{4m^2}{s + i0}}.
+
+    Parameters
+    ----------
+    s : number or str
+        The squared momentum of the massive leg.
+    msq : number or str
+        The common squared mass, :math:`> 0`.
+    dps : int, optional
+        Decimal digits requested (default: ``mpmath.mp.dps``).
+
+    Returns
+    -------
+    mpmath.mpc
+
+    Examples
+    --------
+    >>> C0_mob(2, 1)
+    mpc(real='-0.61685027506808487', imag='0.0')
+    """
     return _certified(_C0_mob_kernel, s, msq, dps=dps)
 
 
 def C0(s, m1sq, m2sq, m3sq, dps=None):
+    r"""
+    Scalar three-point function :math:`C_0(0, 0, s; m_1^2, m_2^2, m_3^2)`, certified.
+
+    .. math::
+
+        C_0 = \int\frac{d^4q}{i\pi^2}\,
+        \frac{1}{(q^2-m_1^2)\,((q+k_1)^2-m_2^2)\,((q+k_2)^2-m_3^2)},
+        \qquad k_1^2 = (k_2-k_1)^2 = 0,\ k_2^2 = s,
+
+    with :math:`+i0` on each propagator. This is LoopTools' ``C0(0, 0, s, m1sq, m2sq, m3sq)``.
+    Equal masses use the closed form of :func:`C0_mob`; unequal masses the
+    't Hooft-Veltman dilogarithm reduction (real part) and the exact cut formula
+    (imaginary part); :math:`s = 0` the divided-difference closed form.
+
+    Parameters
+    ----------
+    s : number or str
+        The squared momentum of the massive leg.
+    m1sq, m2sq, m3sq : number or str
+        Internal squared masses, :math:`\ge 0`. A massless line is allowed when the
+        integral is infrared finite.
+    dps : int, optional
+        Decimal digits requested (default: ``mpmath.mp.dps``).
+
+    Returns
+    -------
+    mpmath.mpc
+
+    Raises
+    ------
+    ValueError
+        For the collinear-divergent cases :math:`m_1 = m_2 = 0` or :math:`m_2 = m_3 = 0`
+        (and, at :math:`s = 0`, two vanishing masses), a negative squared mass, or a
+        non-finite input.
+    ArithmeticError
+        If certification fails.
+
+    Examples
+    --------
+    >>> C0(10, 1, 2, 3)      # LoopTools 2.16: -0.421932531674735434 - 0.336732268033680282 i
+    mpc(real='-0.42193253167473543', imag='-0.33673226803368017')
+    """
     return _certified(_C0_kernel, s, m1sq, m2sq, m3sq, dps=dps)
 
 
 def bubble_3d(p2, m1sq, m2sq, dps=None):
+    r"""
+    The finite two-point function in :math:`D = 3`, certified.
+
+    .. math:: \Gamma(\tfrac12)\int_0^1 dx\,\big(x m_1^2 + (1-x)m_2^2 - x(1-x)p^2 - i0\big)^{-1/2},
+
+    with the measure :math:`d^3q/(i\pi^{3/2})` and propagators :math:`1/(q^2 - m^2 + i0)`.
+    With :math:`M = m_1 + m_2`: :math:`\sqrt\pi\,(2/Q)\arctan(Q/M)` for :math:`p^2 = -Q^2 < 0`;
+    :math:`\sqrt\pi\,(2/k)\operatorname{artanh}(k/M)` for :math:`0 < p^2 = k^2 < M^2`;
+    :math:`\sqrt\pi\,(2/k)[\tfrac12\log\frac{k+M}{k-M} + i\pi/2]` above threshold.
+
+    Parameters
+    ----------
+    p2 : number or str
+        External momentum squared.
+    m1sq, m2sq : number or str
+        Internal squared masses, :math:`\ge 0`.
+    dps : int, optional
+        Decimal digits requested (default: ``mpmath.mp.dps``).
+
+    Returns
+    -------
+    mpmath.mpc
+
+    Raises
+    ------
+    ValueError
+        Exactly at threshold :math:`p^2 = (m_1 + m_2)^2`, for the scaleless case
+        :math:`p^2 = 0` with massless lines, or for invalid inputs.
+
+    Examples
+    --------
+    >>> bubble_3d(10, 1, 2)
+    mpc(real='1.1259454203297292', imag='1.7608599228871051')
+    """
     return _certified(_bubble_3d_kernel, p2, m1sq, m2sq, dps=dps)
-
-
-for _pub, _ker in ((B0_mob, _B0_mob_kernel), (C0_mob, _C0_mob_kernel), (C0, _C0_kernel),
-                   (bubble_3d, _bubble_3d_kernel)):
-    _pub.__doc__ = _ker.__doc__
-del _pub, _ker

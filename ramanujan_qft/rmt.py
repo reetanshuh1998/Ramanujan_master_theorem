@@ -21,31 +21,63 @@ __all__ = ["ramanujan_master_theorem", "mellin_numeric", "massive_propagator_rmt
 
 
 def ramanujan_master_theorem(phi, s, dps=None):
-    """
-    Mellin transform via RMT:  Int_0^oo x^(s-1) Sum phi(n)(-x)^n/n! dx = Gamma(s) phi(-s).
+    r"""
+    Mellin transform by Ramanujan's Master Theorem.
+
+    If :math:`f(x) = \sum_{n\ge0} \varphi(n)\,(-x)^n/n!`, then
+
+    .. math:: \int_0^\infty x^{s-1} f(x)\,dx = \Gamma(s)\,\varphi(-s).
+
+    This function returns the right-hand side, ``Gamma(s) * phi(-s)``.
 
     Parameters
     ----------
     phi : callable
-        Analytic continuation of the Taylor-coefficient function phi(n).
-    s : number
-        Mellin variable, inside the fundamental strip of the integral.
+        The analytic continuation of the Taylor-coefficient function. It is called
+        once, with the mpmath number ``-s``, at the working precision, so write it
+        with mpmath functions (``mpmath.gamma``, ``mpmath.rgamma``, ``mpmath.rf``, ...).
+    s : number or str
+        The Mellin variable. It should lie in the strip where the integral converges;
+        outside it the analytic continuation is returned. Strings are exact decimals.
+    dps : int, optional
+        Decimal digits of working precision (default: ``mpmath.mp.dps``).
+
+    Returns
+    -------
+    mpmath.mpf or mpmath.mpc
 
     Notes
     -----
-    The theorem holds only for the continuation of phi that satisfies Hardy's
-    growth condition (|phi(v)| <= C e^(P Re v + A |Im v|) with A < pi, for Re v
-    > -delta). A function agreeing with phi on the integers but growing faster
-    (e.g. phi(v) + sin(pi v)) gives a wrong result, and no implementation can
-    detect this from a black-box callable. See Amdeberhan et al., Ramanujan J.
-    29 (2012) 103, Theorem 1.2.
+    The theorem holds for the continuation of :math:`\varphi` that satisfies Hardy's
+    growth condition: with :math:`\lambda(v) = \varphi(v)/\Gamma(1+v)` analytic for
+    :math:`\operatorname{Re} v \ge -\delta`, :math:`|\lambda(v + iw)| < C e^{Pv + A|w|}`
+    with :math:`A < \pi`. A function that agrees with :math:`\varphi` on the integers
+    but grows faster (for example :math:`\varphi(v) + \sin(\pi v)`) gives a wrong
+    value. This cannot be detected from a black-box callable, so check new uses with
+    :func:`mellin_numeric`.
+
+    References
+    ----------
+    G. H. Hardy, *Ramanujan: Twelve Lectures on Subjects Suggested by His Life and
+    Work*, Cambridge University Press (1940), ch. XI. T. Amdeberhan, O. Espinosa,
+    I. Gonzalez, M. Harrison, V. H. Moll, A. Straub, *Ramanujan's Master Theorem*,
+    Ramanujan J. 29 (2012) 103.
 
     Examples
     --------
+    :math:`e^{-x}` has :math:`\varphi(n) = 1`, so its Mellin transform is :math:`\Gamma(s)`:
+
     >>> import mpmath
-    >>> # exp(-x): phi(n) = 1  ->  Gamma(s)
-    >>> ramanujan_master_theorem(lambda n: 1, 2.5) - mpmath.gamma(2.5)
-    mpf('0.0')
+    >>> ramanujan_master_theorem(lambda n: 1, 2.5)
+    mpf('1.329340388179137')
+
+    :math:`(1+x)^{-3}` has :math:`\varphi(n) = \Gamma(3+n)/\Gamma(3)`, which gives the
+    Beta function :math:`B(s, 3-s)`:
+
+    >>> ramanujan_master_theorem(lambda n: mpmath.gamma(3 + n) / 2, 1.25)
+    mpf('0.41652027545234682')
+    >>> mpmath.beta(1.25, 1.75)
+    mpf('0.41652027545234682')
     """
     with mpmath.workdps(dps if dps is not None else mpmath.mp.dps):
         s = mpmath.mpmathify(s)
@@ -53,17 +85,57 @@ def ramanujan_master_theorem(phi, s, dps=None):
 
 
 def mellin_numeric(f, s, dps=None):
-    """
-    Numerical Mellin transform Int_0^oo x^(s-1) f(x) dx, intended for cross-checks
-    of non-oscillatory f with power-law behaviour x^p0 at 0 and power-law (or
-    faster) decay at infinity.
+    r"""
+    Numerical Mellin transform :math:`\int_0^\infty x^{s-1} f(x)\,dx`, for cross-checks.
 
-    Algebraic endpoint behaviour is removed by substitution before tanh-sinh
-    quadrature: x = y^(1/sigma) on [0, 1] (sigma = Re s + p0), and x = y^(-1/c) on
-    [1, oo), where c = a - sigma is estimated from the decay f(x) ~ x^(-a) at large x
-    (sampled over several decades). Raises ValueError when the decay estimate is
-    inconsistent or insufficient, and ArithmeticError when the quadrature error
-    estimate does not reach about half of the working digits.
+    Intended for non-oscillatory ``f`` that behave like a power :math:`x^{p_0}` as
+    :math:`x \to 0` and decay like a power (or faster) as :math:`x \to \infty`.
+
+    Parameters
+    ----------
+    f : callable
+        The integrand factor; called with mpmath numbers.
+    s : number or str
+        The Mellin variable; ``Re s > 0`` is required.
+    dps : int, optional
+        Decimal digits of working precision (default: ``mpmath.mp.dps``).
+
+    Returns
+    -------
+    mpmath.mpf or mpmath.mpc
+        The integral, accepted only if the quadrature error estimate is below
+        :math:`10^{-\lfloor dps/2 \rfloor}` relative to the value. Ask for more
+        digits than you want to compare.
+
+    Raises
+    ------
+    ValueError
+        If ``Re s <= 0``; if ``f`` vanishes at sample points; if ``f`` is not in its
+        power-law regime on :math:`[10^{-12}, 10^{-4}]` or :math:`[10^{4}, 10^{12}]`
+        (oscillating or logarithmic behaviour); or if the integral diverges, or
+        nearly so, at either end.
+    ArithmeticError
+        If the quadrature error estimate does not reach about half of the working
+        digits.
+
+    Notes
+    -----
+    The exponent :math:`p_0` is estimated from samples at :math:`x = 10^{-4}, \dots,
+    10^{-12}` and the decay :math:`f \sim x^{-a}` from samples at :math:`x = 10^{4},
+    \dots, 10^{12}`. The algebraic endpoint behaviour is removed by the substitutions
+    :math:`x = y^{1/\sigma}` on :math:`[0, 1]`, with :math:`\sigma = \operatorname{Re} s + p_0`,
+    and :math:`x = y^{-1/c}` on :math:`[1, \infty)`, with :math:`c = a - \operatorname{Re} s`,
+    before tanh-sinh quadrature (``mpmath.quad``).
+
+    Examples
+    --------
+    >>> import mpmath
+    >>> mellin_numeric(lambda x: (1 + x)**-3, 1.25)
+    mpf('0.41652027545234682')
+    >>> mellin_numeric(lambda x: 1 / (1 + x), 1)
+    Traceback (most recent call last):
+    ...
+    ValueError: the Mellin integral diverges (or nearly so) at infinity for this s
     """
     with mpmath.workdps(dps if dps is not None else mpmath.mp.dps):
         s = mpmath.mpmathify(s)
@@ -113,14 +185,50 @@ def mellin_numeric(f, s, dps=None):
 
 
 def massive_propagator_rmt(msq, D, dps=None):
-    """
-    Radial integral of a massive propagator by RMT:
+    r"""
+    Radial integral of a massive propagator in :math:`D` dimensions, by RMT.
 
-        Int_0^oo dq2 (q2)^(D/2 - 1) / (q2 + m^2) = (m^2)^(D/2 - 1) Gamma(D/2) Gamma(1 - D/2).
+    .. math::
 
-    Writing 1/(q2 + m^2) = Sum_n (-q2)^n n!/(n! (m^2)^(n+1)), i.e. phi(n) = Gamma(n+1)/(m^2)^(n+1),
-    RMT with s = D/2 gives Gamma(D/2) phi(-D/2). Valid (convergent) for 0 < D < 2 and
-    defined elsewhere by analytic continuation -- exactly dimensional regularisation.
+        \int_0^\infty dq^2\,(q^2)^{D/2-1}\,\frac{1}{q^2+m^2}
+        = (m^2)^{D/2-1}\,\Gamma(D/2)\,\Gamma(1-D/2).
+
+    The expansion :math:`1/(q^2+m^2) = \sum_n \Gamma(n+1)(m^2)^{-n-1}(-q^2)^n/n!` gives
+    :math:`\varphi(n) = \Gamma(n+1)/(m^2)^{n+1}`, and the theorem is applied at
+    :math:`s = D/2`.
+
+    Parameters
+    ----------
+    msq : number or str
+        The squared mass :math:`m^2 > 0`.
+    D : number or str
+        The dimension. The integral converges for :math:`0 < D < 2`; elsewhere the
+        analytic continuation in :math:`D` is returned, which is dimensional
+        regularisation. At :math:`D = 2, 4, 6, \dots` the continuation has a pole and
+        mpmath raises ``ValueError``.
+    dps : int, optional
+        Decimal digits of working precision (default: ``mpmath.mp.dps``).
+
+    Returns
+    -------
+    mpmath.mpf or mpmath.mpc
+
+    Raises
+    ------
+    ValueError
+        If ``msq`` is not positive, or at a pole in ``D``.
+
+    Notes
+    -----
+    Dividing by :math:`\Gamma(D/2)` gives the Euclidean tadpole
+    :math:`\int d^Dq_E/\pi^{D/2}\,(q_E^2+m^2)^{-1} = \Gamma(1-D/2)\,(m^2)^{D/2-1}`.
+
+    Examples
+    --------
+    >>> massive_propagator_rmt(2.5, 1.5)
+    mpf('3.533294752055899')
+    >>> print(massive_propagator_rmt(4, 3))     # D = 3 by continuation: -2 pi
+    -6.28318530717959
     """
     with mpmath.workdps(dps if dps is not None else mpmath.mp.dps):
         m2, D = mpmath.mpf(msq), mpmath.mpmathify(D)

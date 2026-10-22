@@ -56,7 +56,13 @@ __all__ = [
 
 
 class SeriesConvergenceError(ArithmeticError):
-    """Raised when no valid residue expansion reaches the requested accuracy."""
+    r"""
+    No valid residue expansion reaches the requested accuracy.
+
+    Raised by :func:`product_integral` at the convergence boundary :math:`\rho = 1`,
+    or when a valid series needs more than ``max_terms`` terms or more than
+    ``max_dps`` digits. A subclass of :class:`ArithmeticError`.
+    """
 
 
 class _PoleCollision(Exception):
@@ -74,17 +80,42 @@ class _Built:
 
 @dataclass
 class MellinFunction:
-    """
-    A factor f(x) on (0, oo) described by its Mellin data.
+    r"""
+    A factor :math:`f(x)` on :math:`(0, \infty)`, described by its Mellin data.
 
-    name   : display name
-    build  : () -> _Built, evaluated at the current working precision
-    L, R   : Gamma-orders of the Taylor coefficients and of M at +oo (see module doc)
-    p0     : leading exponent of f at x = 0 (raw value; converted at the working precision)
-    tail   : behaviour at x -> oo: ("fast",) for faster than any power, or
-             ("power", alpha, frequency, phase) for amplitude x^(-alpha) cos(w x + phase),
-             frequency 0 meaning not oscillating; phase in units of pi/4
-    params : raw parameters, for reference
+    Instances are created by the atlas constructors (:func:`exponential`,
+    :func:`gaussian`, :func:`bessel_j`, :func:`cosine`, :func:`sine`,
+    :func:`inverse_power`, :func:`gaussian_bessel`) and passed to
+    :func:`product_integral`. Calling an instance evaluates the function:
+    ``exponential(1)(2)`` is :math:`e^{-2}`.
+
+    Attributes
+    ----------
+    name : str
+        Display name, used in messages.
+    build : callable
+        Returns the Mellin data (function, transform, expansions, scale) at the
+        current working precision. Its return type is internal, so defining new
+        factors outside the package is not yet a stable interface.
+    L, R : number or None
+        Gamma orders: the Taylor coefficients decay like :math:`c^p/\Gamma(p)^L` and
+        the Mellin transform grows like :math:`\Gamma(w)^R/c^w`. ``L`` is None for a
+        factor that cannot be expanded.
+    p0 : number or str
+        Leading exponent of :math:`f` at :math:`x = 0`.
+    tail : tuple
+        Behaviour at :math:`x \to \infty`: ``("fast",)`` for faster than any power, or
+        ``("power", alpha, frequency, phase)`` for :math:`x^{-\alpha}\cos(\omega x + \phi)`.
+    params : dict
+        The parameters as given, kept exact.
+
+    Examples
+    --------
+    >>> f = bessel_j(0, 3)
+    >>> f.name, f.L, f.R
+    ('J_0(3 x)', 1, 1)
+    >>> f(1)
+    mpf('-0.26005195490193345')
     """
     name: str
     build: Callable[[], _Built]
@@ -110,7 +141,24 @@ def _positive(name, value):
 
 
 def exponential(k):
-    """exp(-k x), k > 0."""
+    r"""
+    The factor :math:`e^{-kx}`.
+
+    Parameters
+    ----------
+    k : number or str
+        Real, finite and positive.
+
+    Returns
+    -------
+    MellinFunction
+        Mellin transform :math:`k^{-s}\Gamma(s)`; Gamma orders :math:`L = R = 1`, scale :math:`k`.
+
+    Examples
+    --------
+    >>> product_integral(exponential(2), cosine(5))     # 2/29
+    mpf('0.068965517241379309')
+    """
     _positive("k", k)
 
     def build():
@@ -123,7 +171,25 @@ def exponential(k):
 
 
 def gaussian(a):
-    """exp(-a x^2), a > 0."""
+    r"""
+    The factor :math:`e^{-ax^2}`.
+
+    Parameters
+    ----------
+    a : number or str
+        Real, finite and positive.
+
+    Returns
+    -------
+    MellinFunction
+        Mellin transform :math:`\tfrac12 a^{-s/2}\Gamma(s/2)`; Gamma orders
+        :math:`L = R = 1/2`, scale :math:`\sqrt{2a}`.
+
+    Examples
+    --------
+    >>> product_integral(gaussian(1), cosine(3))        # sqrt(pi)/2 exp(-9/4)
+    mpf('0.093407630728565852')
+    """
     _positive("a", a)
 
     def build():
@@ -137,7 +203,34 @@ def gaussian(a):
 
 
 def bessel_j(nu, b):
-    """J_nu(b x), b > 0, real nu > -1 or nu a negative integer (J_-n = (-1)^n J_n)."""
+    r"""
+    The factor :math:`J_\nu(bx)`.
+
+    Parameters
+    ----------
+    nu : number or str
+        Real order :math:`\nu > -1`, or a negative integer (mapped to
+        :math:`J_{-n} = (-1)^n J_n`).
+    b : number or str
+        Real, finite and positive.
+
+    Returns
+    -------
+    MellinFunction
+        Mellin transform :math:`2^{s-1} b^{-s}\,\Gamma(\tfrac{\nu+s}{2})/\Gamma(\tfrac{\nu-s}{2}+1)`;
+        Gamma orders :math:`L = R = 1`, scale :math:`b`.
+
+    Raises
+    ------
+    ValueError
+        For a complex order, an order :math:`\le -1` that is not an integer, or
+        :math:`b \le 0`.
+
+    Examples
+    --------
+    >>> product_integral(bessel_j(0, 2), cosine(1))     # 1/sqrt(3)
+    mpf('0.57735026918962573')
+    """
     _positive("b", b)
     nu_ = _m(nu)
     if mpmath.im(nu_) != 0:
@@ -162,7 +255,25 @@ def bessel_j(nu, b):
 
 
 def cosine(b):
-    """cos(b x), b > 0."""
+    r"""
+    The factor :math:`\cos bx`.
+
+    Parameters
+    ----------
+    b : number or str
+        Real, finite and positive.
+
+    Returns
+    -------
+    MellinFunction
+        Mellin transform :math:`b^{-s}\Gamma(s)\cos(\pi s/2)`; Gamma orders
+        :math:`L = R = 1`, scale :math:`b`.
+
+    Examples
+    --------
+    >>> product_integral(exponential(1), cosine(10**6), dps=20)     # 1/(1 + 10^12)
+    mpf('9.99999999999e-13')
+    """
     _positive("b", b)
 
     def build():
@@ -175,7 +286,25 @@ def cosine(b):
 
 
 def sine(b):
-    """sin(b x), b > 0."""
+    r"""
+    The factor :math:`\sin bx`.
+
+    Parameters
+    ----------
+    b : number or str
+        Real, finite and positive.
+
+    Returns
+    -------
+    MellinFunction
+        Mellin transform :math:`b^{-s}\Gamma(s)\sin(\pi s/2)`; Gamma orders
+        :math:`L = R = 1`, scale :math:`b`.
+
+    Examples
+    --------
+    >>> product_integral(exponential(1), sine(2))       # 2/5
+    mpf('0.40000000000000002')
+    """
     _positive("b", b)
 
     def build():
@@ -188,7 +317,28 @@ def sine(b):
 
 
 def inverse_power(m, v):
-    """(x + m)^(-v), m > 0, v > 0."""
+    r"""
+    The factor :math:`(x + m)^{-v}`.
+
+    It carries both its Taylor expansion at :math:`x = 0` and its expansion
+    :math:`\sum_n \binom{-v}{n} m^n x^{-v-n}` at large :math:`x`.
+
+    Parameters
+    ----------
+    m, v : number or str
+        Real, finite and positive.
+
+    Returns
+    -------
+    MellinFunction
+        Mellin transform :math:`m^{s-v}\Gamma(s)\Gamma(v-s)/\Gamma(v)`; Gamma orders
+        :math:`L = R = 0`, scale :math:`1/m`.
+
+    Examples
+    --------
+    >>> product_integral(exponential(1), inverse_power(1, 1))      # e E1(1)
+    mpf('0.59634736232319407')
+    """
     _positive("m", m)
     _positive("v", v)
 
@@ -205,8 +355,36 @@ def inverse_power(m, v):
 
 
 def gaussian_bessel(a, b, nu):
-    """exp(-a x^2) J_nu(b x), a, b > 0, nu > -1. Mellin transform in closed form via 1F1;
-    usable as the non-expanded factor (e.g. against an exponential)."""
+    r"""
+    The factor :math:`e^{-ax^2}J_\nu(bx)`.
+
+    Its Mellin transform is known in closed form,
+
+    .. math::
+
+        M(s) = \frac{(b/2)^\nu\,\Gamma(h)}{2\,a^{h}\,\Gamma(\nu+1)}\,
+        {}_1F_1\!\left(h;\nu+1;-\frac{b^2}{4a}\right), \qquad h = \frac{s+\nu}{2},
+
+    but it is not expanded itself (:math:`L` is undefined), so it must be paired with a
+    factor that can be expanded against :math:`R = 1/2`, such as an exponential. This
+    handles three-factor products like :math:`e^{-2x}e^{-x^2/2}J_1(100x)`.
+
+    Parameters
+    ----------
+    a, b : number or str
+        Real, finite and positive.
+    nu : number or str
+        Real order :math:`\nu > -1`.
+
+    Returns
+    -------
+    MellinFunction
+
+    Examples
+    --------
+    >>> product_integral(exponential(2), gaussian_bessel("0.5", 1, 1))
+    mpf('0.072735927988686319')
+    """
     _positive("a", a)
     _positive("b", b)
     if not _m(nu) > -1:
@@ -495,24 +673,76 @@ def _evaluate(f, g, s, dps, tol, max_terms, max_dps):
 
 def product_integral(f, g, s=1, dps=None, tol=None, max_terms=4000, return_info=False,
                      continuation=False, max_dps=None):
-    """
-    Evaluate Int_0^oo x^(s-1) f(x) g(x) dx by Mellin residue summation.
+    r"""
+    Evaluate :math:`\int_0^\infty x^{s-1} f(x)\,g(x)\,dx` by Mellin residue summation.
+
+    One factor is expanded in its Taylor series at :math:`x = 0` (and the other at
+    :math:`x = \infty` when it has such an expansion), and the residue series
+
+    .. math:: I(s) = \sum_n r_n\,M_g(s + p_n) + \sum_n q_n\,M_f(s - a_n)
+
+    is summed. Only expansions for which closing the Mellin-Barnes contour is
+    legitimate are used (see the user guide), the existence of the integral is
+    checked first, and the working precision is raised against cancellation.
 
     Parameters
     ----------
     f, g : MellinFunction
-    s : number (complex allowed); s = 1 gives the plain integral
-    dps : decimal digits requested (default mpmath.mp.dps)
-    tol : relative accuracy target (default 10^(-dps))
-    return_info : also return a dict (method, error estimate, terms, working precision)
-    continuation : if True, s outside the region where the integral exists is allowed
-                   and the analytic continuation in s is returned
-    max_dps : cap on the internal working precision (default max(20*dps, 1000))
+        Factors from the atlas: :func:`exponential`, :func:`gaussian`,
+        :func:`bessel_j`, :func:`cosine`, :func:`sine`, :func:`inverse_power`,
+        :func:`gaussian_bessel`.
+    s : number or str, default 1
+        The Mellin variable; ``s=1`` gives the plain integral. Complex values are
+        allowed; strings are exact decimals.
+    dps : int, optional
+        Decimal digits requested (default: ``mpmath.mp.dps``). The result is rounded
+        to ``dps`` digits.
+    tol : number, optional
+        Relative accuracy target (default :math:`10^{-dps}`).
+    max_terms : int, default 4000
+        Largest number of residue terms per series.
+    return_info : bool, default False
+        Also return a dict with the keys ``method`` (the expanded factor, and notes on
+        Wynn acceleration or coinciding poles), ``error_estimate``, ``terms`` and
+        ``working_dps``.
+    continuation : bool, default False
+        Allow ``s`` outside the strip where the integral exists, and return the
+        analytic continuation of :math:`I(s)`.
+    max_dps : int, optional
+        Cap on the internal working precision (default ``max(20*dps, 1000)``).
+
+    Returns
+    -------
+    mpmath.mpf or mpmath.mpc, or (value, dict) if ``return_info`` is true
 
     Raises
     ------
-    ValueError               if the integral does not exist for this s
-    SeriesConvergenceError   if no valid expansion reaches the accuracy target
+    ValueError
+        If the integral does not exist for this ``s`` (the message gives the strip),
+        or ``s`` is not finite.
+    SeriesConvergenceError
+        If no valid expansion reaches the accuracy target: the scales are at the
+        convergence boundary :math:`\rho = 1` (for example :math:`e^{-x}J_0(x)`), or
+        the series needs more than ``max_terms`` terms, or more than ``max_dps``
+        digits.
+
+    Notes
+    -----
+    The method is the classical Mellin-convolution (Meijer-G / Slater) residue
+    expansion; see the prior-art page of the documentation (Marichev 1983;
+    Adamchik and Marichev 1990; Slater 1966; DLMF 2.5).
+
+    Examples
+    --------
+    >>> product_integral(exponential(1), bessel_j(0, 3))      # 1/sqrt(10)
+    mpf('0.31622776601683794')
+    >>> v, info = product_integral(exponential(1), bessel_j(0, 3), dps=30, return_info=True)
+    >>> info['method'], info['terms'], info['working_dps']
+    ('expand exp(-1 x)', 73, 45)
+    >>> product_integral(exponential(1), bessel_j(0, 1))
+    Traceback (most recent call last):
+    ...
+    ramanujan_qft.mellin.SeriesConvergenceError: neither ordering of exp(-1 x) * J_0(1 x) is a convergent residue expansion (the scales are at the convergence boundary rho = 1, or the factors cannot be expanded). Use quadrature or a closed form.
     """
     dps = dps if dps is not None else mpmath.mp.dps
     max_dps = max_dps if max_dps is not None else max(20 * dps, 1000)

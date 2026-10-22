@@ -48,7 +48,7 @@ agrees with $\varphi$ on the integers but has an extra term such as
 $\sin(\pi v)$ grows like $e^{\pi |w|}$, so it violates the condition and gives a
 different, wrong value. A black-box callable cannot be tested for this, so the
 library does not try. Checking the result is your job; use
-[`mellin_numeric`](#checking-a-result-with-mellin-numeric) for that.
+[`mellin_numeric`](#checking-a-result-with-mellin_numeric) for that.
 
 ## Using `ramanujan_master_theorem`
 
