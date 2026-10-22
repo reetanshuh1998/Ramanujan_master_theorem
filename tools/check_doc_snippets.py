@@ -72,6 +72,7 @@ def check_page(path):
             test = parser.get_doctest(code, namespace, f"{path}:{line}", str(path), line)
             out = io.StringIO()
             result = runner.run(test, out=out.write, clear_globs=False)
+            namespace.update(test.globs)  # DocTest works on a copy of the namespace
             if result.failed:
                 failures += 1
                 print(out.getvalue())
