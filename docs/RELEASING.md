@@ -12,7 +12,7 @@ release or upload has occurred. The code remains a scoped research tool.
 - [x] Complete the final candidate artifact checks and record their outcomes.
 
 Local evidence: 440 tests and 19 doctests passed; all 34 fixed-seed audit cases,
-six notebook code cells and seven graph/series guide snippets passed. Sphinx,
+six notebook code cells and all 67 documentation examples passed. Sphinx,
 actionlint, strict Twine checks, and fresh-environment wheel/sdist installs
 passed. The full tests emitted one existing SciPy reference-quadrature roundoff
 warning. These local results do not substitute for the hosted and external
@@ -23,6 +23,7 @@ python -m pip install ".[test]" build twine
 python -m pytest -q
 python tools/audit_sunset.py --output benchmarks/data/sunset_audit.json
 python tools/check_notebook.py notebooks/research_alpha.ipynb
+python tools/check_doc_snippets.py docs
 python tools/check_release_metadata.py --tag v0.3.0a1
 python -m build --outdir dist .
 python -m twine check --strict dist/*
