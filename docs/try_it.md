@@ -8,9 +8,13 @@ server.
 * Pick an example or write your own code, then press **Run** (or
   <kbd>Ctrl</kbd>+<kbd>Enter</kbd>). The value of the last line is shown, as in a
   notebook, and variables persist between runs.
-* The first run downloads Python, mpmath and SymPy, about 20 MB in total. Your
+* The first run downloads Python, NumPy, mpmath and SymPy (tens of MB). Your
   browser caches them, so later visits start faster.
 * **Stop** ends a long calculation. Python then restarts on the next run.
+* To see the Ramanujan method on a coupled integral, choose **Two-loop sunset:
+  graph to multivariate RMT**. It displays the exponent matrix, Gamma families,
+  result and error diagnostics. The separate Taylor example covers equal-mass
+  vacuum and checks it against a Clausen reference.
 
 ```{raw} html
 <link rel="stylesheet" href="_static/try_it.css">
@@ -39,8 +43,10 @@ server.
 * **Version.** The console installs the package built from the same commit as this
   documentation.
 * **Limits.** One calculation runs at a time. Files and plots are not supported.
-  `numpy` and the other packages that Pyodide provides are loaded automatically
-  when your code imports them.
+  NumPy, mpmath and SymPy are loaded before the package starts. Other Pyodide
+  packages are loaded when your code imports them explicitly. For the hybrid
+  graph evaluator, include `import scipy` before calling `integrate_graph`;
+  its optional SciPy dependency is not needed for the sunset series examples.
 * **If it does not start:** the console needs a recent browser with WebAssembly
   and access to `cdn.jsdelivr.net`, where Pyodide is hosted. Corporate networks
   sometimes block it. Use Colab or a local installation instead.

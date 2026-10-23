@@ -7,8 +7,9 @@
  * Configuration (for offline tests or mirrors): set window.RQFT_CONFIG before this
  * script runs, e.g. {indexURL: "http://localhost:8000/pyodide/", wheels: [...]}.
  *   indexURL    Pyodide distribution (default: jsDelivr, Pyodide 0.26.4)
- *   packages    Pyodide packages to load (default: mpmath, sympy)
- *   wheels      if set, URLs of wheels to install instead of `packages`
+ *   packages    Pyodide packages to load (default: numpy, mpmath, sympy)
+ *   wheels      if set, pure-Python dependency wheels instead of `packages`;
+ *               NumPy is always loaded from the Pyodide distribution
  *   wheelIndex  JSON file {"wheel": "<file name>"} naming the ramanujan-qft wheel,
  *               which lies next to it (default: wheels/latest.json next to this script)
  * Relative URLs in RQFT_CONFIG are resolved against the page.
@@ -21,7 +22,7 @@
 
   const DEFAULTS = {
     indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/",
-    packages: ["mpmath", "sympy"],
+    packages: ["numpy", "mpmath", "sympy"],
     wheels: null,
     wheelIndex: new URL("wheels/latest.json", SCRIPT_URL).href,
   };
@@ -119,6 +120,40 @@ m = (1, 2, 3)   # squared masses
 print("threshold:", sunset_threshold(*m))
 for s in (20, 50, 100):
     print(f"Im S({s}) =", mp.nstr(sunset_im(s, *m), 15))
+`,
+    },
+    {
+      title: "Two-loop sunset: graph to multivariate RMT",
+      code: `import mpmath as mp
+from ramanujan_qft import ScalarEdge, ScalarGraph, compile_sunset_rmt
+
+# Positive Euclidean propagators; squared masses = 1, D = 2, Q = 10 > 3m.
+# This backend sums generated Gamma series without numerical integration.
+graph = ScalarGraph([ScalarEdge(0, 1, 1) for _ in range(3)],
+                    external_momenta={0: [10], 1: [-10]})
+series = compile_sunset_rmt(graph)
+print("Exponent matrix:", series.bracket_system.matrix)
+print("Gamma families:", len(series.families))
+result = series.evaluate(dps=25)
+print("Chart:", result.chart)
+print("Integral:", mp.nstr(result.value, 25))
+print("Truncation bound:", mp.nstr(result.truncation_bound, 5))
+print("Estimated error:", mp.nstr(result.error_estimate, 5))
+`,
+    },
+    {
+      title: "Two-loop sunset: equal-mass Taylor continuation",
+      code: `import mpmath as mp
+from ramanujan_qft import ScalarEdge, ScalarGraph, integrate_sunset_taylor
+
+# Separate Taylor method: equal-mass vacuum is outside the RMT charts.
+graph = ScalarGraph([ScalarEdge(0, 1, 1) for _ in range(3)])
+result = integrate_sunset_taylor(graph, dps=25)
+print("Method:", result.method)
+print("Vacuum integral:", mp.nstr(result.value, 25))
+with mp.workdps(35):
+    print("Clausen reference:", mp.nstr(4 * mp.clsin(2, mp.pi / 3) / mp.sqrt(3), 25))
+print("Estimated error:", mp.nstr(result.error_estimate, 5))
 `,
     },
     {
@@ -245,7 +280,7 @@ mp.nstr(product_integral(gaussian(1), cosine(3), dps=25), 25)
       const id = ++runId;
       write(">>> run\n", "prompt");
       try {
-        if (!worker || !starting) setStatus("Starting Python… (the first start downloads about 20 MB)", "loading");
+        if (!worker || !starting) setStatus("Starting Python… (the first start downloads Python and its dependencies)", "loading");
         await startWorker();
       } catch (err) {
         return;

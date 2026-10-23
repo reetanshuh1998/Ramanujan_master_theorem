@@ -8,13 +8,13 @@ flowchart TD
     A[1. Equal-mass coverage: implemented and tested]
     B[2. Local audit passed: external review pending]
     C[3. Capabilities and guarantees: documented]
-    D[4. Hosted CI passed: TestPyPI pending]
+    D[4. Hosted CI and TestPyPI rehearsal passed]
     E[5. Alpha candidate prepared: publication pending]
     A --> B --> C --> D --> E
     classDef ready fill:#d8f3dc,stroke:#2d6a4f,color:#102a1b
     classDef pending fill:#fff3cd,stroke:#997404,color:#332701
-    class A,C ready
-    class B,D,E pending
+    class A,C,D ready
+    class B,E pending
 ```
 
 | Order | Objective | Completion criteria | Status |
@@ -22,12 +22,12 @@ flowchart TD
 | 1 | Close the equal-mass Euclidean gap | Derived convergent series, documented normalization and tail bound; vacuum, quadrature and overlap checks; bounded work | Implemented; validation recorded below |
 | 2 | Audit the numerical backend | Reproducible benchmark grid, independent references, actual versus reported errors, boundary and budget failures, review packet | Local audit passed; external scientific review pending |
 | 3 | Make capabilities explicit | One capability table; distinguish RMT, analytic continuation and numerical integration; describe all error guarantees | Implemented |
-| 4 | Gate publication on validation | Release-commit tests, wheel and source-distribution checks outside checkout, platform smoke tests, TestPyPI rehearsal workflow | Hosted validation passed for `b224380`; TestPyPI rehearsal pending |
+| 4 | Gate publication on validation | Release-commit tests, wheel and source-distribution checks outside checkout, platform smoke tests, TestPyPI rehearsal workflow | Hosted validation and TestPyPI upload/install passed for `3b00bd6`; changed candidates must be revalidated |
 | 5 | Prepare the public research alpha | Runnable notebook, versioned release notes, citation/contribution instructions and release checklist | Candidate 0.3.0a1 prepared; public release pending |
 
 External scientific review needs a human reviewer. Repository changes cannot
-stand in for that review. TestPyPI/PyPI uploads and a public release will be
-prepared for review; no publication is performed by this local implementation.
+stand in for that review. TestPyPI contains the rehearsed `0.3.0a1` candidate;
+production PyPI publication remains pending.
 
 ## Scope
 
@@ -67,9 +67,14 @@ research objectives. Existing user changes are preserved throughout.
   SciPy unavailable. The source archive contains the reproduction material.
 - The candidate notebook, citation version, contribution guide and draft
   release notes are prepared. Follow [the release checklist](RELEASING.md);
-  external review, TestPyPI/PyPI uploads and public release remain pending.
+  external review and production PyPI publication remain pending.
 - Hosted validation for candidate `b224380` passed: [tests, audit and six
   platform/artifact combinations](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/39865347949)
   and [full documentation/gallery checks](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/39865347891).
   Subsequent changes must pass CI again; current results are tracked in
-  [draft PR #3](https://github.com/reetanshuh1998/Ramanujan_master_theorem/pull/3).
+  [merged PR #3](https://github.com/reetanshuh1998/Ramanujan_master_theorem/pull/3)
+  and the main-branch workflow runs.
+- Candidate `3b00bd6` passed the [TestPyPI rehearsal](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/39924746748):
+  validation, trusted-publisher upload and fresh installation from the index.
+  Published wheel/source hashes matched the validated artifacts. Later changes
+  require another frozen candidate and an unused version for a repeat upload.
