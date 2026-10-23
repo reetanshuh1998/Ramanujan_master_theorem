@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   validate:
+    if: github.event_name == 'release'
     uses: ./.github/workflows/validate.yml
     with:
       include_slow: true
@@ -36,7 +37,6 @@ jobs:
 
   publisher-preflight:
     if: github.event_name == 'workflow_dispatch'
-    needs: validate
     runs-on: ubuntu-latest
     environment: pypi
     permissions:

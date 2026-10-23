@@ -12,6 +12,22 @@ import urllib.parse
 import urllib.request
 
 
+def rejection_codes(error):
+    """Return only known public error codes, never raw authentication data."""
+    known = {'invalid-payload', 'not-enabled', 'invalid-token',
+             'invalid-pending-publisher', 'rate-limited', 'invalid-reuse-token',
+             'invalid-publisher'}
+    try:
+        payload = json.loads(error.read(16384))
+    except (ValueError, UnicodeError):
+        return []
+    if not isinstance(payload, dict) or not isinstance(payload.get('errors'), list):
+        return []
+    return sorted({item['code'] for item in payload['errors']
+                   if isinstance(item, dict) and isinstance(item.get('code'), str)
+                   and item['code'] in known})
+
+
 def main():
     endpoint = os.environ['ACTIONS_ID_TOKEN_REQUEST_URL']
     parsed = urllib.parse.urlsplit(endpoint)
@@ -32,6 +48,8 @@ def main():
     except urllib.error.HTTPError as error:
         # Never dump an auth response, request headers or identity tokens.
         print(f'Production PyPI rejected publisher authentication (HTTP {error.code}).')
+        for code in rejection_codes(error):
+            print(f'PyPI rejection code: {code}')
         print('Check the PyPI pending publisher: project ramanujan-qft; owner '
               'reetanshuh1998; repository Ramanujan_master_theorem; '
               'workflow publish.yml; environment pypi.')

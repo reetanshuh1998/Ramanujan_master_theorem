@@ -45,3 +45,16 @@ def test_only_authentication_endpoints_and_no_credential_output(preflight, monke
     assert len(requests) == 2
     output = capsys.readouterr()
     assert 'secret' not in output.out+output.err
+
+
+@pytest.mark.parametrize('payload, expected', [
+    ({'errors': [{'code': 'invalid-publisher', 'description': 'identity-secret'},
+                 {'code': 'identity-secret'}, {'code': ['identity-secret']}]},
+     ['invalid-publisher']),
+    ({'errors': 'identity-secret'}, []),
+    (['identity-secret'], []),
+])
+def test_rejection_codes_are_allowlisted(preflight, payload, expected):
+    error = urllib.error.HTTPError('https://pypi.org/_/oidc/mint-token', 422,
+                                  'rejected', {}, io.BytesIO(json.dumps(payload).encode()))
+    assert preflight.rejection_codes(error) == expected
