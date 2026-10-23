@@ -1,7 +1,11 @@
 # Conventions
 
-The Feynman-integral functions follow the conventions of LoopTools, so that
+The `one_loop` and `sunset` functions follow the conventions of LoopTools, so that
 values can be compared one to one with LoopTools, FF and pySecDec output.
+
+The {doc}`multiloop` and {doc}`sunset_rmt` graph APIs instead use positive Euclidean
+propagators and the measure $d^Dk/\pi^{D/2}$; its conventions are given in that
+guide. The conventions below apply to `one_loop` and `sunset`.
 
 ## Kinematics
 

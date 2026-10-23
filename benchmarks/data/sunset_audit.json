@@ -1,0 +1,953 @@
+{
+  "schema_version": 1,
+  "package_version": "0.3.0a1",
+  "dps": 20,
+  "random_seed": 1729,
+  "python": "3.12.3",
+  "mpmath": "1.3.0",
+  "sympy": "1.14.0",
+  "base_commit": "c9c4922f41e5b691cd28df31ec72acdfd2980d8a",
+  "source_sha256": {
+    "ramanujan_qft/sunset_rmt.py": "8f3e9e6fbb7c6646c9647a7eb1fa387f5e2450b8030adf8619e9441f9843a6c1",
+    "ramanujan_qft/sunset_taylor.py": "3087d2e73f29a85ce5076dc9d8291755c11621f02d963ba574d09b6614a7c6fa",
+    "ramanujan_qft/brackets.py": "287ccf7749b50118e1992f49c2ff078c32e51fb870eb3868a6f5ee686a3e5554",
+    "ramanujan_qft/multiloop.py": "42bc1037ada4fff3acf9006ba1c42d04db30949ca3ff0bcc7455024b84c64887",
+    "tools/audit_sunset.py": "6abc11825db2994e5a962217fce2e6553ad1150e8636cd8d696c9b804f56f047",
+    "ramanujan_qft/__init__.py": "3600ed396e1aea91c481dd424cc7618c04d6e2431b2f92a312609d7f76ff8edb",
+    "pyproject.toml": "6fca87438f65842f8e60e1380da32da4a5bf172adf560a18570bba39ee7a3a27"
+  },
+  "reference": "Cheng-Wu parameter integral; two working precisions",
+  "external_scientific_review": "pending",
+  "passed": true,
+  "cases": [
+    {
+      "name": "equal_taylor_0",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "0",
+      "backend": "taylor",
+      "expected": "value",
+      "budget": {
+        "max_terms": 1024
+      },
+      "outcome": "value",
+      "passed": true,
+      "value": "2.343907238689458890601685",
+      "reference": "2.3439072386894588906015622888722770690954030096359",
+      "reference_precision_difference": "1.5722247e-36",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "1.2317432e-22",
+      "reported_error": "1.2317432e-22",
+      "error_ratio": "1.0",
+      "terms": 1,
+      "working_dps": 61,
+      "method": "equal-mass sunset / transformed Taylor series",
+      "seconds": 0.173
+    },
+    {
+      "name": "equal_taylor_0.001",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "0.001",
+      "backend": "taylor",
+      "expected": "value",
+      "budget": {
+        "max_terms": 1024
+      },
+      "outcome": "value",
+      "passed": true,
+      "value": "2.343907124053720791750005",
+      "reference": "2.3439071240537207917513967026101224479399928633721",
+      "reference_precision_difference": "1.4721623e-36",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "1.3918159e-21",
+      "reported_error": "1.3918162e-21",
+      "error_ratio": "0.99999981",
+      "terms": 4,
+      "working_dps": 64,
+      "method": "equal-mass sunset / transformed Taylor series",
+      "seconds": 0.186
+    },
+    {
+      "name": "equal_taylor_1",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "1",
+      "backend": "taylor",
+      "expected": "value",
+      "budget": {
+        "max_terms": 1024
+      },
+      "outcome": "value",
+      "passed": true,
+      "value": "2.236792700212646510527626",
+      "reference": "2.2367927002126465105292636268841307993871175068389",
+      "reference_precision_difference": "2.689923e-37",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "1.6378379e-21",
+      "reported_error": "1.8549514e-21",
+      "error_ratio": "0.88295465",
+      "terms": 22,
+      "working_dps": 82,
+      "method": "equal-mass sunset / transformed Taylor series",
+      "seconds": 0.1693
+    },
+    {
+      "name": "equal_taylor_2",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "2",
+      "backend": "taylor",
+      "expected": "value",
+      "budget": {
+        "max_terms": 1024
+      },
+      "outcome": "value",
+      "passed": true,
+      "value": "1.983943810907626775150904",
+      "reference": "1.9839438109076267751501033848954371708104822668221",
+      "reference_precision_difference": "1.148504e-37",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "8.0077515e-22",
+      "reported_error": "1.0389842e-21",
+      "error_ratio": "0.77072889",
+      "terms": 43,
+      "working_dps": 103,
+      "method": "equal-mass sunset / transformed Taylor series",
+      "seconds": 0.1874
+    },
+    {
+      "name": "equal_taylor_3",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "3",
+      "backend": "taylor",
+      "expected": "value",
+      "budget": {
+        "max_terms": 1024
+      },
+      "outcome": "value",
+      "passed": true,
+      "value": "1.697946461195426121941829",
+      "reference": "1.697946461195426121941926194883505305703934601506",
+      "reference_precision_difference": "1.0788033e-37",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "9.7479658e-23",
+      "reported_error": "3.3894789e-22",
+      "error_ratio": "0.28759482",
+      "terms": 73,
+      "working_dps": 133,
+      "method": "equal-mass sunset / transformed Taylor series",
+      "seconds": 0.2379
+    },
+    {
+      "name": "equal_taylor_6",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "6",
+      "backend": "taylor",
+      "expected": "value",
+      "budget": {
+        "max_terms": 1024
+      },
+      "outcome": "value",
+      "passed": true,
+      "value": "1.052354070777636885703003",
+      "reference": "1.0523540707776368857027817946933884925608389630462",
+      "reference_precision_difference": "8.9390415e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "2.2122388e-22",
+      "reported_error": "3.428287e-22",
+      "error_ratio": "0.64528984",
+      "terms": 230,
+      "working_dps": 290,
+      "method": "equal-mass sunset / transformed Taylor series",
+      "seconds": 0.4776
+    },
+    {
+      "name": "equal_taylor_10",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "10",
+      "backend": "taylor",
+      "expected": "value",
+      "budget": {
+        "max_terms": 1024
+      },
+      "outcome": "value",
+      "passed": true,
+      "value": "0.6290167075906141495904777",
+      "reference": "0.62901670759061414959082725388358334161230707670367",
+      "reference_precision_difference": "6.9677811e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "3.4953361e-22",
+      "reported_error": "4.0740797e-22",
+      "error_ratio": "0.85794495",
+      "terms": 604,
+      "working_dps": 664,
+      "method": "equal-mass sunset / transformed Taylor series",
+      "seconds": 2.6349
+    },
+    {
+      "name": "equal_rmt_6",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "6",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "1.052354070777636885703003",
+      "reference": "1.0523540707776368857027817946933884925608389630462",
+      "reference_precision_difference": "8.9390415e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "2.2122388e-22",
+      "reported_error": "4.3982117e-22",
+      "error_ratio": "0.50298596",
+      "terms": 9880,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 1.8533
+    },
+    {
+      "name": "equal_rmt_10",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "10",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.6290167075906141495904777",
+      "reference": "0.62901670759061414959082725388358334161230707670367",
+      "reference_precision_difference": "6.9677811e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "3.4953361e-22",
+      "reported_error": "3.9730491e-22",
+      "error_ratio": "0.87976162",
+      "terms": 2024,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 0.681
+    },
+    {
+      "name": "equal_rmt_100",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "100",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.02544374905635285933739727",
+      "reference": "0.025443749056352859337403462867715927134026492815837",
+      "reference_precision_difference": "3.7951964e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "6.1881394e-24",
+      "reported_error": "6.2159839e-24",
+      "error_ratio": "0.9955205",
+      "terms": 120,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 0.6156
+    },
+    {
+      "name": "unequal_momentum_0",
+      "mass_squared": [
+        "36",
+        "1",
+        "16"
+      ],
+      "momentum": "22",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.0921335330174489781953719",
+      "reference": "0.092133533017448978195350329456788823233277181430437",
+      "reference_precision_difference": "1.3348765e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "2.15713e-23",
+      "reported_error": "4.5422605e-23",
+      "error_ratio": "0.47490232",
+      "terms": 9880,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 1.8562
+    },
+    {
+      "name": "unequal_momentum_1",
+      "mass_squared": [
+        "25",
+        "16",
+        "4"
+      ],
+      "momentum": "22",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.08222091793999602403460623",
+      "reference": "0.082220917939996024034626327838251758081150249874643",
+      "reference_precision_difference": "7.0420134e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "2.0095942e-23",
+      "reported_error": "3.9715356e-23",
+      "error_ratio": "0.5059993",
+      "terms": 9880,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 1.4485
+    },
+    {
+      "name": "unequal_momentum_2",
+      "mass_squared": [
+        "36",
+        "1",
+        "4"
+      ],
+      "momentum": "18",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.1415250165641318812400794",
+      "reference": "0.14152501656413188124002706869025004350152424065897",
+      "reference_precision_difference": "7.1235262e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "5.2339118e-23",
+      "reported_error": "8.6072963e-23",
+      "error_ratio": "0.60807849",
+      "terms": 9880,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 1.4706
+    },
+    {
+      "name": "unequal_momentum_3",
+      "mass_squared": [
+        "9",
+        "25",
+        "9"
+      ],
+      "momentum": "22",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.08002467878943449612583636",
+      "reference": "0.080024678789434496125802898626106893335524984197498",
+      "reference_precision_difference": "8.6440742e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "3.3461024e-23",
+      "reported_error": "5.0796456e-23",
+      "error_ratio": "0.65872753",
+      "terms": 9880,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 1.5234
+    },
+    {
+      "name": "unequal_momentum_4",
+      "mass_squared": [
+        "9",
+        "4",
+        "4"
+      ],
+      "momentum": "14",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.1959781754368774334821828",
+      "reference": "0.19597817543687743348226271126735742851855530705326",
+      "reference_precision_difference": "4.5416126e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "7.9922431e-23",
+      "reported_error": "1.2211125e-22",
+      "error_ratio": "0.65450504",
+      "terms": 9880,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 1.4397
+    },
+    {
+      "name": "unequal_momentum_5",
+      "mass_squared": [
+        "36",
+        "25",
+        "16"
+      ],
+      "momentum": "30",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.04250904225585146635759299",
+      "reference": "0.042509042255851466357603163718601920644224986626268",
+      "reference_precision_difference": "3.3067663e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "1.017468e-23",
+      "reported_error": "1.9564309e-23",
+      "error_ratio": "0.52006335",
+      "terms": 9880,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 1.5381
+    },
+    {
+      "name": "unequal_momentum_6",
+      "mass_squared": [
+        "1",
+        "25",
+        "16"
+      ],
+      "momentum": "20",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.1089119186666013727749565",
+      "reference": "0.10891191866660137277496135175192908194067900253359",
+      "reference_precision_difference": "7.6360347e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "4.8150781e-24",
+      "reported_error": "3.294365e-23",
+      "error_ratio": "0.14616104",
+      "terms": 9880,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 1.3329
+    },
+    {
+      "name": "unequal_momentum_7",
+      "mass_squared": [
+        "9",
+        "16",
+        "9"
+      ],
+      "momentum": "20",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.09536542861788701266597017",
+      "reference": "0.095365428617887012665986802829397128736039550774437",
+      "reference_precision_difference": "5.442321e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "1.6628145e-23",
+      "reported_error": "3.6982528e-23",
+      "error_ratio": "0.44962164",
+      "terms": 9880,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 1.5522
+    },
+    {
+      "name": "unequal_mass_0",
+      "mass_squared": [
+        "16",
+        "9",
+        "1296"
+      ],
+      "momentum": "2",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.01958126249088794703699561",
+      "reference": "0.019581262490887947036990832473204106926454608281931",
+      "reference_precision_difference": "1.1336558e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "4.7774e-24",
+      "reported_error": "6.4007843e-24",
+      "error_ratio": "0.74637728",
+      "terms": 1330,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 0.3606
+    },
+    {
+      "name": "unequal_mass_1",
+      "mass_squared": [
+        "16",
+        "1",
+        "576"
+      ],
+      "momentum": "1",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.04609928030155045942084008",
+      "reference": "0.046099280301550459420861841414853551197683925789916",
+      "reference_precision_difference": "4.4126742e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "2.17569e-23",
+      "reported_error": "2.6276954e-23",
+      "error_ratio": "0.82798409",
+      "terms": 1330,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 0.3295
+    },
+    {
+      "name": "unequal_mass_2",
+      "mass_squared": [
+        "1",
+        "16",
+        "1024"
+      ],
+      "momentum": "3",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.03160820144283053932067812",
+      "reference": "0.031608201442830539320690898742108546606193713233231",
+      "reference_precision_difference": "4.4839344e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "1.2775204e-23",
+      "reported_error": "1.5535822e-23",
+      "error_ratio": "0.82230629",
+      "terms": 1330,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 0.2931
+    },
+    {
+      "name": "unequal_mass_3",
+      "mass_squared": [
+        "9",
+        "1",
+        "784"
+      ],
+      "momentum": "3",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.04233072503079728168827785",
+      "reference": "0.042330725030797281688268012993383291413013029962482",
+      "reference_precision_difference": "1.2432482e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "9.835025e-24",
+      "reported_error": "1.3307038e-23",
+      "error_ratio": "0.73908445",
+      "terms": 1330,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 0.3551
+    },
+    {
+      "name": "unequal_mass_4",
+      "mass_squared": [
+        "16",
+        "16",
+        "2304"
+      ],
+      "momentum": "4",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.01221470223647403769367778",
+      "reference": "0.012214702236474037693678391515267688792343930827709",
+      "reference_precision_difference": "1.2092167e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "6.1261977e-25",
+      "reported_error": "1.525774e-24",
+      "error_ratio": "0.40151408",
+      "terms": 1330,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 0.3879
+    },
+    {
+      "name": "mass_vacuum",
+      "mass_squared": [
+        "1",
+        "4",
+        "100"
+      ],
+      "momentum": "0",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "0.1859493038547262227081922",
+      "reference": "0.18594930385472622270812601902238165084738140802663",
+      "reference_precision_difference": "2.1432074e-37",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "6.6194831e-23",
+      "reported_error": "8.2204245e-23",
+      "error_ratio": "0.80524833",
+      "terms": 253,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 0.2629
+    },
+    {
+      "name": "mass_hierarchy",
+      "mass_squared": [
+        "1e-16",
+        "1",
+        "1e16"
+      ],
+      "momentum": "1",
+      "backend": "rmt",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "2.717861700698636248617487e-13",
+      "reference": "0.00000000000027178617006986362486170626164552957812289301801254",
+      "reference_precision_difference": "3.2325621e-62",
+      "reference_working_dps": [
+        75,
+        100
+      ],
+      "actual_error": "4.2480394e-35",
+      "reported_error": "4.2480394e-35",
+      "error_ratio": "1.0",
+      "terms": 4,
+      "working_dps": 55,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 3.2567
+    },
+    {
+      "name": "taylor_scale_1e-60",
+      "mass_squared": [
+        "1e-60",
+        "1e-60",
+        "1e-60"
+      ],
+      "momentum": "1e-30",
+      "backend": "taylor",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "2.236792700212646510530214e+60",
+      "reference": "2.2367927002126465105292636268841307993871175068389e+60",
+      "reference_precision_difference": "3.1015586e+22",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "9.5007946e+38",
+      "reported_error": "1.2017475e+39",
+      "error_ratio": "0.79058162",
+      "terms": 22,
+      "working_dps": 82,
+      "method": "equal-mass sunset / transformed Taylor series",
+      "seconds": 0.1005
+    },
+    {
+      "name": "taylor_scale_1e60",
+      "mass_squared": [
+        "1e60",
+        "1e60",
+        "1e60"
+      ],
+      "momentum": "1e30",
+      "backend": "taylor",
+      "expected": "value",
+      "budget": {},
+      "outcome": "value",
+      "passed": true,
+      "value": "2.236792700212646510530127e-60",
+      "reference": "2.2367927002126465105292636268841307993871175068389e-60",
+      "reference_precision_difference": "1.7870683e-97",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "8.6371693e-82",
+      "reported_error": "1.1153849e-81",
+      "error_ratio": "0.77436668",
+      "terms": 22,
+      "working_dps": 82,
+      "method": "equal-mass sunset / transformed Taylor series",
+      "seconds": 0.1127
+    },
+    {
+      "name": "rmt_boundary",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "3",
+      "backend": "rmt",
+      "expected": "domain",
+      "budget": {},
+      "exception": "no certified RMT chart: require p_E > m1+m2+m3, or M > m_a+m_b+p_E; boundaries and equal-mass vacuum are not covered",
+      "outcome": "domain",
+      "passed": true,
+      "seconds": 0.0004
+    },
+    {
+      "name": "rmt_gap",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "1",
+      "backend": "rmt",
+      "expected": "domain",
+      "budget": {},
+      "exception": "no certified RMT chart: require p_E > m1+m2+m3, or M > m_a+m_b+p_E; boundaries and equal-mass vacuum are not covered",
+      "outcome": "domain",
+      "passed": true,
+      "seconds": 0.0002
+    },
+    {
+      "name": "mass_boundary",
+      "mass_squared": [
+        "1",
+        "4",
+        "16"
+      ],
+      "momentum": "1",
+      "backend": "rmt",
+      "expected": "domain",
+      "budget": {},
+      "exception": "no certified RMT chart: require p_E > m1+m2+m3, or M > m_a+m_b+p_E; boundaries and equal-mass vacuum are not covered",
+      "outcome": "domain",
+      "passed": true,
+      "seconds": 0.0003
+    },
+    {
+      "name": "rmt_near_boundary_budget",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "3.0000000000000000000001",
+      "backend": "rmt",
+      "expected": "budget",
+      "budget": {
+        "max_shells": 6
+      },
+      "exception": "momentum RMT series did not reach 20 digits within max_shells=6, max_terms=250000; increase the budget or use an independent integral representation",
+      "outcome": "budget",
+      "passed": true,
+      "value": "1.736403960137750756782937",
+      "reference": "1.6979464611954261219418984613586139468008549728492",
+      "reference_precision_difference": "5.4116238e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "0.038457499",
+      "reported_error": "2.5e+65",
+      "error_ratio": "1.5383e-67",
+      "terms": 56,
+      "working_dps": 44,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 0.3567
+    },
+    {
+      "name": "rmt_term_budget",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "10",
+      "backend": "rmt",
+      "expected": "budget",
+      "budget": {
+        "max_terms": 1
+      },
+      "exception": "momentum RMT series did not reach 20 digits within max_shells=128, max_terms=1; increase the budget or use an independent integral representation",
+      "outcome": "budget",
+      "passed": true,
+      "value": "0.6362277732574077612674",
+      "reference": "0.62901670759061414959082725388358334161230707670367",
+      "reference_precision_difference": "6.9677811e-38",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "0.0072110657",
+      "reported_error": "0.14836658",
+      "error_ratio": "0.048603033",
+      "terms": 1,
+      "working_dps": 40,
+      "method": "multivariate RMT / coalesced Gamma series",
+      "seconds": 0.4252
+    },
+    {
+      "name": "taylor_term_budget",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "2",
+      "backend": "taylor",
+      "expected": "budget",
+      "budget": {
+        "max_terms": 6
+      },
+      "exception": "Taylor series needs 43 terms, exceeding max_terms=6",
+      "outcome": "budget",
+      "passed": true,
+      "value": "1.983564016883106738728809",
+      "reference": "1.9839438109076267751501033848954371708104822668221",
+      "reference_precision_difference": "1.148504e-37",
+      "reference_working_dps": [
+        35,
+        50
+      ],
+      "actual_error": "0.00037979402",
+      "reported_error": "0.0019890251",
+      "error_ratio": "0.19094482",
+      "terms": 6,
+      "working_dps": 66,
+      "method": "equal-mass sunset / transformed Taylor series",
+      "seconds": 0.1172
+    },
+    {
+      "name": "taylor_precision_budget",
+      "mass_squared": [
+        "1",
+        "1",
+        "1"
+      ],
+      "momentum": "6",
+      "backend": "taylor",
+      "expected": "budget",
+      "budget": {
+        "max_dps": 80
+      },
+      "exception": "Taylor series needs more than max_dps=80 working digits",
+      "outcome": "budget",
+      "passed": true,
+      "seconds": 0.0007
+    }
+  ]
+}

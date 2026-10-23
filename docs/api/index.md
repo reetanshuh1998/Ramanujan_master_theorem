@@ -3,7 +3,9 @@
 Every public object is importable from the top-level package, for example
 `from ramanujan_qft import B0, product_integral`. The pages below document them
 by module. Masses are squared masses, `dps` is the number of decimal digits
-requested, and results are mpmath numbers (see {doc}`/user_guide/precision`).
+requested, and results are mpmath numbers (see {doc}`/user_guide/precision`),
+except for the hybrid `integrate_graph` API, which uses `epsrel`/`epsabs`
+and returns float64 estimates with statistical diagnostics.
 
 ## Ramanujan's Master Theorem — `ramanujan_qft.rmt`
 
@@ -47,6 +49,30 @@ requested, and results are mpmath numbers (see {doc}`/user_guide/precision`).
 | {py:func}`~ramanujan_qft.sunset.sunset_subtracted` | $S(s)-S(0)-s\,S'(0)$ |
 | {py:func}`~ramanujan_qft.sunset.sunset_d2` | $S''(s)$ below threshold |
 
+## Multiloop graphs — `ramanujan_qft.multiloop`
+
+{py:class}`~ramanujan_qft.multiloop.ScalarEdge` and
+{py:class}`~ramanujan_qft.multiloop.ScalarGraph` describe the topology, masses,
+powers, and external Euclidean momenta.
+{py:func}`~ramanujan_qft.multiloop.integrate_graph` evaluates convergent graphs
+with RMT scale integration and numerical Hepp sectors. See {doc}`multiloop`.
+
+## Multivariate sunset series — `ramanujan_qft.sunset_rmt`
+
+{py:func}`~ramanujan_qft.brackets.schwinger_brackets` generates exact exponent
+matrices and formal Gamma families. {py:func}`~ramanujan_qft.sunset_rmt.compile_sunset_rmt`
+selects a justified chart for the massive, unit-power $D=2$ sunset and resolves
+its colliding poles analytically. {py:func}`~ramanujan_qft.sunset_rmt.integrate_graph_rmt`
+evaluates the resulting series with arbitrary precision and an analytic tail
+bound. See {doc}`sunset_rmt` for the API and {doc}`/user_guide/sunset_rmt` for
+the derivation and strict convergence domains.
+
+## Equal-mass continuation — `ramanujan_qft.sunset_taylor`
+
+{py:func}`~ramanujan_qft.sunset_taylor.integrate_sunset_taylor` covers the
+equal-mass D=2 Euclidean sunset, including vacuum, using a separately named
+Taylor-series method. See {doc}`sunset_taylor`.
+
 ## Legacy (version 0.1) interface
 
 `FeynmanMoBSolver`, `RamanujanContinuationEngine` and the modules under
@@ -61,5 +87,8 @@ rmt
 mellin
 one_loop
 sunset
+multiloop
+sunset_rmt
+sunset_taylor
 legacy
 ```

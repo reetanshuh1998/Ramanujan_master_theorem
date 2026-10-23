@@ -10,6 +10,18 @@
 **Ramanujan's Master Theorem, Mellin residue summation and arbitrary-precision
 Feynman integrals in pure Python.**
 
+**Research-alpha scope:** see the [capability table](docs/CAPABILITIES.md) for
+supported domains, methods and error guarantees, and the
+[release plan](docs/RELEASE_PLAN.md) for validation and publication status.
+The runnable [research notebook](notebooks/research_alpha.ipynb) demonstrates
+graph-generated RMT families, equal-mass vacuum and an independent reference.
+
+The maintained repository contains the package (`ramanujan_qft/`), regression
+tests and reference fixtures (`tests/`), runnable examples and notebooks,
+documentation, benchmarks, and validation tools. Obsolete experiments,
+generated runs and bundled third-party installations have been removed from
+the current tree; their history remains in Git. See [the audit](AUDIT.md).
+
 ```
 f(x) = Σ φ(n) (-x)ⁿ / n!     ⟹     ∫₀^∞ x^(s-1) f(x) dx = Γ(s) φ(-s)
 ```
@@ -30,6 +42,18 @@ control:
    representations: one-loop B0 and C0, the D=3 bubble, and the
    scheme-independent part of the two-loop sunset. Results are certified to the requested precision,
    and checked against LoopTools.
+4. **`multiloop.integrate_graph`**: an experimental graph-based evaluator for
+   UV-convergent massive Euclidean scalar integrals. It builds Symanzik
+   polynomials, checks all UV subgraphs, applies RMT to the Schwinger scale,
+   and integrates the remaining Hepp sectors with scrambled Sobol sampling.
+   This backend returns float64 estimates with statistical errors.
+5. **`sunset_rmt.integrate_graph_rmt`**: genuine multivariate RMT/Gamma series
+   for the massive, unit-power two-loop sunset in D=2. Exact graph-derived
+   bracket families, analytic pole resolution, justified convergence charts,
+   and arbitrary-precision summation with an analytic truncation bound.
+6. **`sunset_taylor.integrate_sunset_taylor`**: a separate equal-mass D=2
+   Taylor-series evaluator covering vacuum and finite Euclidean momentum,
+   with an analytic tail bound and precision control for its unstable recurrence.
 
 **Originality.** The methods are not new. [docs/PRIOR_ART.md](docs/PRIOR_ART.md)
 credits the earlier work (Hardy, Marichev, Adamchik–Marichev, Slater,
@@ -56,8 +80,11 @@ mpmath, …). The contribution here is a careful, tested, open implementation.
 It is **not** a faster replacement for LoopTools, COLLIER, pySecDec, FIESTA,
 AMFlow or TSIL. Compiled one-loop libraries are several hundred times faster at double
 precision. Closed-form symbolic integration (SymPy `meijerint`, Mathematica) is
-faster wherever it applies, and general multi-loop integrals are beyond the
-current scope. See [docs/COMPARISON.md](docs/COMPARISON.md) and
+faster wherever it applies. The new graph backend covers convergent massive
+Euclidean multiloop graphs, subject to explicit computational budgets; it does
+not provide general multivariate RMT residue summation, dimensional-regulator
+expansions, massless integrals, tensors, or physical-region continuation.
+See [the multiloop guide](docs/user_guide/multiloop.md), [docs/COMPARISON.md](docs/COMPARISON.md) and
 [AUDIT.md](AUDIT.md).
 
 ## Install
@@ -66,6 +93,7 @@ current scope. See [docs/COMPARISON.md](docs/COMPARISON.md) and
 pip install "git+https://github.com/reetanshuh1998/Ramanujan_master_theorem"   # latest version, requires Python >= 3.9
 pip install .            # from a clone
 pip install ".[test]"    # + pytest, scipy for the test suite
+pip install ".[multiloop]"  # + scipy for the experimental graph evaluator
 ```
 
 ## Quick start
@@ -99,6 +127,50 @@ More in [`examples/`](examples/):
 | `02_mellin_products.py` | exp × Bessel at high frequency, log cases, three-factor products, convergence errors |
 | `03_one_loop_integrals.py` | B0, C0 at double and 50-digit precision; MoB series vs closed form |
 | `04_sunset_dispersion.py` | sunset Im part and twice-subtracted dispersion relation |
+| `05_multiloop_graphs.py` | graph-based two- and three-loop integrals, unequal masses and UV diagnostics |
+| `06_sunset_rmt.py` | exact bracket families, convergent multivariate sunset series, domain refusals |
+| `07_sunset_taylor.py` | equal-mass vacuum, low momentum and overlap with the RMT chart |
+
+### Graph-based multiloop example
+
+```python
+from ramanujan_qft import ScalarEdge, ScalarGraph, integrate_graph
+
+# Four parallel edges give a three-loop banana graph.
+graph = ScalarGraph([ScalarEdge(0, 1, mass_squared=1) for _ in range(4)])
+result = integrate_graph(graph, D=2, epsrel=1e-4, seed=0)
+print(result.value, result.error_estimate)  # approximately 7*zeta(3) = 8.414398...
+```
+
+The graph API uses **positive Euclidean propagators** and the loop measure
+dᴰk/π^(D/2). Its `error_estimate` is statistical, not a rigorous bound.
+Unmet tolerances raise `MultiloopConvergenceError`, carrying the partial result.
+Read [the guide](docs/user_guide/multiloop.md) before comparing conventions.
+
+### Genuine multivariate RMT example
+
+```python
+import mpmath as mp
+from ramanujan_qft import ScalarEdge, ScalarGraph, compile_sunset_rmt
+
+graph = ScalarGraph([ScalarEdge(0, 1, 1) for _ in range(3)],
+                    external_momenta={0: [10], 1: [-10]})
+series = compile_sunset_rmt(graph)
+print(series.bracket_system.matrix)  # exact exponent constraints
+print(len(series.gamma_terms))       # 8 regulated Gamma families
+result = series.evaluate(dps=30)
+print(mp.nstr(result.value, 30))      # 0.629016707590614149590827253884
+```
+
+Supported charts require **p_E > m1+m2+m3** or **M > ma+mb+p_E**, where
+M is the largest mass. Equal-mass vacuum and the gap between these charts
+raise `RMTDomainError`. This evaluator uses no numerical integration fallback.
+See [the derivation and error controls](docs/user_guide/sunset_rmt.md).
+
+The separate `integrate_sunset_taylor(graph, dps=30)` method now covers
+equal-mass vacuum and finite Euclidean momentum. It uses an ODE/Taylor series
+with a Clausen boundary value, with no automatic substitution for an RMT call.
+See [its derivation](docs/user_guide/sunset_taylor.md).
 
 ## API overview
 
@@ -115,11 +187,13 @@ More in [`examples/`](examples/):
 | | `C0_mob(s, m²)` | equal-mass closed MoB form | arcsin² identity, `C0` |
 | | `bubble_3d(p², m1², m2²)` | finite D=3 bubble | quadrature with −i0 |
 | `sunset` | `sunset_im`, `sunset_subtracted`, `sunset_d2` | Im S, S(s)−S(0)−sS′(0), S″(s) | 2-D Feynman-parameter integrals |
+| `multiloop` | `ScalarEdge`, `ScalarGraph`, `integrate_graph` | convergent massive Euclidean graphs; RMT scale + numerical Hepp sectors | independent quadrature, Clausen/zeta values, position-space integrals through four loops |
+| `brackets`, `sunset_rmt` | `schwinger_brackets`, `compile_sunset_rmt`, `integrate_graph_rmt` | exact bracket algebra; justified D=2 sunset Gamma series | high-precision independent simplex quadrature; pole limits; hybrid graph backend |
 
-All functions take `dps=` (decimal digits). Squared masses throughout;
+The original numerical APIs take `dps=` (decimal digits). Squared masses throughout;
 Minkowski metric, so p² > 0 is time-like; Feynman +i0.
 
-**Normalisation:** each loop is integrated with dᴰk/(iπ^(D/2)), and propagators
+**Normalisation of `one_loop` and `sunset`:** each loop is integrated with dᴰk/(iπ^(D/2)), and propagators
 are 1/(q² − m² + i0), as in LoopTools and pySecDec.
 
 The classes of version 0.1 (`FeynmanMoBSolver`, `AnalyticalConvolutionEngine`,
@@ -130,8 +204,8 @@ explanation (see [CHANGELOG.md](CHANGELOG.md)).
 ## Validation
 
 ```bash
-pytest -m "not slow"     # 288 tests, ~20 s
-pytest                   # 311 tests, + independent Feynman-parameter / closed-form checks, ~6 min
+pytest -m "not slow"     # fast regressions and multiloop validation
+pytest                   # also independent nested-quadrature checks; several minutes
 bash benchmarks/looptools/compare_looptools.sh   # builds LoopTools (gfortran) and compares
 python benchmarks/bench_fair.py      # RACE vs closed forms and mpmath.quadosc at 30 digits
 ```
@@ -159,6 +233,11 @@ python benchmarks/bench_fair.py      # RACE vs closed forms and mpmath.quadosc a
 
 ## Roadmap
 
+* Extend the D=2 sunset RMT charts into the uncovered Euclidean region, then
+  add topologies with derived convergence rules. Broaden the graph backend with
+  efficient sector strategies, epsilon expansions and subtraction,
+  massless graphs, and causal continuation. See the staged plan in
+  [the multiloop guide](docs/user_guide/multiloop.md).
 * Sunset subtraction constants S(0), S′(0) in closed form, giving the full
   finite part.
 * C0 with general external momenta; D0.

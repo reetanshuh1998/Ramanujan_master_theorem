@@ -7,9 +7,16 @@ The whole page runs in a few seconds.
 To follow along, {doc}`install the package <installation>`, or run the same
 calls without installing anything on the {doc}`/try_it` page.
 
-All functions take `dps=`, the number of **decimal digits** requested, and
+The functions introduced here take `dps=`, the number of **decimal digits** requested, and
 return [mpmath](https://mpmath.org) numbers (`mpf` for real, `mpc` for complex
 results).
+
+For graph-based calculations beyond the named topologies, see
+{doc}`/user_guide/multiloop`. That experimental backend returns float64
+estimates with statistical errors and uses `epsrel`/`epsabs` instead of `dps`.
+For a graph-generated multivariate Gamma series with arbitrary precision,
+see {doc}`/user_guide/sunset_rmt`, currently restricted to two justified
+convergence charts of the massive, unit-power D=2 sunset.
 
 ## 1. Ramanujan's Master Theorem
 

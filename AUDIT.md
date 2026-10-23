@@ -183,37 +183,25 @@ independent closed forms, and both fixed:
 
 Regression tests for all of these are in `tests/test_round3_regressions.py`.
 
-## Repository hygiene: actions for the owner before going public
+## Repository hygiene: cleanup completed
 
-These were **not** done automatically because they delete files or rewrite
-history:
+The research-alpha cleanup removed obsolete material from the current tree:
 
-1. **Third-party code** (`third_party/`, 25 MB: LoopTools, SecDec 3, FIESTA 4/5
-   sources and tarballs, plus a compiled `lt_driver`). It is GPL/LGPL/academic
-   code inside an MIT repository. Remove it; `benchmarks/looptools/compare_looptools.sh`
-   downloads LoopTools when needed.
-2. **Generated SecDec output** (`HEAD_TO_HEAD/`, including four `intfile1.exe`
-   binaries) and `secdec3_local`. Remove.
-3. **Third-party PDFs**: `rmt1.pdf` (Elsevier journal article), `loop_tool.pdf`
-   (LoopTools manual), `benchmark_paper.pdf` (pySecDec paper), `rmt.pdf`,
-   `rmt2.pdf`, `2408.08725v1.pdf`. Redistribution is generally not permitted;
-   cite them instead (README "References"). `RMT_mynotes.pdf` is your own work
-   (13 MB): keep it only if you want it public.
-4. **Images** with superseded claims: `rmt_superiority_plot.png`, `RACE.png`
-   (4.4 MB), `rmt_vs_scipy_stress_test.png`.
-5. **LICENSE copyright holder**: now reads "In memory of Ramanujan" (was
-   "Antigravity AI"). A copyright line normally names a legal holder; consider
-   "Copyright (c) 2026 <your name>, in memory of Srinivasa Ramanujan".
-6. **Git history** is 136 MB and contains all of the above, plus two author
-   e-mail addresses. Removing files does not remove them from history. Either
-   publish a fresh repository from a clean tree (simplest), or use
-   `git filter-repo` before pushing the repository public.
-7. **Root scripts** (`example*.py`, `*benchmark*.py`, `ultimate_*.py`, `test1.py`,
-   `test2.py`, `test_c0.py`, `test_p126_dl_mob.py`, `test_sunset_suite.py`,
-   `generate_bubble.py`, `ramanujan_integrator.py`, `ramanujan_user_api.py`,
-   `recreate_table_5.py`, `feynman_*.py`, `plot_rmt_superiority.py`,
-   `local_qft_benchmark.py`, `runners/`, `scratch/`): move them to a
-   `research/` folder with a note, or delete them. The supported examples are
-   in `examples/`.
-8. `PAPER_DRAFT.md` and `perfect_table_results.md` repeat claims from
-   findings 3, 5–9, 13 and 14. Revise them before circulating.
+- Vendored third-party source trees, tarballs and compiled drivers. The maintained
+  `benchmarks/looptools/compare_looptools.sh` downloads LoopTools when requested.
+- Generated `HEAD_TO_HEAD/` SecDec runs, backups and executables, and the local
+  `secdec3_local` checkout.
+- Downloaded reference PDFs, personal notes, old benchmark plots, superseded
+  paper/results drafts and the exploratory Minkowski strategy note.
+- Root-level experimental scripts and old benchmark/test drivers, plus `runners/`
+  and `scratch/`. Supported examples are in `examples/`; maintained benchmarks
+  are in `benchmarks/` and regression tests are in `tests/`.
+
+The numerical package, tested legacy compatibility interfaces, independent
+reference fixtures, current audit report and reproduction tools are retained.
+Original scientific findings above remain part of the audit record, including
+historical filenames and withdrawn claims.
+
+This cleanup does not rewrite Git history: earlier commits still contain the
+removed files. A local archive was also made before removal. Copyright-holder
+metadata and any future history rewrite are separate from this cleanup.

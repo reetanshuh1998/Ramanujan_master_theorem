@@ -11,6 +11,10 @@ auto_examples/index
 try_it
 api/index
 validation
+CAPABILITIES
+RELEASE_PLAN
+SCIENTIFIC_REVIEW
+RELEASING
 Comparison <COMPARISON>
 Prior art <PRIOR_ART>
 citing
@@ -61,6 +65,9 @@ GitHub
 
 ::::
 
+See {doc}`CAPABILITIES` for supported domains and error guarantees, and
+{doc}`RELEASE_PLAN` for the research-alpha release status.
+
 ## What is in the package
 
 ::::{grid} 1 1 2 2
@@ -97,6 +104,24 @@ $D=3$ bubble in LoopTools conventions, certified to any number of digits.
 
 The imaginary part of the massive sunset and its twice-subtracted dispersion
 relation $S(s)-S(0)-s\,S'(0)$, from certified numerical integration.
+:::
+
+:::{grid-item-card} Experimental multiloop graphs
+:link: user_guide/multiloop
+:link-type: doc
+
+`ScalarGraph` and `integrate_graph`: convergent massive Euclidean scalar
+topologies, automatic graph polynomials and UV checks, RMT scale integration,
+and numerical Hepp sectors with statistical errors.
+:::
+
+:::{grid-item-card} Multivariate Ramanujan sunset series
+:link: user_guide/sunset_rmt
+:link-type: doc
+
+`compile_sunset_rmt` generates exact Gamma families for the massive $D=2$
+sunset, resolves pole collisions, and sums in justified Euclidean convergence
+charts with arbitrary precision and an analytic tail bound.
 :::
 
 ::::
@@ -141,7 +166,9 @@ conventions and the printing of high-precision results.
 * **Integrals with a closed form.** Symbolic integration (SymPy `meijerint`,
   Mathematica) followed by mpmath is 100–40,000 times faster where it applies.
   At 15 digits, compiled quadrature is also faster than `product_integral`.
-* **General multi-loop integrals.** Use pySecDec, FIESTA or AMFlow, and TSIL for
+* **Multiloop regulator expansions or physical-region integrals.** The
+  experimental graph backend covers convergent massive Euclidean cases only.
+  For broader coverage, use pySecDec, FIESTA or AMFlow, and TSIL for
   two-loop self-energies; a certified `sunset_subtracted` call takes about 10 s.
 * **Integrals at the convergence boundary.** `product_integral` raises
   `SeriesConvergenceError` instead of returning a value it cannot certify, for

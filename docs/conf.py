@@ -23,11 +23,13 @@ extensions = [
     "sphinx_design",
     "sphinx_copybutton",
     "sphinx_gallery.gen_gallery",
+    "sphinxcontrib.mermaid",
 ]
 
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 myst_enable_extensions = ["colon_fence", "dollarmath", "amsmath", "deflist", "attrs_block", "attrs_inline"]
 myst_heading_anchors = 3
+myst_fence_as_directive = ["mermaid"]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]

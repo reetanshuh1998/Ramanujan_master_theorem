@@ -5,9 +5,9 @@ three dependencies, which pip installs automatically:
 
 | package | version | used for |
 |---|---|---|
-| [mpmath](https://mpmath.org) | ≥ 1.3.0 | arbitrary-precision arithmetic; every result is an mpmath number |
-| [SymPy](https://www.sympy.org) | ≥ 1.12 | symbolic algebra in the legacy 0.1 modules (`solvers`, `core`) |
-| [NumPy](https://numpy.org) | ≥ 1.24 | the legacy 0.1 module `core` |
+| [mpmath](https://mpmath.org) | ≥ 1.3.0 | arbitrary-precision arithmetic and RMT factors |
+| [SymPy](https://www.sympy.org) | ≥ 1.12 | exact graph algebra and the legacy 0.1 modules |
+| [NumPy](https://numpy.org) | ≥ 1.24 | numerical multiloop sectors and the legacy 0.1 module `core` |
 
 There is nothing to compile.
 
@@ -35,6 +35,7 @@ git clone https://github.com/reetanshuh1998/Ramanujan_master_theorem
 cd Ramanujan_master_theorem
 pip install .            # the package
 pip install ".[test]"    # the package plus pytest and SciPy, for the test suite
+pip install ".[multiloop]"  # plus SciPy for hybrid graph integration; RMT series need only the base package
 ```
 
 For development, add `-e` (`pip install -e ".[test]"`) so that changes to the
@@ -54,7 +55,7 @@ pip install ramanujan-qft
 ```pycon
 >>> import ramanujan_qft
 >>> ramanujan_qft.__version__
-'0.2.0'
+'0.3.0a1'
 >>> from ramanujan_qft import B0
 >>> B0(5, 1, 1)
 mpc(real='1.5695910590359961', imag='1.4049629462081452')
@@ -69,8 +70,8 @@ The last value agrees with LoopTools 2.16, which gives
 From the root of a clone, with the `[test]` extra installed:
 
 ```bash
-python -m pytest -q -m "not slow" tests     # 288 tests, about 15 s
-python -m pytest -q tests                   # all 311 tests, a few minutes
+python -m pytest -q -m "not slow" tests     # fast regressions and multiloop checks
+python -m pytest -q tests                   # includes slow checks; several minutes
 ```
 
 The tests marked `slow` are independent nested quadratures (for example the
@@ -80,7 +81,7 @@ Feynman-parameter checks of the two-loop sunset) and take seconds each.
 ## Build the documentation locally
 
 ```bash
-pip install -r docs/requirements.txt
+pip install ".[multiloop]" -r docs/requirements.txt
 python -m sphinx -b html docs docs/_build/html
 ```
 

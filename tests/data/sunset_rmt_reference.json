@@ -1,0 +1,49 @@
+{
+  "method": "independent simplex quadrature, x=u*v, y=u*(1-v), z=1-u",
+  "working_dps": [
+    40,
+    55
+  ],
+  "cases": [
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "p_e_squared": 100,
+      "value": "0.62901670759061414959082725388358334161230707670367",
+      "precision_check_difference": "2.3720573e-42"
+    },
+    {
+      "mass_squared": [
+        1,
+        4,
+        9
+      ],
+      "p_e_squared": 400,
+      "value": "0.1670696485060690405684311573974960979219727293217",
+      "precision_check_difference": "3.8537721e-43"
+    },
+    {
+      "mass_squared": [
+        1,
+        4,
+        100
+      ],
+      "p_e_squared": 0,
+      "value": "0.18594930385472622270812601902238165084738140802663",
+      "precision_check_difference": "3.5129442e-43"
+    },
+    {
+      "mass_squared": [
+        1,
+        4,
+        100
+      ],
+      "p_e_squared": 1,
+      "value": "0.18541551333305554295613003435767700380753543051992",
+      "precision_check_difference": "7.396426e-43"
+    }
+  ]
+}

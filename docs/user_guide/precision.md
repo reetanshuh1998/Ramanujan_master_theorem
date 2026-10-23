@@ -1,9 +1,20 @@
 # Precision and certification
 
-Every function in the package takes `dps=`, the number of **decimal digits**
+The original numerical APIs take `dps=`, the number of **decimal digits**
 requested, and returns an mpmath number (`mpf` or `mpc`). This page explains
 what that number of digits means, how it is guaranteed, and the two pitfalls to
 know: printing, and decimal inputs.
+
+The experimental {doc}`multiloop` graph evaluator instead uses float64,
+`epsrel`/`epsabs`, and statistical error diagnostics. It does not accept `dps`
+or certify decimal digits; the guarantees below do not apply to that backend.
+
+The separate {doc}`sunset_rmt` evaluator accepts `dps=30` by default and
+returns an `RMTSeriesResult` containing an mpmath value. Its analytic tail bound
+and precision checks are described in that guide. Graph inputs use exact
+rationals obtained from decimal representations; use strings for reproducible
+decimal input. These input and default-precision rules differ from the
+original APIs described below.
 
 ```python
 import mpmath as mp
