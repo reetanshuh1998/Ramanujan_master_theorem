@@ -86,7 +86,9 @@ verified by a local build alone.
 After merging and freezing the candidate, dispatch `publish.yml` on its `v*` tag.
 The `publisher-preflight` job uses the existing protected `pypi` environment and
 checks whether PyPI accepts that workflow identity. The manual-dispatch path
-cannot upload a distribution. A release publication is a separate trigger.
+cannot upload a distribution. PyPI can activate a pending publisher and create
+its empty project during token exchange; this is publishing setup, not a release.
+A release publication is a separate trigger.
 Credentials stay in memory and are not logged or stored as artifacts.
 
 For a new project, the account owner must configure a

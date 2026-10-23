@@ -6,7 +6,7 @@ name: publish
 
 on:
   # Authentication-only preflight; dispatch on the frozen v* candidate tag.
-  # This path cannot upload a distribution or create a PyPI project.
+  # No distribution upload. PyPI may activate a pending publisher/project.
   workflow_dispatch:
   release:
     types: [published]

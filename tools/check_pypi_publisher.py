@@ -2,7 +2,8 @@
 
 Run only in publish.yml's protected pypi environment. Credentials are kept in
 memory and never printed or written to artifacts. This verifies authentication,
-not an upload or the availability of a project name.
+not an upload. On PyPI, minting the first token can activate a pending
+publisher and create its empty project.
 """
 import json
 import os
