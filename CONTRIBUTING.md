@@ -17,6 +17,19 @@ On Windows, choose a writable output path instead of `/tmp/sunset_audit.json`.
 Release tooling and documentation builds use Python 3.12; the numerical
 package supports Python 3.9 and later.
 
+Browser-console changes must pass `tools/check_browser_console.py` against the
+built documentation with its bundled wheel. The documentation workflow installs
+Playwright/Chromium and runs this check before deployment. To run it locally:
+
+```bash
+python -m pip install "playwright>=1.50,<2"
+python -m playwright install chromium
+python tools/check_browser_console.py --site docs/_build/html
+```
+
+The check needs network access to Pyodide's CDN. It executes the visible examples,
+independent numerical assertions, Reset, and the custom dependency-wheel path.
+
 Keep maintained examples in `examples/`, benchmarks in `benchmarks/`, and
 regression tests with their reference fixtures in `tests/`. Download external
 tools into ignored build directories. Do not commit generated comparison runs,

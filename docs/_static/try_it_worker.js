@@ -56,11 +56,16 @@ async function init(config) {
   postMessage({ type: "status", text: "Downloading Python (Pyodide)…" });
   importScripts(config.indexURL + "pyodide.js");
   pyodide = await loadPyodide({ indexURL: config.indexURL });
-  postMessage({ type: "status", text: "Installing mpmath and SymPy…" });
+  postMessage({ type: "status", text: "Installing NumPy, mpmath and SymPy…" });
+  // Wheel unpacking does not resolve dependencies, and import scanning of user
+  // code cannot discover NumPy imported internally by ramanujan_qft.
+  // NumPy must come from Pyodide's compatible WebAssembly build, including
+  // when mirrors supply pure-Python mpmath/SymPy wheels via config.wheels.
+  const packages = config.wheels && config.wheels.length
+    ? ["numpy"] : ["numpy", ...(config.packages || ["mpmath", "sympy"])];
+  await pyodide.loadPackage([...new Set(packages)]);
   if (config.wheels && config.wheels.length) {
     for (const url of config.wheels) await fetchWheel(url);
-  } else {
-    await pyodide.loadPackage(config.packages);
   }
   postMessage({ type: "status", text: "Installing ramanujan-qft…" });
   await fetchWheel(config.packageWheel);
