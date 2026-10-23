@@ -16,6 +16,12 @@ supported domains, methods and error guarantees, and the
 The runnable [research notebook](notebooks/research_alpha.ipynb) demonstrates
 graph-generated RMT families, equal-mass vacuum and an independent reference.
 
+The maintained repository contains the package (`ramanujan_qft/`), regression
+tests and reference fixtures (`tests/`), runnable examples and notebooks,
+documentation, benchmarks, and validation tools. Obsolete experiments,
+generated runs and bundled third-party installations have been removed from
+the current tree; their history remains in Git. See [the audit](AUDIT.md).
+
 ```
 f(x) = Σ φ(n) (-x)ⁿ / n!     ⟹     ∫₀^∞ x^(s-1) f(x) dx = Γ(s) φ(-s)
 ```

@@ -1,1 +1,0 @@
-OBJ = CIntegratePool.o CIntegratePoolCommon.o

@@ -12,7 +12,17 @@
   review packet, research notebook and contribution instructions.
 - Publication now depends on tests, numerical audit, docs/notebook checks and
   installed wheel/sdist checks across Linux, Windows and macOS. Added a manual
-  TestPyPI rehearsal. Hosted checks, external review and publication are pending.
+  TestPyPI rehearsal. Hosted candidate checks passed; external review and
+  publication remain pending.
+
+### Repository cleanup
+- Removed obsolete root scripts, superseded plots/results drafts, generated
+  SecDec runs, vendored tools, binaries and downloaded PDFs from the current tree.
+- Retained the supported package and compatibility APIs, current examples,
+  maintained benchmarks, independent fixtures and reproducible audit report.
+- Updated ignore rules and packaging so generated output stays outside version
+  control and the source distribution contains the maintained reproduction files.
+- Git history is preserved; this cleanup is not a history rewrite.
 
 ### Multivariate Ramanujan sunset series
 - Added exact Schwinger bracket matrices and basis solving with inspectable

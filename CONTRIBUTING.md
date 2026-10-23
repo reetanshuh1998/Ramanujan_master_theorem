@@ -17,6 +17,12 @@ On Windows, choose a writable output path instead of `/tmp/sunset_audit.json`.
 Release tooling and documentation builds use Python 3.12; the numerical
 package supports Python 3.9 and later.
 
+Keep maintained examples in `examples/`, benchmarks in `benchmarks/`, and
+regression tests with their reference fixtures in `tests/`. Download external
+tools into ignored build directories. Do not commit generated comparison runs,
+compiled binaries, downloaded papers or unreviewed benchmark claims. The fixed
+`benchmarks/data/sunset_audit.json` report is intentional validation evidence.
+
 ## Scientific changes
 
 Include the integral's normalization and domain, a derivation with primary

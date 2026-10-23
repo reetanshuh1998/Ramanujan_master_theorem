@@ -1,2 +1,0 @@
-mpirun -np 4 bin/CIntegratePoolMPI -in examples/in
-rm examples/out.kch
