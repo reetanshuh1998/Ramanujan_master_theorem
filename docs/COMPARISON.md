@@ -1,7 +1,9 @@
 # How ramanujan-qft relates to existing tools
 
 The aim of this page is an accurate map, so you can pick the right tool for a
-job. Measured numbers are from `benchmarks/` on one Linux machine, Python 3.13.
+job. Timings are workload-specific measurements, not rankings of entire libraries.
+The current product benchmark records its environment, source hashes and raw
+samples; the one-loop table below is explicitly historical.
 
 ## 1. Product integrals over (0, ∞): Mellin residues vs the alternatives
 
@@ -18,33 +20,44 @@ Adamchik–Marichev, Slater, Fikioris, SymPy `meijerint` and mpmath `meijerg`.
 | mpmath `quadosc` | oscillatory quadrature, arbitrary precision | general | slow |
 | **ramanujan-qft `product_integral`** | numerical Mellin residue summation with validity check, cancellation control and honest refusal | arbitrary precision; cost nearly independent of the oscillation frequency; three-factor products without closed forms | only atlas factors; raises at the convergence boundary (e.g. e^(−x) J₀(x)); slower than closed forms |
 
-Measured at 30 digits (`benchmarks/bench_fair.py`; relative error, best-of-3 time):
+### Current candidate: accuracy-checked product benchmarks
 
-| integral | RACE | closed form (mpmath) | mpmath.quadosc |
-|---|---|---|---|
-| e^(−x) J₀(3x) | exact, 5.1 ms | exact, 0.010 ms | exact, 905 ms |
-| e^(−x) J₀(10³x) | exact, 1.1 ms | exact, 0.012 ms | exact, 1618 ms |
-| e^(−x) J₀(10⁶x) | exact, 0.8 ms | exact, 0.010 ms | — |
-| e^(−x) cos(10⁶x) | exact, 0.6 ms | exact, 0.006 ms | — |
-| e^(−2x) e^(−x²/2) J₁(x) (no closed form) | 7e-35, 6.5 ms | — | exact, 1.6 s |
-| e^(−2x) e^(−x²/2) J₁(100x) (no closed form) | 6e-33, 6.2 ms | — | exact, 4.3 s |
+Measured with **ramanujan-qft 0.3.0a2**, Python 3.12.3 and mpmath 1.3.0 on Linux.
+All methods run at 30 working digits (RACE adds its own guard digits); the target
+is relative error at most $10^{-30}$. Times are milliseconds, median of three
+calls after one warm-up per method. Node/zero caches remain warm; setup and
+reference generation are excluded. These are **product integrals**, not
+one-loop B0/C0 or multiloop graph speed comparisons.
 
-A wider audit benchmark (double precision, with QUADPACK QAWO/QAWF,
-Ooura–Mori, Ogata, Levin and contour rotation) found:
+| Integral over $(0,\infty)$ | RACE | mpmath `quadosc` | mpmath tanh–sinh | mpmath Gauss–Legendre | Closed form |
+|---|---:|---:|---:|---:|---:|
+| $e^{-x}J_0(3x)$ | 2.15 | 372 | 219 | target missed | 0.0081 |
+| $e^{-x}J_0(1000x)$ | 0.726 | 990 | target missed | target missed | 0.0088 |
+| $e^{-2x-x^2/2}J_1(x)$ | 5.16 | 97.4 | 59.5 | 13.8 | — |
+| $e^{-2x-x^2/2}J_1(100x)$ | 3.93 | 1018 | target missed | target missed | — |
 
-* RACE is **never the fastest at 15 digits**. Compiled double-precision methods
-  take 5–300 µs, against RACE's milliseconds.
-* Closed forms are 100–40,000× faster wherever they exist.
-* At 30 digits, RACE beats every general-purpose alternative measured, by 2–30×
-  over the best (Ogata DE in mpmath, after an 83 s table build). This is
-  clearest for three-factor products that have no closed form.
-* Fourier-weighted quadrature loses digits on e^(−x)cos(bx) at large b, where the
-  value ~1/b² cancels. RACE and contour rotation do not.
+On the frequency-100 three-factor example, RACE was about **259× faster than
+`quadosc`**, with relative errors $5.9\times10^{-33}$ and $1.5\times10^{-31}$,
+respectively. On the frequency-1 example it was **2.7× faster than
+Gauss–Legendre**, **11.5× faster than tanh–sinh**, and **18.9× faster than
+`quadosc`**. These comparisons identify useful cases for residue summation;
+they do not establish that those quadrature methods generally underperform.
+The closed forms in the first two rows were about 80–265× faster than RACE.
 
-**Honest positioning:** a reliable arbitrary-precision evaluator for products of
-atlas functions, most useful where no closed form exists. It is not faster than
-symbolic integration where a closed form exists, and the method itself is
-classical.
+The ordinary quadratures use intervals `[0, 1, infinity]` and `maxdegree=8`.
+Their missed targets are results under that finite budget, not proof that they
+cannot solve the integrals. For example, at frequency 1000 their relative errors
+were 0.086 (tanh–sinh) and 0.022 (Gauss–Legendre). `quadosc` uses the known
+frequency, as recommended in the [mpmath documentation](https://mpmath.org/doc/current/calculus/integration.html).
+All four RACE results and all four `quadosc` results met the target.
+
+Reproduce with `python benchmarks/bench_release.py`. The retained
+[JSON report](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/main/benchmarks/data/release_comparison.json)
+contains every sample and error, including failed targets. References use
+closed forms for the two-factor cases and independent quadrature at 50/70
+digits for the three-factor cases. Precision agreement is evidence, not a
+rigorous enclosure. No closed-form baseline is supplied for the three-factor
+cases; this is not a proof that no closed form exists.
 
 ## 2. One-loop Feynman integrals
 
@@ -55,9 +68,12 @@ classical.
 | OneLOop (van Hameren) | Fortran | double and higher | scalar integrals, complex masses, IR divergent cases |
 | QCDLoop 2 (Carrazza, Ellis, Zanderighi) | C++ | double and quadruple | scalar integrals incl. IR divergent |
 | Package-X (Patel) | Mathematica | analytic | analytic one-loop expressions |
-| **ramanujan-qft `one_loop`** | Python (mpmath) | **arbitrary, certified** | B0 (all masses), C0(0,0,s; m1,m2,m3) (massless lines allowed when IR finite), D=3 bubble |
+| **ramanujan-qft `one_loop`** | Python (mpmath) | **arbitrary, precision-checked** | B0 (all masses), C0(0,0,s; m1,m2,m3) (massless lines allowed when IR finite), D=3 bubble |
 
-Speed per call (measured):
+### Historical one-loop measurements
+
+These retained version-0.2 timings were not rerun for 0.3.0a2. They must not be
+combined with the current product-integral table to infer a common ranking.
 
 | | LoopTools 2.16 | ramanujan-qft 0.2 (15 / 50 digits) |
 |---|---|---|
@@ -97,9 +113,9 @@ and the twice-subtracted dispersion relation S(s) − S(0) − s·S′(0). Both 
 certified numerical integrations. They are validated against independent
 Feynman-parameter integration and a closed form for masses (0, 0, M), at
 thresholds and at scales from 10⁻¹² to 10¹². This is a small, correct building
-block, **not** a replacement for the tools above. For production two-loop
-self-energies, TSIL is the natural comparison, and it is much faster: a certified
-`sunset_subtracted` call takes about 10 s here.
+block, **not** a replacement for the tools above. TSIL is a relevant comparison
+for production two-loop self-energies. No matched TSIL timing was retained, so no speed ratio is claimed; an earlier
+`sunset_subtracted` measurement took about 10 s here.
 
 The experimental [graph backend](user_guide/multiloop.md) also handles
 UV-convergent massive Euclidean scalar graphs with positive powers and real

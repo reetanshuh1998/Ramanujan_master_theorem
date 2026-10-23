@@ -2,7 +2,22 @@
 
 ## Unreleased
 
-## 0.3.0a1 — prepared research-alpha candidate (not published)
+## 0.3.0a2 — research-alpha candidate (production publication pending)
+
+- Fixed browser startup by loading Pyodide's compiled NumPy before importing
+  the package, including custom dependency-wheel configurations.
+- Added browser examples for graph-derived sunset RMT and equal-mass Taylor
+  evaluation, and real Chromium checks for examples, references and reset.
+- Added a reproducible 30-digit comparison with three mpmath quadrature
+  methods, raw timings, source hashes and explicit accuracy failures.
+  Historical one-loop timings are labelled separately; unsupported broad
+  rankings were removed.
+- Added production publisher authentication preflight without upload, plus
+  an installation check outside the checkout after production publication.
+- Refreshed candidate metadata and the independent-parameter audit. External
+  scientific review remains pending; automated validation is not peer review.
+
+## 0.3.0a1 — TestPyPI rehearsal (not published to production PyPI)
 
 ### Equal-mass continuation and release preparation
 - Added a separate D=2 equal-mass transformed Taylor series for vacuum and

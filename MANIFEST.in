@@ -16,3 +16,4 @@ prune docs/_build
 prune docs/auto_examples
 prune benchmarks/looptools/_build
 include benchmarks/data/sunset_audit.json
+include benchmarks/data/release_comparison.json

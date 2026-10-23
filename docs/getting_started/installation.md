@@ -55,7 +55,7 @@ pip install ramanujan-qft
 ```pycon
 >>> import ramanujan_qft
 >>> ramanujan_qft.__version__
-'0.3.0a1'
+'0.3.0a2'
 >>> from ramanujan_qft import B0
 >>> B0(5, 1, 1)
 mpc(real='1.5695910590359961', imag='1.4049629462081452')

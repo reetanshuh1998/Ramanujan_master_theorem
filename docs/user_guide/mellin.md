@@ -317,20 +317,12 @@ including cases at high frequency.
 
 ## Performance
 
-Typical calls take about 1–10 ms at 15–30 digits. Measured at 30 digits with
-`benchmarks/bench_fair.py` (best of three; see {doc}`/COMPARISON` for the full
-table and the double-precision comparison):
-
-| integral | `product_integral` | closed form in mpmath | `mpmath.quadosc` |
-|---|---|---|---|
-| $e^{-x}J_0(10^3x)$ | 1.1 ms | 0.012 ms | 1618 ms |
-| $e^{-x}\cos(10^6x)$ | 0.6 ms | 0.006 ms | — |
-| $e^{-2x}e^{-x^2/2}J_1(100x)$ (no closed form) | 6.2 ms | — | 4.3 s |
-
-Where a closed form exists, evaluating it is 100 to 40,000 times faster. At 15
-digits, compiled double-precision quadrature (QUADPACK, double-exponential
-methods) is faster too. `product_integral` pays off for high precision, high
-frequencies and products without a closed form.
+The [current accuracy-checked comparison](../COMPARISON.md) measures RACE,
+`mpmath.quadosc`, tanh–sinh, Gauss–Legendre and closed-form evaluation at 30
+digits. RACE takes about 0.7–5.2 ms on those four inputs and outperforms the
+successful quadrature baselines. Closed forms remain faster where available.
+The report records missed accuracy targets separately and supports no general
+speed claim for other integrals or precisions.
 
 ## Defining new factors
 
