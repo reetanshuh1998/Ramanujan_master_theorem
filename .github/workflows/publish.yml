@@ -5,10 +5,15 @@ name: publish
 # workflow "publish.yml", environment "pypi" (https://docs.pypi.org/trusted-publishers/).
 
 on:
-  # Authentication-only preflight; dispatch on the frozen v* candidate tag.
-  # No distribution upload. PyPI may activate a pending publisher/project.
+  # Dispatch on a frozen v* tag. Authentication is the default; only the
+  # explicit testpypi-release operation uploads to the test index.
   workflow_dispatch:
     inputs:
+      operation:
+        description: Authenticate only, or validate and upload to TestPyPI
+        type: choice
+        options: [authenticate, testpypi-release]
+        default: authenticate
       index:
         description: Index for authentication only (never uploads files)
         type: choice
@@ -22,7 +27,7 @@ permissions:
 
 jobs:
   validate:
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.operation == 'testpypi-release')
     uses: ./.github/workflows/validate.yml
     with:
       include_slow: true
@@ -42,7 +47,7 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@release/v1
 
   publisher-preflight:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && inputs.operation != 'testpypi-release'
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
@@ -57,19 +62,40 @@ jobs:
           PYPI_CHECK_INDEX: ${{ inputs.index || 'pypi' }}
         run: python tools/check_pypi_publisher.py --index "$PYPI_CHECK_INDEX"
 
-  install-from-index:
-    needs: pypi
+  testpypi:
+    if: github.event_name == 'workflow_dispatch' && inputs.operation == 'testpypi-release'
+    needs: validate
     runs-on: ubuntu-latest
+    # Matches the replacement publisher configured on TestPyPI. The service
+    # endpoint is fixed here; the authentication index input cannot change it.
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  install-from-index:
+    needs: [pypi, testpypi]
+    if: always() && (needs.pypi.result == 'success' || needs.testpypi.result == 'success')
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_INDEX: ${{ github.event_name == 'release' && 'https://pypi.org/simple/' || 'https://test.pypi.org/simple/' }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - run: python -m pip install mpmath sympy numpy
-      - name: Install the published version from production PyPI
+      - run: python -m pip install --index-url https://pypi.org/simple/ mpmath sympy numpy
+      - name: Install the published version from the selected release index
         run: |
           VERSION=$(python tools/check_release_metadata.py)
-          python -m pip install --no-deps --index-url https://pypi.org/simple/ "ramanujan-qft==$VERSION"
+          python -m pip install --no-deps --index-url "$RELEASE_INDEX" "ramanujan-qft==$VERSION"
       - name: Verify installation outside the checkout
         run: |
           python - <<'PY'

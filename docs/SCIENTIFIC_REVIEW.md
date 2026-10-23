@@ -65,7 +65,7 @@ and budget exhaustion are counted separately from successful evaluations.
 
 ## Findings from the local audit
 
-The refreshed 0.3.0a2 report records 34 passing cases: 27 evaluations, three expected
+The refreshed 0.3.0a3 report records 34 passing cases: 27 evaluations, three expected
 domain refusals and four expected budget refusals. Its source hashes match the
 candidate numerical code. This is a bounded local audit, not a claim of
 exhaustive domain coverage.
