@@ -8,7 +8,7 @@ flowchart TD
     A[1. Equal-mass coverage: implemented and tested]
     B[2. Local audit passed: external review pending]
     C[3. Capabilities and guarantees: documented]
-    D[4. Local artifacts passed: hosted CI pending]
+    D[4. Hosted CI passed: TestPyPI pending]
     E[5. Alpha candidate prepared: publication pending]
     A --> B --> C --> D --> E
     classDef ready fill:#d8f3dc,stroke:#2d6a4f,color:#102a1b
@@ -22,7 +22,7 @@ flowchart TD
 | 1 | Close the equal-mass Euclidean gap | Derived convergent series, documented normalization and tail bound; vacuum, quadrature and overlap checks; bounded work | Implemented; validation recorded below |
 | 2 | Audit the numerical backend | Reproducible benchmark grid, independent references, actual versus reported errors, boundary and budget failures, review packet | Local audit passed; external scientific review pending |
 | 3 | Make capabilities explicit | One capability table; distinguish RMT, analytic continuation and numerical integration; describe all error guarantees | Implemented |
-| 4 | Gate publication on validation | Release-commit tests, wheel and source-distribution checks outside checkout, platform smoke tests, TestPyPI rehearsal workflow | Local artifact checks and workflow lint passed; hosted runs and TestPyPI pending |
+| 4 | Gate publication on validation | Release-commit tests, wheel and source-distribution checks outside checkout, platform smoke tests, TestPyPI rehearsal workflow | Hosted validation passed for `b224380`; TestPyPI rehearsal pending |
 | 5 | Prepare the public research alpha | Runnable notebook, versioned release notes, citation/contribution instructions and release checklist | Candidate 0.3.0a1 prepared; public release pending |
 
 External scientific review needs a human reviewer. Repository changes cannot
@@ -59,13 +59,17 @@ research objectives. Existing user changes are preserved throughout.
   and macOS. A manual-only TestPyPI rehearsal workflow is prepared.
 - Full local regression suite: 440 tests passed, including the slow quadrature
   checks; one existing SciPy reference-quadrature roundoff warning was emitted.
-- Final local checks: 19 doctests, all six research-notebook code cells, seven
-  graph/series guide snippets, a warning-free Sphinx build with the rendered
+- Final local checks: 19 doctests, all six research-notebook code cells, all 67
+  documentation examples, a warning-free Sphinx build with the rendered
   plan chart, actionlint and strict distribution metadata checks passed.
 - The 0.3.0a1 wheel and source distribution installed successfully into fresh
   environments outside the checkout. Both numerical series APIs passed with
   SciPy unavailable. The source archive contains the reproduction material.
 - The candidate notebook, citation version, contribution guide and draft
   release notes are prepared. Follow [the release checklist](RELEASING.md);
-  no hosted workflow, external review, TestPyPI/PyPI upload or public release
-  has been performed as part of this local work.
+  external review, TestPyPI/PyPI uploads and public release remain pending.
+- Hosted validation for candidate `b224380` passed: [tests, audit and six
+  platform/artifact combinations](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/39865347949)
+  and [full documentation/gallery checks](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/39865347891).
+  Subsequent changes must pass CI again; current results are tracked in
+  [draft PR #3](https://github.com/reetanshuh1998/Ramanujan_master_theorem/pull/3).

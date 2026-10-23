@@ -60,6 +60,9 @@ The reusable `.github/workflows/validate.yml` runs tests, the numerical audit,
 notebook and documentation checks, builds the artifacts once, and tests those
 artifacts on three operating systems. `publish.yml` depends on all these jobs
 and publishes the same artifact bundle. Release tags must match the metadata.
+JavaScript actions use Node.js 24 runtimes, including the nested artifact
+upload in the Pages composite action. When updating action versions, inspect
+their `action.yml` runtime and nested actions as well as their release notes.
 Hosted jobs, account configuration, independent review and uploads cannot be
 verified by a local build alone.
 
