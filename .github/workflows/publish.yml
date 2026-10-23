@@ -8,6 +8,12 @@ on:
   # Authentication-only preflight; dispatch on the frozen v* candidate tag.
   # No distribution upload. PyPI may activate a pending publisher/project.
   workflow_dispatch:
+    inputs:
+      index:
+        description: Index for authentication only (never uploads files)
+        type: choice
+        options: [pypi, testpypi]
+        default: pypi
   release:
     types: [published]
 
@@ -46,8 +52,10 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - name: Verify PyPI trusts this workflow without uploading
-        run: python tools/check_pypi_publisher.py
+      - name: Verify the selected index trusts this workflow without uploading
+        env:
+          PYPI_CHECK_INDEX: ${{ inputs.index || 'pypi' }}
+        run: python tools/check_pypi_publisher.py --index "$PYPI_CHECK_INDEX"
 
   install-from-index:
     needs: pypi

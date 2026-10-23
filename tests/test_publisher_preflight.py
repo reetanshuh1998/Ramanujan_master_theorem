@@ -21,7 +21,8 @@ def preflight(monkeypatch):
 
 
 @pytest.mark.parametrize('outcome', ['success', 'rejected', 'missing-token'])
-def test_only_authentication_endpoints_and_no_credential_output(preflight, monkeypatch, capsys, outcome):
+@pytest.mark.parametrize('index,host', [('pypi', 'pypi.org'), ('testpypi', 'test.pypi.org')])
+def test_only_authentication_endpoints_and_no_credential_output(preflight, monkeypatch, capsys, outcome, index, host):
     requests = []
 
     def urlopen(request, timeout):
@@ -29,10 +30,10 @@ def test_only_authentication_endpoints_and_no_credential_output(preflight, monke
         if len(requests) == 1:
             assert request.get_header('Authorization') == 'Bearer request-secret'
             assert urllib.parse.parse_qs(urllib.parse.urlsplit(request.full_url).query) == {
-                'x': ['1'], 'audience': ['pypi']}
+                'x': ['1'], 'audience': [index]}
             return io.StringIO(json.dumps({'value': 'identity-secret'}))
         assert len(requests) == 2
-        assert request.full_url == 'https://pypi.org/_/oidc/mint-token'
+        assert request.full_url == f'https://{host}/_/oidc/mint-token'
         assert request.get_method() == 'POST'
         assert json.loads(request.data) == {'token': 'identity-secret'}
         if outcome == 'rejected':
@@ -41,7 +42,7 @@ def test_only_authentication_endpoints_and_no_credential_output(preflight, monke
         return io.StringIO(json.dumps({'token': 'publishing-secret'} if outcome == 'success' else {}))
 
     monkeypatch.setattr(preflight.urllib.request, 'urlopen', urlopen)
-    assert preflight.main() == (0 if outcome == 'success' else 1)
+    assert preflight.main(index) == (0 if outcome == 'success' else 1)
     assert len(requests) == 2
     output = capsys.readouterr()
     assert 'secret' not in output.out+output.err
