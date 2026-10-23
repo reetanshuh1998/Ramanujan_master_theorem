@@ -23,7 +23,7 @@ flowchart TD
 | 2 | Audit the numerical backend | Reproducible benchmark grid, independent references, actual versus reported errors, boundary and budget failures, review packet | Local audit passed; external scientific review pending |
 | 3 | Make capabilities explicit | One capability table; distinguish RMT, analytic continuation and numerical integration; describe all error guarantees | Implemented |
 | 4 | Gate publication on validation | Release-commit tests, wheel and source-distribution checks outside checkout, platform smoke tests, TestPyPI rehearsal workflow | Hosted validation and TestPyPI upload/install passed for `3b00bd6`; changed candidates must be revalidated |
-| 5 | Prepare the public research alpha | Runnable notebook, versioned release notes, citation/contribution instructions and release checklist | Candidate 0.3.0a1 prepared; public release pending |
+| 5 | Prepare the public research alpha | Runnable notebook, versioned release notes, citation/contribution instructions and release checklist | Candidate 0.3.0a2 prepared; final rehearsal and public release pending |
 
 External scientific review needs a human reviewer. Repository changes cannot
 stand in for that review. TestPyPI contains the rehearsed `0.3.0a1` candidate;

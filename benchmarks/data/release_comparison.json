@@ -1,0 +1,234 @@
+{
+  "schema_version": 1,
+  "package_version": "0.3.0a2",
+  "python": "3.12.3",
+  "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+  "processor": "x86_64",
+  "mpmath": "1.3.0",
+  "base_commit": "73ee2b7dadec0ddc58d72ee1cfd03f778ea17356",
+  "source_sha256": {
+    "benchmarks/bench_release.py": "20e439698205dab016c545afee2d73985477b5b5a8c082a6624a6c9ce30ba969",
+    "ramanujan_qft/mellin.py": "354e927d592a7be2a3e24d8b74bf909c70e944d5d84004b187570993240d614b",
+    "ramanujan_qft/__init__.py": "28dab82c1fc2ae989b703fb63c78707d80da6796339425b65ba2b6a21c86fc98"
+  },
+  "requested_dps": 30,
+  "repetitions": 3,
+  "summary": "median after one warm-up; caches retained",
+  "quadrature_maxdegree": 8,
+  "quadrature_intervals": "[0, 1, infinity]",
+  "limitations": "Selected product integrals, not Feynman graph benchmarks. Reference agreement is not an interval proof. Failed accuracy targets must not be ranked as successful evaluations.",
+  "cases": [
+    {
+      "integral": "exp(-x)*J0(3*x)",
+      "reference": "0.316227766016837933199889354443271853371955513932521682685750485279259443463",
+      "reference_method": "closed form at 50/70 digits",
+      "reference_relative_difference": "3.6550962e-55",
+      "methods": {
+        "RACE": {
+          "seconds": [
+            0.00213093200000003,
+            0.0022282050013018306,
+            0.002151475000573555
+          ],
+          "median_seconds": 0.002151475000573555,
+          "max_relative_error": "1.2181295e-32",
+          "meets_30_digit_target": true
+        },
+        "mpmath.quadosc": {
+          "seconds": [
+            0.37583279099999345,
+            0.37246603600215167,
+            0.366126078999514
+          ],
+          "median_seconds": 0.37246603600215167,
+          "max_relative_error": "1.2181295e-32",
+          "meets_30_digit_target": true
+        },
+        "mpmath.quad/tanh-sinh": {
+          "seconds": [
+            0.22713463399850298,
+            0.21604698200098937,
+            0.2185057599999709
+          ],
+          "median_seconds": 0.2185057599999709,
+          "max_relative_error": "1.2181295e-32",
+          "meets_30_digit_target": true
+        },
+        "mpmath.quad/gauss-legendre": {
+          "seconds": [
+            0.03571763499712688,
+            0.032266975002130494,
+            0.032044613999460125
+          ],
+          "median_seconds": 0.032266975002130494,
+          "max_relative_error": "5.371695e-18",
+          "meets_30_digit_target": false
+        },
+        "closed form": {
+          "seconds": [
+            8.131999493343756e-06,
+            8.350998541573063e-06,
+            6.567999662365764e-06
+          ],
+          "median_seconds": 8.131999493343756e-06,
+          "max_relative_error": "1.2181295e-32",
+          "meets_30_digit_target": true
+        }
+      }
+    },
+    {
+      "integral": "exp(-x)*J0(1000*x)",
+      "reference": "0.000999999500000374999687500273437253906475585728027540130429763970142196315369",
+      "reference_method": "closed form at 50/70 digits",
+      "reference_relative_difference": "3.138698e-52",
+      "methods": {
+        "RACE": {
+          "seconds": [
+            0.0007314409995160531,
+            0.0007238159996632021,
+            0.0007256229982885998
+          ],
+          "median_seconds": 0.0007256229982885998,
+          "max_relative_error": "2.0962382e-32",
+          "meets_30_digit_target": true
+        },
+        "mpmath.quadosc": {
+          "seconds": [
+            1.0277315439998347,
+            0.9901773599995067,
+            0.9873604280001018
+          ],
+          "median_seconds": 0.9901773599995067,
+          "max_relative_error": "2.0962382e-32",
+          "meets_30_digit_target": true
+        },
+        "mpmath.quad/tanh-sinh": {
+          "seconds": [
+            0.8279466140011209,
+            0.8250253890000749,
+            0.8228711420015316
+          ],
+          "median_seconds": 0.8250253890000749,
+          "max_relative_error": "0.086178822",
+          "meets_30_digit_target": false
+        },
+        "mpmath.quad/gauss-legendre": {
+          "seconds": [
+            0.33283528900210513,
+            0.32975188399723265,
+            0.3296579499983636
+          ],
+          "median_seconds": 0.32975188399723265,
+          "max_relative_error": "0.022013445",
+          "meets_30_digit_target": false
+        },
+        "closed form": {
+          "seconds": [
+            8.94100230652839e-06,
+            8.76800186233595e-06,
+            7.819002348696813e-06
+          ],
+          "median_seconds": 8.76800186233595e-06,
+          "max_relative_error": "2.0962382e-32",
+          "meets_30_digit_target": true
+        }
+      }
+    },
+    {
+      "integral": "exp(-2*x-x*x/2)*J1(1*x)",
+      "reference": "0.0727359279886863123938923469713965748961382560629445651725710057794969012481",
+      "reference_method": "quadosc at 50/70 digits",
+      "reference_relative_difference": "5.420593e-52",
+      "methods": {
+        "RACE": {
+          "seconds": [
+            0.005189101000723895,
+            0.005079575999843655,
+            0.005156450999493245
+          ],
+          "median_seconds": 0.005156450999493245,
+          "max_relative_error": "6.9869444e-35",
+          "meets_30_digit_target": true
+        },
+        "mpmath.quadosc": {
+          "seconds": [
+            0.10312899899872718,
+            0.09738577200187137,
+            0.09675295799752348
+          ],
+          "median_seconds": 0.09738577200187137,
+          "max_relative_error": "6.9869444e-35",
+          "meets_30_digit_target": true
+        },
+        "mpmath.quad/tanh-sinh": {
+          "seconds": [
+            0.05937587399967015,
+            0.05949704699742142,
+            0.059451059001730755
+          ],
+          "median_seconds": 0.059451059001730755,
+          "max_relative_error": "6.9869444e-35",
+          "meets_30_digit_target": true
+        },
+        "mpmath.quad/gauss-legendre": {
+          "seconds": [
+            0.013761035002971767,
+            0.013853857999492902,
+            0.013579262998973718
+          ],
+          "median_seconds": 0.013761035002971767,
+          "max_relative_error": "6.9869444e-35",
+          "meets_30_digit_target": true
+        }
+      }
+    },
+    {
+      "integral": "exp(-2*x-x*x/2)*J1(100*x)",
+      "reference": "0.00980001000675268801870689780915541815400515012000490965511533937597756279433",
+      "reference_method": "quadosc at 50/70 digits",
+      "reference_relative_difference": "2.1179639e-51",
+      "methods": {
+        "RACE": {
+          "seconds": [
+            0.0039303300000028685,
+            0.004067502999532735,
+            0.0038866610011609737
+          ],
+          "median_seconds": 0.0039303300000028685,
+          "max_relative_error": "5.9016816e-33",
+          "meets_30_digit_target": true
+        },
+        "mpmath.quadosc": {
+          "seconds": [
+            1.0478426320005383,
+            1.0181135240018193,
+            1.0162843170000997
+          ],
+          "median_seconds": 1.0181135240018193,
+          "max_relative_error": "1.5131693e-31",
+          "meets_30_digit_target": true
+        },
+        "mpmath.quad/tanh-sinh": {
+          "seconds": [
+            0.38857300900053815,
+            0.38761749300101656,
+            0.3939079859992489
+          ],
+          "median_seconds": 0.38857300900053815,
+          "max_relative_error": "2.6248346e-12",
+          "meets_30_digit_target": false
+        },
+        "mpmath.quad/gauss-legendre": {
+          "seconds": [
+            0.14627177599686547,
+            0.14409928300301544,
+            0.14528543100095703
+          ],
+          "median_seconds": 0.14528543100095703,
+          "max_relative_error": "1.5736071e-8",
+          "meets_30_digit_target": false
+        }
+      }
+    }
+  ]
+}

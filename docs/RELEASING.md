@@ -1,15 +1,18 @@
 # Research-alpha release checklist
 
-Rehearsed version: **0.3.0a1**, uploaded to TestPyPI from commit `3b00bd6`.
+Current candidate: **0.3.0a2**. External scientific review remains pending.
+
+Previously rehearsed version: **0.3.0a1**, uploaded to TestPyPI from commit `3b00bd6`.
 The [rehearsal](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/39924746748)
 passed validation, trusted-publisher upload and installation outside the checkout.
 Both published file hashes matched the validated distribution artifacts.
 This is a TestPyPI rehearsal; production PyPI publication and external scientific
 review remain pending. The code remains a scoped research tool.
 
-Changes after that commit, including the browser-console fix, need a new frozen
-candidate before publication. Use a new prerelease version (for example
-`0.3.0a2`) for another TestPyPI upload; the existing `0.3.0a1` files are immutable.
+The 0.3.0a2 candidate includes the browser fix, current comparison report and
+publishing checks. Rehearse its frozen commit on TestPyPI before production
+publication; the existing `0.3.0a1` files are immutable. Candidate-specific hosted
+results and artifact hashes are recorded in the GitHub candidate release notes.
 
 ## Local preparation
 
@@ -19,7 +22,7 @@ candidate before publication. Use a new prerelease version (for example
 - [x] Keep `pyproject.toml`, `__version__` and `CITATION.cff` consistent.
 - [x] Complete the final candidate artifact checks and record their outcomes.
 
-Local evidence: 440 tests and 19 doctests passed; all 34 fixed-seed audit cases,
+Local evidence for 0.3.0a2: 443 tests and 19 doctests passed; all 34 fixed-seed audit cases,
 six notebook code cells and all 67 documentation examples passed. Sphinx,
 actionlint, strict Twine checks, and fresh-environment wheel/sdist installs
 passed. The full tests emitted one existing SciPy reference-quadrature roundoff
@@ -32,7 +35,7 @@ python -m pytest -q
 python tools/audit_sunset.py --output benchmarks/data/sunset_audit.json
 python tools/check_notebook.py notebooks/research_alpha.ipynb
 python tools/check_doc_snippets.py docs
-python tools/check_release_metadata.py --tag v0.3.0a1
+python tools/check_release_metadata.py --tag v0.3.0a2
 python -m build --outdir dist .
 python -m twine check --strict dist/*
 python tools/smoke_release.py --dist dist --format wheel
@@ -57,7 +60,8 @@ reference data, audit tooling, documentation and the research notebook.
   the **manual** TestPyPI rehearsal on the candidate ref.
 - [x] Verify the rehearsed install-from-TestPyPI job succeeds outside the checkout.
 - [ ] Rehearse the final candidate on TestPyPI if its artifacts have changed.
-- [ ] Pass real-browser startup, example, numerical-reference and reset checks.
+- [x] Pass real-browser startup, example, numerical-reference and reset checks
+  on merged browser-fix commit `73ee2b7`; CI repeats these for the new candidate.
 - [ ] Configure the `pypi` trusted publisher/environment, with maintainer review.
 - [ ] Approve the concrete candidate, tag its matching version, and publish a prerelease
   with the reviewed notes. This triggers PyPI publication only after validation.
@@ -76,6 +80,35 @@ upload in the Pages composite action. When updating action versions, inspect
 their `action.yml` runtime and nested actions as well as their release notes.
 Hosted jobs, account configuration, independent review and uploads cannot be
 verified by a local build alone.
+
+## Production authentication preflight
+
+After merging and freezing the candidate, dispatch `publish.yml` on its `v*` tag.
+The `publisher-preflight` job uses the existing protected `pypi` environment and
+checks whether PyPI accepts that workflow identity. The manual-dispatch path
+cannot upload a distribution. PyPI can activate a pending publisher and create
+its empty project during token exchange; this is publishing setup, not a release.
+A release publication is a separate trigger.
+Credentials stay in memory and are not logged or stored as artifacts.
+
+For a new project, the account owner must configure a
+[pending publisher](https://docs.pypi.org/trusted-publishers/creating-a-project-through-oidc/)
+on **production** PyPI with these exact values:
+
+| Field | Value |
+|---|---|
+| Project | `ramanujan-qft` |
+| Owner | `reetanshuh1998` |
+| Repository | `Ramanujan_master_theorem` |
+| Workflow | `publish.yml` |
+| Environment | `pypi` |
+
+GitHub environment configuration and TestPyPI authentication do not establish
+production PyPI trust. The preflight uses the documented
+[OIDC exchange](https://docs.pypi.org/trusted-publishers/using-a-publisher/), an
+implementation-specific interface; actual uploads still use the supported
+PyPA publishing action. After publication, the production workflow installs
+that exact version from PyPI and runs the smoke check outside the checkout.
 
 ## Trust and first-use checks
 
@@ -96,7 +129,7 @@ verified by a local build alone.
 
 ## Draft release notes
 
-Version 0.3.0a1 adds exact graph-polynomial and Schwinger bracket compilation,
+Version 0.3.0a2 includes exact graph-polynomial and Schwinger bracket compilation,
 a hybrid numerical graph evaluator, and justified multivariate Gamma series
 for two massive D=2 sunset charts. A separately named equal-mass Taylor backend
 adds vacuum and finite Euclidean momentum coverage with an analytic tail bound.

@@ -65,7 +65,7 @@ and budget exhaustion are counted separately from successful evaluations.
 
 ## Findings from the local audit
 
-The final 0.3.0a1 report records 34 passing cases: 27 evaluations, three expected
+The refreshed 0.3.0a2 report records 34 passing cases: 27 evaluations, three expected
 domain refusals and four expected budget refusals. Its source hashes match the
 candidate numerical code. This is a bounded local audit, not a claim of
 exhaustive domain coverage.
@@ -81,6 +81,12 @@ exhaustive domain coverage.
   two-precision agreement, and an explicit precision-budget regression test.
 
 ## External review record
+
+The release preparation also adds an accuracy-checked product benchmark against
+three quadrature methods. This comparison is separate from the sunset scientific
+audit and does not extend its domain or establish scientific independence.
+The candidate remains unsuitable for a claim of completed external review until
+an identified reviewer supplies findings on the frozen source below.
 
 - Reviewer: pending.
 - Reviewed source hashes/release commit: pending.

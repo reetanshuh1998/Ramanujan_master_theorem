@@ -105,7 +105,12 @@ benchmarks, LoopTools was roughly 300–450 times faster at double precision;
 evaluation of known closed forms also beat residue summation in the measured
 product-integral cases. These timings do not establish a speed ranking for the
 new multiloop backends against pySecDec, FIESTA, AMFlow or TSIL.
-See [the comparisons](docs/COMPARISON.md) and [audit](AUDIT.md).
+For a measured strength of the Ramanujan/Mellin approach, the current 30-digit
+product benchmark evaluates $e^{-2x-x^2/2}J_1(100x)$ in **3.93 ms**, versus
+**1018 ms** for `mpmath.quadosc`, with both meeting the accuracy target. At
+frequency 1, RACE also beats the measured tanh–sinh and Gauss–Legendre calls.
+These are selected product integrals, not a general Feynman-integral speed claim.
+See [the reproducible comparisons](docs/COMPARISON.md) and [audit](AUDIT.md).
 
 ## Install
 

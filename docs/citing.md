@@ -9,7 +9,7 @@ If ramanujan-qft helps your work, please cite the software:
   author  = {Reet},
   title   = {ramanujan-qft: Ramanujan's Master Theorem, Mellin residue summation
              and arbitrary-precision Feynman integrals},
-  version = {0.3.0a1},
+  version = {0.3.0a2},
   year    = {2026},
   url     = {https://github.com/reetanshuh1998/Ramanujan_master_theorem},
   license = {MIT}

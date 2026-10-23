@@ -160,12 +160,14 @@ conventions and the printing of high-precision results.
 
 ## When not to use it
 
-* **Double-precision phenomenology.** LoopTools and COLLIER are roughly
-  300–450 times faster at double precision, and provide tensor integrals and
-  general kinematics.
-* **Integrals with a closed form.** Symbolic integration (SymPy `meijerint`,
-  Mathematica) followed by mpmath is 100–40,000 times faster where it applies.
-  At 15 digits, compiled quadrature is also faster than `product_integral`.
+* **Double-precision phenomenology.** Compiled tools such as LoopTools and COLLIER
+  provide tensor integrals and broader kinematics. The historical LoopTools
+  benchmark was roughly 300–450 times faster for the two measured calls;
+  no COLLIER speed ratio was measured.
+* **Integrals with a closed form.** Evaluating an available closed form can be much
+  faster: about 80–265 times in the current two-factor benchmark. That timing
+  excludes finding the symbolic expression; it does not measure SymPy or
+  Mathematica integration time.
 * **Multiloop regulator expansions or physical-region integrals.** The
   experimental graph backend covers convergent massive Euclidean cases only.
   For broader coverage, use pySecDec, FIESTA or AMFlow, and TSIL for
