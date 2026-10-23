@@ -75,17 +75,37 @@ mpmath, …). The contribution here is a careful, tested, open implementation.
   4.3 s. See [docs/COMPARISON.md](docs/COMPARISON.md) for the fair benchmark;
   where a closed form exists, SymPy/Mathematica plus mpmath is faster.
 
-## What it is not
+## Multiloop support and current limits
 
-It is **not** a faster replacement for LoopTools, COLLIER, pySecDec, FIESTA,
-AMFlow or TSIL. Compiled one-loop libraries are several hundred times faster at double
-precision. Closed-form symbolic integration (SymPy `meijerint`, Mathematica) is
-faster wherever it applies. The new graph backend covers convergent massive
-Euclidean multiloop graphs, subject to explicit computational budgets; it does
-not provide general multivariate RMT residue summation, dimensional-regulator
-expansions, massless integrals, tensors, or physical-region continuation.
-See [the multiloop guide](docs/user_guide/multiloop.md), [docs/COMPARISON.md](docs/COMPARISON.md) and
-[AUDIT.md](AUDIT.md).
+**Multiloop integration is implemented for UV-convergent massive Euclidean
+scalar graphs.** `integrate_graph` accepts graph input without a fixed loop-count
+limit; validation includes examples through four loops. Practical graph size is
+limited by sector growth and explicit work budgets. It uses **RMT for the common
+Schwinger scale and numerical Hepp-sector integration for the remaining
+parameters**, returning float64 estimates with statistical error diagnostics.
+
+The package has three distinct residue/series capabilities:
+
+- **RACE (`mellin.product_integral`)** evaluates products of functions from the
+  documented Mellin atlas by residue summation.
+- **The multivariate RMT backend (`integrate_graph_rmt`)** generates and sums
+  Gamma-function series for the massive, unit-power D=2 sunset in two justified
+  convergence regions, without a numerical integration fallback.
+- **The separate Taylor backend (`integrate_sunset_taylor`)** covers the
+  equal-mass D=2 sunset at vacuum and finite Euclidean momentum, subject to budgets.
+
+**General multiloop evaluation entirely through RACE/RMT residue series remains
+a research goal.** The graph backend does not yet supply dimensional-regulator
+expansions, overlapping-divergence subtraction, massless or tensor integrals,
+or physical-region continuation. See the [capability table](docs/CAPABILITIES.md)
+and [multiloop guide](docs/user_guide/multiloop.md).
+
+Performance claims are limited to measured cases. In the recorded one-loop
+benchmarks, LoopTools was roughly 300–450 times faster at double precision;
+evaluation of known closed forms also beat residue summation in the measured
+product-integral cases. These timings do not establish a speed ranking for the
+new multiloop backends against pySecDec, FIESTA, AMFlow or TSIL.
+See [the comparisons](docs/COMPARISON.md) and [audit](AUDIT.md).
 
 ## Install
 

@@ -108,13 +108,20 @@ for the remaining parameters. Results have statistical float64 error estimates;
 the factorial sector count limits practical graph size. This is an independent
 numerical reference for RMT-series work, without general regulator
 expansions, massless domains, tensors, or physical-region continuation.
+This graph evaluator has no fixed loop-count limit, and validation includes
+examples through four loops. It is distinct from RACE (`mellin.product_integral`),
+which sums Mellin residues for products from the documented function atlas.
+General graph integration entirely through RACE/RMT residue series is still
+a research objective.
 
 The separate [D=2 sunset RMT backend](user_guide/sunset_rmt.md) now generates
 exact bracket families, resolves coalescing Gamma poles analytically, and
 sums a multivariate series with an analytic tail bound. It covers unit powers
 in the strict regions $Q>m_1+m_2+m_3$ and $M>m_a+m_b+Q$. Equal-mass vacuum
-and the gap between the charts remain unsupported. No speed comparison with
-general-purpose multiloop tools is claimed.
+and the gap between the charts remain unsupported by that RMT evaluator.
+The separate [equal-mass Taylor backend](user_guide/sunset_taylor.md) covers
+vacuum and finite Euclidean momentum, subject to work budgets. No speed
+comparison with general-purpose multiloop tools is claimed.
 
 ### Why "O(1) multi-loop via RMT" does not hold in general
 
@@ -134,4 +141,8 @@ constant-time evaluator.
 * Oscillatory product integral of exponentials, Gaussians, Bessel and
   trigonometric functions, and powers → **ramanujan-qft** `product_integral`.
 * Phenomenology at one loop (speed, tensor integrals) → LoopTools / COLLIER.
-* Two loops and beyond → pySecDec / FIESTA / AMFlow / TSIL (self-energies).
+* Convergent massive Euclidean scalar graphs → the experimental
+  **ramanujan-qft** graph backend, within its work budgets; for supported D=2
+  sunset domains, use the RMT or equal-mass Taylor series explicitly.
+* Broader multiloop coverage, regulator expansions and physical regions →
+  pySecDec / FIESTA / AMFlow / TSIL (self-energies).
