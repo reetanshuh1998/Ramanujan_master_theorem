@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased
+## Unreleased — 0.3.0rc1.dev1
+
+- Retry only the selected index's exact missing-version response, with bounded
+  attempts. Other install failures and smoke checks fail immediately.
+- Add minimum-dependency CI, source-bound stability reports and clean/upgrade
+  artifact checks with base and optional SciPy dependencies. The development
+  version distinguishes these artifacts from the published 0.3.0a5.
 
 - Add a method-selection guide and shared reference-checked examples for local
   Python, documentation, notebooks and the browser. Domain/precision refusals

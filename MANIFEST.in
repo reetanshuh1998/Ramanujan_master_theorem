@@ -6,7 +6,7 @@ include CONTRIBUTING.md
 include AUDIT.md
 include THIRD_PARTY_NOTICES.md
 recursive-include ramanujan_qft *.py
-recursive-include tests *.py *.csv *.json
+recursive-include tests *.py *.csv *.json *.txt
 recursive-include tools *.py
 recursive-include notebooks *.ipynb
 recursive-include examples *.py *.txt *.rst

@@ -1,7 +1,7 @@
 # Plan for the first stable release
 
 Target: **0.3.0**, following a tested **0.3.0rc1** candidate. The published
-baseline is 0.3.0a5. This page tracks development; it does not announce a new
+baseline is 0.3.0a5; the working development version is 0.3.0rc1.dev1. This page tracks development; it does not announce a new
 release or promote experimental calculations to stable status.
 
 The goal is a reproducible, documented interface for the calculations already
@@ -17,7 +17,7 @@ flowchart TD
     B[2. Audit implemented; human review pending]
     C[3. Explanation export implemented]
     D[4. First-use implementation checked]
-    E[5. Release hardening: next]
+    E[5. Hardening implemented; qualification pending]
     A --> B --> C --> D --> E
     E --> R[0.3.0rc1: feedback and blocker review]
     R --> S[0.3.0: publish when gates pass]
@@ -33,7 +33,7 @@ flowchart TD
 | 2 | Strengthen scientific validation | Automated audit passed; human review pending | Reproducible boundary/error audit, independent references, review disposition |
 | 3 | Make the RMT calculation inspectable | Implemented; validation recorded below | Versioned explanation/export format, exact graph-to-series trace, reference checks |
 | 4 | Improve first-use experience | Implemented; browser check running | Method-selection guide, actionable errors, three executed end-to-end examples |
-| 5 | Harden release automation | Planned | Bounded index retry, dependency and upgrade checks, frozen candidate evidence |
+| 5 | Harden release automation | Implemented; full qualification pending | Bounded index retry, dependency and upgrade checks, frozen candidate evidence |
 
 Finish and record each implementation milestone before starting the next.
 Keep human review requests distinct from completed reviews. Review can proceed
@@ -130,7 +130,7 @@ example, and a new user can identify supported methods and their limitations.
 
 ## 5. Harden releases and qualify the candidate
 
-- [ ] Add bounded retries for a newly uploaded version becoming visible in the
+- [x] Add bounded retries for a newly uploaded version becoming visible in the
   selected index. Test the observed missing-version case, eventual success and
   exhaustion. Preserve genuine install/smoke failures and never reupload files.
 - [ ] Exercise supported dependency minima and current dependencies on suitable
@@ -222,4 +222,22 @@ retained as reproducible release evidence. Do not overwrite the 0.3.0a5 reports.
 - An interactive Colab session remains a user check; the notebook is not claimed
   to have been run on Google's hosted service by this development run.
 
-Next: objective 5, bounded index retries and dependency/upgrade validation.
+### Objective 5 implementation
+
+- `tools/install_from_index.py` retries only the selected index's exact
+  missing-version response. Fourteen policy tests passed, including eventual
+  visibility, exhaustion, other-package failures, connection warnings and timeout.
+- The workflow adds a pinned Python 3.9 minimum-dependency job, the stability
+  audit, shared notebook/examples, and baseline-to-artifact upgrades with and
+  without the optional SciPy extra. Existing Node.js 24 actions are retained.
+- Wheel/sdist smoke checks now verify legacy imports and bundled explanation
+  schema. Upgrade checks assert the installed baseline and target versions.
+- Version, citation and package metadata identify development 0.3.0rc1.dev1.
+  This is not the frozen 0.3.0rc1 candidate and has not been published.
+- Full tests, artifact installs/upgrades, source-bound audits and hosted checks
+  are running. Their results will be recorded before this implementation is
+  considered verified.
+
+Remaining external gates: qualified human scientific review, interactive Colab
+and outside-user feedback, then frozen-candidate TestPyPI rehearsal and final
+release qualification. The engineering changes do not mark these gates complete.

@@ -31,4 +31,4 @@ from .explain import explain_sunset_rmt, sunset_rmt_schema
 from .solvers.feynman_mob_solver import FeynmanMoBSolver
 from .utils.ramanujan_continuation import RamanujanContinuationEngine
 
-__version__ = "0.3.0a5"
+__version__ = "0.3.0rc1.dev1"
