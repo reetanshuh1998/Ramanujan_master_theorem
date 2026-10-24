@@ -14,8 +14,8 @@ research milestones.
 ```mermaid
 flowchart TD
     A[1. API contract: implemented and checked]
-    B[2. Scientific validation: next]
-    C[3. Explain and export the RMT calculation]
+    B[2. Audit implemented; human review pending]
+    C[3. Explain and export the RMT calculation: next]
     D[4. Improve the first calculation experience]
     E[5. Harden releases and qualify the candidate]
     A --> B --> C --> D --> E
@@ -23,14 +23,14 @@ flowchart TD
     R --> S[0.3.0: publish when gates pass]
     classDef done fill:#d8f3dc,stroke:#2d6a4f,color:#102a1b
     classDef next fill:#fff3cd,stroke:#856404,color:#332701
-    class A done
-    class B next
+    class A,B done
+    class C next
 ```
 
 | Order | Objective | Status | Evidence required to finish |
 |---|---|---|---|
 | 1 | Define the stable API | Implemented; validation recorded below | Compatibility policy, classified interfaces, naming clarification, executable contract checks |
-| 2 | Strengthen scientific validation | Planned | Reproducible boundary/error audit, independent references, review disposition |
+| 2 | Strengthen scientific validation | Automated audit passed; human review pending | Reproducible boundary/error audit, independent references, review disposition |
 | 3 | Make the RMT calculation inspectable | Planned | Versioned explanation/export format, exact graph-to-series trace, reference checks |
 | 4 | Improve first-use experience | Planned | Method-selection guide, actionable errors, three executed end-to-end examples |
 | 5 | Harden release automation | Planned | Bounded index retry, dependency and upgrade checks, frozen candidate evidence |
@@ -67,19 +67,19 @@ Build on `tools/audit_sunset.py`, its 34-case baseline and the existing regressi
 fixtures. Avoid replacing earlier evidence or presenting repeated checks as new
 independent methods.
 
-- [ ] Define an exact-input grid for both RMT charts, chart boundaries, equal
+- [x] Define an exact-input grid for both RMT charts, chart boundaries, equal
   and unequal masses, colliding poles, extreme scales and work/precision limits.
-- [ ] Compare accepted values with independent references at sufficient extra
+- [x] Compare accepted values with independent references at sufficient extra
   precision. Record absolute error, relative error when meaningful, reference
   uncertainty, reported error and whether the requested tolerance was met.
-- [ ] Separate accepted evaluations, expected domain refusals, budget refusals
+- [x] Separate accepted evaluations, expected domain refusals, budget refusals
   and unresolved references. An unresolved reference cannot count as a pass.
-- [ ] Audit hybrid estimates across a declared graph grid and multiple fixed
+- [x] Audit hybrid estimates across a declared graph grid and multiple fixed
   random seeds. Report error-estimate coverage and outliers; do not turn an
   empirical coverage fraction into a universal confidence guarantee.
-- [ ] Include mass permutations, scaling identities and agreement in overlapping
+- [x] Include mass permutations, scaling identities and agreement in overlapping
   domains as additional checks, with their dependence on shared formulas stated.
-- [ ] Prepare a frozen review packet covering normalization, convergence,
+- [ ] Obtain a human review of the prepared frozen packet covering normalization, convergence,
   collision limits and error estimates for a qualified human reviewer. Record
   findings and dispositions; retain the existing automated review unchanged.
 
@@ -179,5 +179,18 @@ retained as reproducible release evidence. Do not overwrite the 0.3.0a5 reports.
 - The new interfaces and notes are unreleased development work. Stable
   promotion remains contingent on the later objectives.
 
-Next: objective 2, beginning with a declared boundary/error audit grid and
-independent-reference precision criteria before changing the audit tooling.
+### Objective 2 implementation
+
+- `tools/audit_stability.py`: 25 series cases (15 values, four domain refusals,
+  six budget refusals), eight invariant comparisons, and 32 hybrid samples
+  across eight fixed seeds. All passed at 15 requested digits for the series;
+  all 32 hybrid samples were covered by their reported errors on this grid.
+- Ten audit/packet regression checks passed, including unresolved references,
+  underestimated errors, zero references and stale source rejection.
+- `tools/prepare_review_packet.py` freezes source, tests, report and hashes.
+  Packet prepared at `/home/reet/ramanujan-stable-objective2-review` on 2026-10-25.
+  It is an objective-2 snapshot, not the eventual final release candidate.
+- See {doc}`STABILITY_AUDIT` for reproduction and statistical limitations.
+  Human review remains pending; no human assessment has been fabricated.
+
+Next: objective 3, a structured graph-to-series explanation and export.
