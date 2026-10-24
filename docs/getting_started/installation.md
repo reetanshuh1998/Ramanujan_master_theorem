@@ -49,7 +49,7 @@ Install the published research alpha:
 pip install --pre ramanujan-qft
 ```
 
-To pin this candidate once published, use `ramanujan-qft==0.3.0a4`.
+To pin the released research alpha, use `ramanujan-qft==0.3.0a4`.
 Alpha releases require `--pre` or an explicit version. For the optional hybrid
 graph evaluator, use `pip install --pre "ramanujan-qft[multiloop]"`.
 

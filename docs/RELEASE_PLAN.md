@@ -1,4 +1,4 @@
-# Research-alpha release plan
+# Research-alpha release plan — completed for 0.3.0a4
 
 Work proceeds in this order. A completed implementation is distinct from
 independent scientific review and from publication.
@@ -9,12 +9,10 @@ flowchart TD
     B[2. Local audit and review corrections complete]
     C[3. Capabilities and guarantees: documented]
     D[4. Hosted CI and TestPyPI rehearsal passed]
-    E[5. Alpha candidate prepared: publication pending]
+    E[5. Research alpha published: installation verified]
     A --> B --> C --> D --> E
     classDef ready fill:#d8f3dc,stroke:#2d6a4f,color:#102a1b
-    classDef pending fill:#fff3cd,stroke:#997404,color:#332701
-    class A,B,C,D ready
-    class E pending
+    class A,B,C,D,E ready
 ```
 
 | Order | Objective | Completion criteria | Status |
@@ -22,13 +20,16 @@ flowchart TD
 | 1 | Close the equal-mass Euclidean gap | Derived convergent series, documented normalization and tail bound; vacuum, quadrature and overlap checks; bounded work | Implemented; validation recorded below |
 | 2 | Audit the numerical backend | Reproducible benchmark grid, independent references, actual versus reported errors, boundary and budget failures, review packet | Local audit passed; supplementary review corrections complete; human peer review welcome |
 | 3 | Make capabilities explicit | One capability table; distinguish RMT, analytic continuation and numerical integration; describe all error guarantees | Implemented |
-| 4 | Gate publication on validation | Release-commit tests, wheel and source-distribution checks outside checkout, platform smoke tests, TestPyPI rehearsal workflow | Hosted validation and TestPyPI upload/install passed for `3b00bd6`; changed candidates must be revalidated |
-| 5 | Prepare the public research alpha | Runnable notebook, versioned release notes, citation/contribution instructions and release checklist | Candidate 0.3.0a4 addresses review corrections; production release pending |
+| 4 | Gate publication on validation | Release-commit tests, wheel and source-distribution checks outside checkout, platform smoke tests, TestPyPI rehearsal workflow | Final candidate passed hosted validation, TestPyPI rehearsal and production upload/install |
+| 5 | Prepare the public research alpha | Runnable notebook, versioned release notes, citation/contribution instructions and release checklist | 0.3.0a4 published to PyPI; fresh installation and artifact hashes verified |
 
 The supplementary review and all six corrections are recorded in
 {doc}`SCIENTIFIC_REVIEW`; no human peer review is claimed. Version 0.3.0a3
-restored TestPyPI availability. Version 0.3.0a4 prepares the corrected research
-alpha for production publication after validation and a new rehearsal.
+restored TestPyPI availability. Version **[0.3.0a4](https://pypi.org/project/ramanujan-qft/0.3.0a4/)**
+was published on 2026-10-24 after the corrected candidate passed its
+[TestPyPI rehearsal](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40056460397)
+and [production workflow](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40057042071).
+The completed checklist and artifact evidence are in {doc}`RELEASING`.
 
 ## Scope
 
@@ -37,7 +38,9 @@ topology-specific convergence selection, epsilon expansions, overlapping
 subtractions, massless integrals and physical-region continuation remain later
 research objectives. Existing user changes are preserved throughout.
 
-## Evidence log
+## Historical implementation evidence
+
+The entries below describe earlier milestones; the completed release status is above.
 
 - Initial state: graph-derived RMT sunset charts require momentum dominance or
   mass dominance. Equal-mass vacuum is explicitly refused.

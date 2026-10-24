@@ -1,6 +1,7 @@
-# Research-alpha release checklist
+# Research-alpha release record and checklist
 
-Current candidate: **0.3.0a4**, correcting the six nonblocking review findings.
+Released: **[0.3.0a4](https://pypi.org/project/ramanujan-qft/0.3.0a4/)**
+on 2026-10-24, correcting the six nonblocking review findings.
 Numerical algorithms are unchanged from the reviewed 0.3.0a2 source. See
 {doc}`SCIENTIFIC_REVIEW` for the review scope, original report and dispositions.
 
@@ -11,8 +12,13 @@ outside the checkout. It remains available; the earlier a1/a2 files were deleted
 The replacement TestPyPI publisher authorizes `publish.yml`, environment `pypi`.
 Production PyPI separately accepted that identity in the
 [authentication preflight](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40056000753).
-Authentication alone does not publish a release. The final candidate still
-requires validation, rehearsal and a verified production installation.
+The frozen `ca31a681ccd60e03883dcf16fbc13ba3dbe2bfee` candidate passed the
+[final TestPyPI rehearsal](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40056460397)
+and the [production release workflow](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40057042071),
+including validation, uploads and fresh index installations outside the checkout.
+Published wheel/sdist hashes were checked against each workflow's validated
+artifacts. The [release assets](https://github.com/reetanshuh1998/Ramanujan_master_theorem/releases/tag/v0.3.0a4)
+retain the verification records, source archive, review report and dispositions.
 
 ## Local preparation
 
@@ -22,8 +28,9 @@ requires validation, rehearsal and a verified production installation.
 - [x] Keep `pyproject.toml`, `__version__` and `CITATION.cff` consistent.
 - [x] Complete the final candidate artifact checks and record their outcomes.
 
-Local evidence for 0.3.0a2: 443 tests and 19 doctests passed; all 34 fixed-seed audit cases,
-six notebook code cells and all 67 documentation examples passed. Sphinx,
+Local evidence for 0.3.0a4: 455 tests and 19 doctests passed; all 34 fixed-seed audit cases,
+the 18-point default-budget grid, six notebook code cells and all 67
+documentation examples passed. Sphinx,
 actionlint, strict Twine checks, and fresh-environment wheel/sdist installs
 passed. The full tests emitted one existing SciPy reference-quadrature roundoff
 warning. These local results do not substitute for the hosted and external
@@ -47,24 +54,24 @@ The artifact checks create fresh virtual environments outside the checkout and
 verify the series APIs without SciPy. The source distribution includes tests,
 reference data, audit tooling, documentation and the research notebook.
 
-## Before a public announcement
+## Completed release gates for 0.3.0a4
 
 - [x] Record the supplementary review and its limitations in {doc}`SCIENTIFIC_REVIEW`.
 - [x] Address the six nonblocking review corrections. Human peer review remains welcome.
-- [x] Run hosted CI on the rehearsed `3b00bd6` candidate.
+- [x] Run hosted CI on the frozen `ca31a68` candidate.
 - [x] Verify its Linux, Windows and macOS artifacts and supported Python jobs.
-- [ ] Freeze the final candidate/version and rerun validation on that exact commit.
-- [ ] Review the generated documentation and notebook from the candidate.
-- [ ] Confirm the candidate version is unused on each target index; if needed,
+- [x] Freeze the final candidate/version and rerun validation on that exact commit.
+- [x] Review the generated documentation and notebook from the candidate.
+- [x] Confirm the candidate version is unused on each target index; if needed,
   increment it consistently before rebuilding. Never replace a published artifact.
 - [x] Configure the separate TestPyPI publisher (`publish.yml`, environment `pypi`) and run
   the **manual** TestPyPI rehearsal on the candidate ref.
 - [x] Verify the rehearsed install-from-TestPyPI job succeeds outside the checkout.
-- [ ] Rehearse the final candidate on TestPyPI if its artifacts have changed.
+- [x] Rehearse the final candidate on TestPyPI if its artifacts have changed.
 - [x] Pass real-browser startup, example, numerical-reference and reset checks
-  on merged browser-fix commit `73ee2b7`; CI repeats these for the new candidate.
+  on the final candidate in [the documentation run](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40056453265).
 - [x] Verify the production `pypi` trusted publisher/environment through authentication.
-- [ ] Approve the concrete candidate, tag its matching version, and publish a prerelease
+- [x] Approve the concrete candidate, tag its matching version, and publish a prerelease
   with the reviewed notes. This triggers PyPI publication only after validation.
 
 The TestPyPI and PyPI services require separate configuration. Trusted
@@ -138,7 +145,7 @@ that exact version from PyPI and runs the smoke check outside the checkout.
 - Publish the candidate's audit, known limitations, change log and instructions
   for reporting a numerical error, including graph, conventions and precision.
 
-## Draft release notes
+## Released scope
 
 Version 0.3.0a4 includes exact graph-polynomial and Schwinger bracket compilation,
 a hybrid numerical graph evaluator, and justified multivariate Gamma series
