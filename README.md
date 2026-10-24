@@ -10,29 +10,23 @@
 **Ramanujan's Master Theorem, Mellin residue summation and arbitrary-precision
 Feynman integrals in pure Python.**
 
-**Research-alpha scope:** see the [capability table](docs/CAPABILITIES.md) for
+**Research-alpha scope:** see the [capability table](https://reetanshuh1998.github.io/Ramanujan_master_theorem/CAPABILITIES.html) for
 supported domains, methods and error guarantees, and the
-[release plan](docs/RELEASE_PLAN.md) for validation and publication status.
-The runnable [research notebook](notebooks/research_alpha.ipynb) demonstrates
+[release plan](https://reetanshuh1998.github.io/Ramanujan_master_theorem/RELEASE_PLAN.html) for validation and publication status.
+The runnable [research notebook](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/main/notebooks/research_alpha.ipynb) demonstrates
 graph-generated RMT families, equal-mass vacuum and an independent reference.
-
-The maintained repository contains the package (`ramanujan_qft/`), regression
-tests and reference fixtures (`tests/`), runnable examples and notebooks,
-documentation, benchmarks, and validation tools. Obsolete experiments,
-generated runs and bundled third-party installations have been removed from
-the current tree; their history remains in Git. See [the audit](AUDIT.md).
 
 ```
 f(x) = Σ φ(n) (-x)ⁿ / n!     ⟹     ∫₀^∞ x^(s-1) f(x) dx = Γ(s) φ(-s)
 ```
 
 Ramanujan's Master Theorem (RMT) turns an integral into an evaluation of
-Taylor coefficients. This library implements **classical** methods built on
-it, in pure Python, at arbitrary precision, and with explicit convergence
-control:
+analytically continued Taylor coefficients under the theorem’s hypotheses.
+The package provides the following numerical methods and diagnostics:
 
-1. **`rmt`**: the theorem itself, with a numerical Mellin transform to check
-   every use.
+1. **`rmt`**: the theorem itself, with a separate numerical Mellin transform
+   for checking suitable non-oscillatory integrands. The caller must establish
+   the theorem’s hypotheses.
 2. **`mellin.product_integral`**: ∫ x^(s-1) f(x) g(x) dx as a residue series,
    using the Mellin-convolution (Meijer-G / Slater) method of Marichev and others.
    Before summing, it checks which expansion legitimately closes the contour.
@@ -40,14 +34,15 @@ control:
    an error rather than return a number that fails its accuracy checks.
 3. **Feynman integrals** with known hypergeometric or dispersive
    representations: one-loop B0 and C0, the D=3 bubble, and the
-   scheme-independent part of the two-loop sunset. Results are precision-checked to the requested precision,
-   and checked against LoopTools.
+   scheme-independent part of the two-loop sunset. Results are checked at two
+   working precisions and against independent references; the one-loop tests
+   also compare with LoopTools.
 4. **`multiloop.integrate_graph`**: an experimental graph-based evaluator for
    UV-convergent massive Euclidean scalar integrals. It builds Symanzik
    polynomials, checks all UV subgraphs, applies RMT to the Schwinger scale,
    and integrates the remaining Hepp sectors with scrambled Sobol sampling.
    This backend returns float64 estimates with statistical errors.
-5. **`sunset_rmt.integrate_graph_rmt`**: genuine multivariate RMT/Gamma series
+5. **`sunset_rmt.integrate_graph_rmt`**: multivariate RMT/Gamma series
    for the massive, unit-power two-loop sunset in D=2. Exact graph-derived
    bracket families, analytic pole resolution, justified convergence charts,
    and arbitrary-precision summation with an analytic truncation bound.
@@ -55,25 +50,23 @@ control:
    Taylor-series evaluator covering vacuum and finite Euclidean momentum,
    with an analytic tail bound and precision control for its unstable recurrence.
 
-**Originality.** The methods are not new. [docs/PRIOR_ART.md](docs/PRIOR_ART.md)
+**References.** The mathematical methods follow the cited literature. [docs/PRIOR_ART.md](https://reetanshuh1998.github.io/Ramanujan_master_theorem/PRIOR_ART.html)
 credits the earlier work (Hardy, Marichev, Adamchik–Marichev, Slater,
 Gonzalez–Moll–Schmidt, Prausa, Ananthanarayan–Banik–Friot–Ghosh, SymPy,
-mpmath, …). The contribution here is a careful, tested, open implementation.
+mpmath, …), with derivations and implementation details in the user guides.
 
 *Dedicated to the memory of Srinivasa Ramanujan.*
 
 ## Why it can be useful
 
-* **Precision.** Standard one-loop libraries work in double (sometimes
-  quadruple) precision. Validating them, or evaluating expressions with large
-  cancellations, needs reference values with 30–100 digits.
-* **Transparency.** Each integral is an explicit hypergeometric series, for
-  example B0 = Δ − log(m²/μ²) + (2w/3)·₂F₁(1,1;5/2;w) with w = p²/4m². The
-  analytic structure, thresholds included, is visible and testable.
-* **Oscillatory products without closed forms, at high precision.** At 30
-  digits, ∫ e^(−2x) e^(−x²/2) J₁(100x) dx takes 6 ms. `mpmath.quadosc` takes
-  4.3 s. See [docs/COMPARISON.md](docs/COMPARISON.md) for the fair benchmark;
-  where a closed form exists, SymPy/Mathematica plus mpmath is faster.
+* **Precision.** Reference values at 30–100 digits can help check
+  double-precision calculations and expressions with large cancellations.
+* **Derivations.** The equal-mass bubble, for example, has the representation
+  B0 = Δ − log(m²/μ²) + (2w/3)·₂F₁(1,1;5/2;w), with w = p²/4m².
+  The documentation explains its domain, continuation and numerical checks.
+* **Oscillatory products.** Residue summation can avoid resolving each
+  oscillation by quadrature. The [measured comparisons](https://reetanshuh1998.github.io/Ramanujan_master_theorem/COMPARISON.html)
+  report accuracy and timings for selected examples.
 
 ## Multiloop support and current limits
 
@@ -97,8 +90,8 @@ The package has three distinct residue/series capabilities:
 **General multiloop evaluation entirely through RACE/RMT residue series remains
 a research goal.** The graph backend does not yet supply dimensional-regulator
 expansions, overlapping-divergence subtraction, massless or tensor integrals,
-or physical-region continuation. See the [capability table](docs/CAPABILITIES.md)
-and [multiloop guide](docs/user_guide/multiloop.md).
+or physical-region continuation. See the [capability table](https://reetanshuh1998.github.io/Ramanujan_master_theorem/CAPABILITIES.html)
+and [multiloop guide](https://reetanshuh1998.github.io/Ramanujan_master_theorem/user_guide/multiloop.html).
 
 Performance claims are limited to measured cases. In the recorded one-loop
 benchmarks, LoopTools was roughly 300–450 times faster at double precision;
@@ -106,11 +99,11 @@ evaluation of known closed forms also beat residue summation in the measured
 product-integral cases. These timings do not establish a speed ranking for the
 new multiloop backends against pySecDec, FIESTA, AMFlow or TSIL.
 For a measured strength of the Ramanujan/Mellin approach, the current 30-digit
-product benchmark evaluates $e^{-2x-x^2/2}J_1(100x)$ in **3.92 ms**, versus
+product benchmark integrates `exp(-2x - x²/2) J₁(100x)` in **3.92 ms**, versus
 **1021 ms** for `mpmath.quadosc`, with both meeting the accuracy target. At
 frequency 1, RACE also beats the measured tanh–sinh and Gauss–Legendre calls.
 These are selected product integrals, not a general Feynman-integral speed claim.
-See [the reproducible comparisons](docs/COMPARISON.md) and [audit](AUDIT.md).
+See [the reproducible comparisons](https://reetanshuh1998.github.io/Ramanujan_master_theorem/COMPARISON.html) and [audit](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/main/AUDIT.md).
 
 Developed and maintained by **Reet**.
 
@@ -154,7 +147,7 @@ C0(10, 1, 2, 3, dps=50)     # C0(0,0,s; m1², m2², m3²) to 50 digits
 sunset_im(100, 1, 2, 3)     # -88.1849955516
 ```
 
-More in [`examples/`](examples/):
+More in [`examples/`](https://github.com/reetanshuh1998/Ramanujan_master_theorem/tree/main/examples/):
 
 | Example | Shows |
 |---------|-------|
@@ -180,9 +173,9 @@ print(result.value, result.error_estimate)  # approximately 7*zeta(3) = 8.414398
 The graph API uses **positive Euclidean propagators** and the loop measure
 dᴰk/π^(D/2). Its `error_estimate` is statistical, not a rigorous bound.
 Unmet tolerances raise `MultiloopConvergenceError`, carrying the partial result.
-Read [the guide](docs/user_guide/multiloop.md) before comparing conventions.
+Read [the guide](https://reetanshuh1998.github.io/Ramanujan_master_theorem/user_guide/multiloop.html) before comparing conventions.
 
-### Genuine multivariate RMT example
+### Multivariate RMT example
 
 ```python
 import mpmath as mp
@@ -200,12 +193,12 @@ print(mp.nstr(result.value, 30))      # 0.629016707590614149590827253884
 Supported charts require **p_E > m1+m2+m3** or **M > ma+mb+p_E**, where
 M is the largest mass. Equal-mass vacuum and the gap between these charts
 raise `RMTDomainError`. This evaluator uses no numerical integration fallback.
-See [the derivation and error controls](docs/user_guide/sunset_rmt.md).
+See [the derivation and error controls](https://reetanshuh1998.github.io/Ramanujan_master_theorem/user_guide/sunset_rmt.html).
 
 The separate `integrate_sunset_taylor(graph, dps=30)` method now covers
 equal-mass vacuum and finite Euclidean momentum. It uses an ODE/Taylor series
 with a Clausen boundary value, with no automatic substitution for an RMT call.
-See [its derivation](docs/user_guide/sunset_taylor.md).
+See [its derivation](https://reetanshuh1998.github.io/Ramanujan_master_theorem/user_guide/sunset_taylor.html).
 
 ## API overview
 
@@ -234,7 +227,7 @@ are 1/(q² − m² + i0), as in LoopTools and pySecDec.
 The classes of version 0.1 (`FeynmanMoBSolver`, `AnalyticalConvolutionEngine`,
 `RamanujanContinuationEngine`, …) are still importable. Methods that did not
 compute their stated integral now raise `NotImplementedError` with an
-explanation (see [CHANGELOG.md](CHANGELOG.md)).
+explanation (see [CHANGELOG.md](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/main/CHANGELOG.md)).
 
 ## Validation
 
@@ -242,7 +235,7 @@ explanation (see [CHANGELOG.md](CHANGELOG.md)).
 pytest -m "not slow"     # fast regressions and multiloop validation
 pytest                   # also independent nested-quadrature checks; several minutes
 bash benchmarks/looptools/compare_looptools.sh   # builds LoopTools (gfortran) and compares
-python benchmarks/bench_fair.py      # RACE vs closed forms and mpmath.quadosc at 30 digits
+python benchmarks/bench_release.py   # accuracy-checked 30-digit product timings
 ```
 
 * B0 and C0 agree with LoopTools 2.16 to double-precision round-off at 15, 30
@@ -252,19 +245,19 @@ python benchmarks/bench_fair.py      # RACE vs closed forms and mpmath.quadosc a
 * The sunset's Im S, S″ and twice-subtracted S agree with independent
   Feynman-parameter integrations to 10⁻⁸ to 10⁻¹⁴.
 * One-loop results are *precision-checked*: each is evaluated at two working precisions,
-  raised until they agree, which removes cancellation at extreme kinematics
-  (p² ≪ m², mass hierarchies, s ≫ m²).
+  raised until they agree within the requested tolerance. This checks for
+  unresolved cancellation at extreme kinematics; it is not an interval proof.
 * RACE went through three adversarial audit rounds against closed forms and
   independent quadrature: two of about 2,000–4,000 cases each, then a bounded
   785-case round. All 50 confirmed defects (19 + 28 + 3) were fixed and turned
   into regression tests (`tests/test_mellin_regressions.py`,
   `tests/test_round2_regressions.py`, `tests/test_round3_regressions.py`). In
-  the final sweeps it either returned the correct value or raised; no silent
-  wrong result remained. Round 3 also covered the one-loop and sunset
+  the recorded final sweeps, accepted values met their accuracy targets;
+  these finite tests do not establish correctness for every input. Round 3 also covered the one-loop and sunset
   functions (1,820 random cases plus a 24,000-point LoopTools comparison). It
   found and fixed defects in the sunset functions and in C0 with massless
   lines. See
-  [AUDIT.md](AUDIT.md).
+  [AUDIT.md](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/main/AUDIT.md).
 
 ## Roadmap
 
@@ -272,13 +265,12 @@ python benchmarks/bench_fair.py      # RACE vs closed forms and mpmath.quadosc a
   add topologies with derived convergence rules. Broaden the graph backend with
   efficient sector strategies, epsilon expansions and subtraction,
   massless graphs, and causal continuation. See the staged plan in
-  [the multiloop guide](docs/user_guide/multiloop.md).
+  [the multiloop guide](https://reetanshuh1998.github.io/Ramanujan_master_theorem/user_guide/multiloop.html).
 * Sunset subtraction constants S(0), S′(0) in closed form, giving the full
   finite part.
 * C0 with general external momenta; D0.
-* An automated MoB pipeline (`core/mob_dynamic_engine.py` currently analyses the
-  bracket system only), restricted to kinematic regions where the resulting
-  series provably converge.
+* Extend `schwinger_brackets` and the sunset series compiler with justified
+  family selection, pole resolution and convergence regions for other topologies.
 * A larger Mellin atlas (Bessel K/Y, Struve, rational functions).
 
 Contributions are welcome. Please add a test against an independent reference
@@ -305,4 +297,4 @@ for any new integral.
 
 ## License
 
-MIT (see [LICENSE](LICENSE)).
+MIT (see [LICENSE](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/main/LICENSE)).

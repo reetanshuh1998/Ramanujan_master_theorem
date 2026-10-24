@@ -11,6 +11,18 @@ three dependencies, which pip installs automatically:
 
 There is nothing to compile.
 
+## Install from PyPI
+
+Install the published research alpha:
+
+```bash
+pip install --pre ramanujan-qft
+```
+
+To pin this version, use `ramanujan-qft==0.3.0a5`.
+Alpha releases require `--pre` or an explicit version. For the optional hybrid
+graph evaluator, use `pip install --pre "ramanujan-qft[multiloop]"`.
+
 ## Install from GitHub
 
 For the latest development source:
@@ -41,24 +53,12 @@ pip install ".[multiloop]"  # plus SciPy for hybrid graph integration; RMT serie
 For development, add `-e` (`pip install -e ".[test]"`) so that changes to the
 source take effect without reinstalling.
 
-## PyPI
-
-Install the published research alpha:
-
-```bash
-pip install --pre ramanujan-qft
-```
-
-To pin the released research alpha, use `ramanujan-qft==0.3.0a4`.
-Alpha releases require `--pre` or an explicit version. For the optional hybrid
-graph evaluator, use `pip install --pre "ramanujan-qft[multiloop]"`.
-
 ## Check the installation
 
 ```pycon
 >>> import ramanujan_qft
 >>> ramanujan_qft.__version__
-'0.3.0a4'
+'0.3.0a5'
 >>> from ramanujan_qft import B0
 >>> B0(5, 1, 1)
 mpc(real='1.5695910590359961', imag='1.4049629462081452')

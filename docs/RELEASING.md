@@ -20,6 +20,13 @@ Published wheel/sdist hashes were checked against each workflow's validated
 artifacts. The [release assets](https://github.com/reetanshuh1998/Ramanujan_master_theorem/releases/tag/v0.3.0a4)
 retain the verification records, source archive, review report and dispositions.
 
+## Metadata correction for 0.3.0a5
+
+Version 0.3.0a5 corrects the author credit to **Reet** and updates documentation.
+The numerical algorithms are unchanged. It must pass the same validation,
+TestPyPI upload and fresh-install checks before production publication.
+The records above and completed checklist below refer to 0.3.0a4.
+
 ## Local preparation
 
 - [x] Document the RMT and Taylor derivations, convergence domains and errors.
@@ -42,7 +49,7 @@ python -m pytest -q
 python tools/audit_sunset.py --output benchmarks/data/sunset_audit.json
 python tools/check_notebook.py notebooks/research_alpha.ipynb
 python tools/check_doc_snippets.py docs
-python tools/check_release_metadata.py --tag v0.3.0a4
+python tools/check_release_metadata.py --tag v0.3.0a5
 python -m build --outdir dist .
 python -m twine check --strict dist/*
 python tools/smoke_release.py --dist dist --format wheel
@@ -96,10 +103,11 @@ Dispatch `publish.yml` on a frozen `v*` tag. The default operation is
 files. PyPI can activate a pending publisher and create its empty project during
 token exchange. Credentials remain in memory and are not logged or archived.
 
-To rebuild, validate, upload and install the replacement TestPyPI release:
+For each new release, use an unused version and freeze its matching tag.
+For the 0.3.0a5 correction:
 
 ```bash
-gh workflow run publish.yml --ref v0.3.0a4 -f operation=testpypi-release -f index=testpypi
+gh workflow run publish.yml --ref v0.3.0a5 -f operation=testpypi-release -f index=testpypi
 ```
 
 `testpypi-release` always uploads to `https://test.pypi.org/legacy/`, regardless
@@ -140,7 +148,7 @@ that exact version from PyPI and runs the smoke check outside the checkout.
   an independent reference. Exercise both successful calculations and useful
   domain/budget refusals in the notebook and browser console.
 - Keep installation and scope documentation consistent with the released
-  version. The production `pip install ramanujan-qft` command should be advertised
+  version. The production `pip install --pre ramanujan-qft` command should be advertised
   as available only after the production upload and a fresh install succeed.
 - Publish the candidate's audit, known limitations, change log and instructions
   for reporting a numerical error, including graph, conventions and precision.

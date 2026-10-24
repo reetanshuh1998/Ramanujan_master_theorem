@@ -65,5 +65,5 @@ For your own calculations, install the package locally
 ({doc}`getting_started/installation`):
 
 ```bash
-pip install "git+https://github.com/reetanshuh1998/Ramanujan_master_theorem"
+pip install --pre ramanujan-qft
 ```

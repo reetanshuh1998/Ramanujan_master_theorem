@@ -6,10 +6,10 @@ If ramanujan-qft helps your work, please cite the software:
 
 ```bibtex
 @software{ramanujan_qft,
-  author  = {Reetamshu},
+  author  = {Reet},
   title   = {ramanujan-qft: Ramanujan's Master Theorem, Mellin residue summation
              and arbitrary-precision Feynman integrals},
-  version = {0.3.0a4},
+  version = {0.3.0a5},
   year    = {2026},
   url     = {https://github.com/reetanshuh1998/Ramanujan_master_theorem},
   license = {MIT}
@@ -79,9 +79,6 @@ proof under explicit conditions, in *Ramanujan: Twelve Lectures* (1940). The
 theorem turns an integral into the evaluation of Taylor coefficients, and that
 idea runs through every module of this package.
 
-ramanujan-qft is dedicated to his memory. Its methods are classical, and the
-package's contribution is a careful, tested, open implementation of them. The
-best tribute it can offer is accuracy and proper credit. That is why each result
-is checked against an independent reference, why each function refuses to return
-a number that fails its accuracy checks, and why the earlier work is credited on the
-{doc}`PRIOR_ART` page.
+ramanujan-qft is dedicated to his memory. The implementation follows the
+classical methods cited on the {doc}`PRIOR_ART` page. Reference calculations,
+regression tests and documented numerical limits accompany the implementation.

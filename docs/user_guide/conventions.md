@@ -4,8 +4,8 @@ The `one_loop` and `sunset` functions follow the conventions of LoopTools, so th
 values can be compared one to one with LoopTools, FF and pySecDec output.
 
 The {doc}`multiloop` and {doc}`sunset_rmt` graph APIs instead use positive Euclidean
-propagators and the measure $d^Dk/\pi^{D/2}$; its conventions are given in that
-guide. The conventions below apply to `one_loop` and `sunset`.
+propagators and the measure $d^Dk/\pi^{D/2}$; their conventions are given in
+the linked guides. The conventions below apply to `one_loop` and `sunset`.
 
 ## Kinematics
 

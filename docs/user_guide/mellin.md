@@ -9,17 +9,15 @@ $$
 for two factors taken from a small *atlas* of functions with known Mellin
 transforms: exponentials, Gaussians, Bessel $J_\nu$, cosines, sines, inverse
 powers $(x+m)^{-v}$ and the Gaussian–Bessel product $e^{-ax^2}J_\nu(bx)$. It
-sums a residue series instead of integrating numerically. The cost is therefore
-almost independent of the oscillation frequency, and any number of digits can be
-requested.
+sums a residue series. For some high-frequency products this requires fewer
+terms than resolving the oscillations by quadrature. Cost depends on the
+selected expansion, cancellation and requested precision; work budgets apply.
 
 The method is the classical Mellin-convolution (Meijer-G / Slater) residue
 expansion of Marichev, Adamchik–Marichev and others. SymPy's `meijerint` and
-mpmath's `meijerg` rest on the same theory. See {doc}`/PRIOR_ART`. What this
-module adds is the bookkeeping that makes the method safe to use as a numerical
-black box. It checks that the integral exists and that the chosen expansion
-converges. It raises the working precision against cancellation. It raises an
-error instead of returning a number that fails its accuracy checks.
+mpmath's `meijerg` rest on the same theory. See {doc}`/PRIOR_ART`. The module
+checks the convergence strip and contour closure, raises working precision
+against cancellation, and reports an error if its accuracy checks fail.
 
 The examples on this page use these imports:
 
@@ -40,7 +38,7 @@ mpf('0.068965517241379309')
 mpf('0.068965517241379309')
 ```
 
-The second argument `s` gives the Mellin transform of the product. Here it is
+The third argument, `s`, selects the Mellin transform of the product. Here it is
 $\int_0^\infty x^{-1/2} e^{-2x}\sin x\,dx = \Gamma(\tfrac12)\,5^{-1/4}\sin(\tfrac12\arctan\tfrac12)$:
 
 ```pycon
@@ -52,7 +50,7 @@ $\int_0^\infty x^{-1/2} e^{-2x}\sin x\,dx = \Gamma(\tfrac12)\,5^{-1/4}\sin(\tfra
 '0.27232873955224408453'
 ```
 
-The frequency hardly matters. Here is $\int_0^\infty e^{-x}\cos(10^6 x)\,dx = 1/(1+10^{12})$
+A high-frequency example is $\int_0^\infty e^{-x}\cos(10^6 x)\,dx = 1/(1+10^{12})$
 to 20 digits:
 
 ```pycon
@@ -162,7 +160,7 @@ mpf('0.093407630728565838')
 
 The two values differ by $1.5\times10^{-16}$ relative, within the default 15
 digits. The cosine was expanded ($L=1 > R=\tfrac12$). Expanding the Gaussian
-against the cosine is invalid, and summing it anyway gives the infamous wrong
+against the cosine is invalid, and summing it anyway gives the incorrect
 answer 0.
 
 ## Options
@@ -174,7 +172,7 @@ answer 0.
   Strings are taken as exact decimals.
 
 `dps`
-: Decimal digits requested. The default is the global `mp.dps`, 15 unless you
+: Decimal digits requested. The default is the global `mp.mp.dps`, 15 unless you
   changed it. The result is rounded to `dps` digits.
 
 `tol`
@@ -266,7 +264,7 @@ ramanujan_qft.mellin.SeriesConvergenceError: valid residue expansion of exp(-1 x
 
 ## More examples
 
-**Three factors, no closed form.** $\int_0^\infty e^{-2x}\,e^{-x^2/2}\,J_1(bx)\,dx$
+**Three-factor product.** $\int_0^\infty e^{-2x}\,e^{-x^2/2}\,J_1(bx)\,dx$
 is `exponential(2)` against `gaussian_bessel("0.5", b, 1)`. At $b=1$ the integrand
 does not oscillate much, and mpmath's quadrature agrees:
 
@@ -319,7 +317,7 @@ including cases at high frequency.
 
 The [current accuracy-checked comparison](../COMPARISON.md) measures RACE,
 `mpmath.quadosc`, tanh–sinh, Gauss–Legendre and closed-form evaluation at 30
-digits. RACE takes about 0.7–5.2 ms on those four inputs and outperforms the
+digits. RACE takes about 0.7–5.1 ms on those four inputs and outperforms the
 successful quadrature baselines. Closed forms remain faster where available.
 The report records missed accuracy targets separately and supports no general
 speed claim for other integrals or precisions.
