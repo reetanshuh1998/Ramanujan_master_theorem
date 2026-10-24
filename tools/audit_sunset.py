@@ -17,6 +17,15 @@ import time
 import mpmath as mp
 
 
+def _base_commit(root):
+    """Optional checkout context; source hashes identify the evaluated files."""
+    try:
+        return subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=root,
+                              capture_output=True, text=True, check=True).stdout.strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+
+
 def reference(masses, q2, dps):
     """Independent one-dimensional parameter integral, normalized d^2k/pi."""
     with mp.workdps(dps):
@@ -128,12 +137,11 @@ def audit(dps=20):
              'ramanujan_qft/brackets.py', 'ramanujan_qft/multiloop.py', 'tools/audit_sunset.py',
              'ramanujan_qft/__init__.py', 'pyproject.toml']
     hashes = {p: hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths}
-    commit = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=root, capture_output=True,
-                            text=True, check=True).stdout.strip()
+    commit = _base_commit(root)
     return dict(schema_version=1, package_version=__version__, dps=dps, random_seed=1729, python=platform.python_version(),
                 mpmath=mp.__version__, sympy=sp.__version__, base_commit=commit,
                 source_sha256=hashes, reference='Cheng-Wu parameter integral; two working precisions',
-                external_scientific_review='pending', passed=all(r['passed'] for r in rows), cases=rows)
+                external_scientific_review='See docs/SCIENTIFIC_REVIEW.md for scope and review record', passed=all(r['passed'] for r in rows), cases=rows)
 
 
 def main():

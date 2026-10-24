@@ -20,10 +20,10 @@ Adamchik–Marichev, Slater, Fikioris, SymPy `meijerint` and mpmath `meijerg`.
 | mpmath `quadosc` | oscillatory quadrature, arbitrary precision | general | slow |
 | **ramanujan-qft `product_integral`** | numerical Mellin residue summation with validity check, cancellation control and honest refusal | arbitrary precision; cost nearly independent of the oscillation frequency; three-factor products without closed forms | only atlas factors; raises at the convergence boundary (e.g. e^(−x) J₀(x)); slower than closed forms |
 
-### Retained accuracy-checked product benchmarks
+### Accuracy-checked product benchmarks
 
-Measured with **ramanujan-qft 0.3.0a2**, Python 3.12.3 and mpmath 1.3.0 on Linux.
-The numerical algorithms are unchanged in the 0.3.0a3 replacement TestPyPI release.
+Measured with **ramanujan-qft 0.3.0a4**, Python 3.12.3 and mpmath 1.3.0 on Linux.
+The numerical algorithms are unchanged from the reviewed 0.3.0a2 candidate.
 All methods run at 30 working digits (RACE adds its own guard digits); the target
 is relative error at most $10^{-30}$. Times are milliseconds, median of three
 calls after one warm-up per method. Node/zero caches remain warm; setup and
@@ -32,18 +32,18 @@ one-loop B0/C0 or multiloop graph speed comparisons.
 
 | Integral over $(0,\infty)$ | RACE | mpmath `quadosc` | mpmath tanh–sinh | mpmath Gauss–Legendre | Closed form |
 |---|---:|---:|---:|---:|---:|
-| $e^{-x}J_0(3x)$ | 2.15 | 372 | 219 | target missed | 0.0081 |
-| $e^{-x}J_0(1000x)$ | 0.726 | 990 | target missed | target missed | 0.0088 |
-| $e^{-2x-x^2/2}J_1(x)$ | 5.16 | 97.4 | 59.5 | 13.8 | — |
-| $e^{-2x-x^2/2}J_1(100x)$ | 3.93 | 1018 | target missed | target missed | — |
+| $e^{-x}J_0(3x)$ | 2.12 | 372 | 220 | target missed | 0.0089 |
+| $e^{-x}J_0(1000x)$ | 0.742 | 1008 | target missed | target missed | 0.0086 |
+| $e^{-2x-x^2/2}J_1(x)$ | 5.08 | 97.1 | 59.7 | 13.7 | — |
+| $e^{-2x-x^2/2}J_1(100x)$ | 3.92 | 1021 | target missed | target missed | — |
 
-On the frequency-100 three-factor example, RACE was about **259× faster than
+On the frequency-100 three-factor example, RACE was about **261× faster than
 `quadosc`**, with relative errors $5.9\times10^{-33}$ and $1.5\times10^{-31}$,
 respectively. On the frequency-1 example it was **2.7× faster than
-Gauss–Legendre**, **11.5× faster than tanh–sinh**, and **18.9× faster than
+Gauss–Legendre**, **11.8× faster than tanh–sinh**, and **19.1× faster than
 `quadosc`**. These comparisons identify useful cases for residue summation;
 they do not establish that those quadrature methods generally underperform.
-The closed forms in the first two rows were about 80–265× faster than RACE.
+The closed forms in the first two rows were about 86–239× faster than RACE.
 
 The ordinary quadratures use intervals `[0, 1, infinity]` and `maxdegree=8`.
 Their missed targets are results under that finite budget, not proof that they
@@ -55,10 +55,34 @@ All four RACE results and all four `quadosc` results met the target.
 Reproduce with `python benchmarks/bench_release.py`. The retained
 [JSON report](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/main/benchmarks/data/release_comparison.json)
 contains every sample and error, including failed targets. References use
-closed forms for the two-factor cases and independent quadrature at 50/70
-digits for the three-factor cases. Precision agreement is evidence, not a
-rigorous enclosure. No closed-form baseline is supplied for the three-factor
-cases; this is not a proof that no closed form exists.
+closed forms for the two-factor cases and a Gaussian Fourier/angular
+representation at 50/70 digits for the three-factor cases. It uses neither
+RACE nor the oscillatory Bessel quadrature being timed. Precision agreement
+is evidence, not a rigorous enclosure. No closed-form baseline is supplied for
+the three-factor cases; this is not a proof that no closed form exists.
+
+For the three-factor reference, [DLMF 10.9.2](https://dlmf.nist.gov/10.9.E2)
+and completing the Gaussian square give
+
+$$
+I(\omega)=\frac2\pi\int_0^{\pi/2}\cos\theta\,
+\operatorname{Im}G(\omega\cos\theta)\,d\theta,\qquad
+G(b)=\sqrt{\frac\pi2}\,e^{(2-ib)^2/2}
+\operatorname{erfc}\!\left(\frac{2-ib}{\sqrt2}\right).
+$$
+
+Absolute Gaussian decay justifies exchanging the original integrals.
+The reference performs finite angular quadrature after evaluating the inner
+Gaussian transform analytically. It shares mpmath arithmetic and tanh–sinh
+quadrature machinery with a baseline, but has a different integrand and domain;
+it does not reuse a timed method's result as its reference. Cross-representation
+tests also compare it with high-precision oscillatory Bessel integration.
+The 50/70-digit reference differences were below $5\times10^{-51}$ for both
+three-factor cases.
+
+The report's per-file SHA-256 hashes identify the evaluated source.
+`base_commit` is optional checkout context, can predate the commit that stores
+the report, and is `null` for the retained reports generated without `.git`.
 
 ## 2. One-loop Feynman integrals
 
@@ -88,7 +112,7 @@ The reasons to use ramanujan-qft here are:
 * **reference values at 30–100+ digits**, for validating other codes or for
   expressions with large cancellations. Example at an extreme mass hierarchy:
   `C0(2.1973609307495493e-11, 8.481053224196959e-10, 8.48190132951938e-10, 35.105214341025246)`
-  = −0.66788699075041312… (certified; an independent 90-digit quadrature agrees).
+  = −0.66788699075041312… (precision-checked; an independent 90-digit quadrature agrees).
   LoopTools 2.16 in double precision returns −0.69637. More cases are in
   `tests/test_round2_regressions.py`;
 * **transparent derivations**: B0 is also available directly as the
@@ -111,7 +135,7 @@ The reasons to use ramanujan-qft here are:
 In its four-dimensional sunset API, ramanujan-qft provides the
 **scheme-independent** pieces: Im S from its exact phase-space representation,
 and the twice-subtracted dispersion relation S(s) − S(0) − s·S′(0). Both are
-certified numerical integrations. They are validated against independent
+precision-checked numerical integrations. They are validated against independent
 Feynman-parameter integration and a closed form for masses (0, 0, M), at
 thresholds and at scales from 10⁻¹² to 10¹². This is a small, correct building
 block, **not** a replacement for the tools above. TSIL is a relevant comparison

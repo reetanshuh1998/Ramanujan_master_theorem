@@ -89,7 +89,7 @@ the number of terms and the working precision:
 factors are far enough apart. $\int_0^\infty e^{-x} J_0(x)\,dx = 1/\sqrt{2}$
 exists, but both of its residue series sit on the convergence boundary
 ($\rho = 1$), so `product_integral` raises an error instead of returning a
-number it cannot certify:
+number it cannot verify:
 
 ```pycon
 >>> product_integral(exponential(1), bessel_j(0, 1))
@@ -181,7 +181,7 @@ number as the float.)
 '(-0.374845190552788402429829239118 + 0.0j)'
 ```
 
-The one-loop and sunset functions are *certified*: each is evaluated at two
+The one-loop and sunset functions are *precision-checked*: each is evaluated at two
 working precisions, which are raised until the results agree to the requested
 number of digits. {doc}`/user_guide/precision` explains what this does and does
 not guarantee.

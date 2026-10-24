@@ -26,7 +26,7 @@ also needs the constants $S(0)$ and $S'(0)$. They are known in closed form
 here. For complete two-loop self-energies, use TSIL.
 
 As in the rest of the package, masses are **squared** masses and `dps` is the
-number of decimal digits. The results are certified (see {doc}`precision`). The
+number of decimal digits. The results are precision-checked (see {doc}`precision`). The
 examples use:
 
 ```python
@@ -76,7 +76,7 @@ homogeneity $\operatorname{Im}S(\lambda s;\lambda m^2) = \lambda\,\operatorname{
 The Källén functions are used in factored form, with the substitution
 $t = t_- + w\sin^2(u/2)$, so that the width $w$ of the integration range is formed
 without cancellation, even very close to threshold. Every quadrature checks its
-error estimate against a relative tolerance. The result is certified by
+error estimate against a relative tolerance. The result is precision-checked by
 evaluation at two working precisions.
 
 ## The subtracted sunset
@@ -150,8 +150,8 @@ functions for independent high-precision checks, not for scans over many points.
   evaluated. Depending on how the threshold value rounds, you get a `ValueError`
   or an `ArithmeticError` ("quadrature did not converge"), never a value. Points
   close to threshold are fine.
-* `ArithmeticError` signals that a quadrature or the two-precision certification
-  failed, instead of returning an uncertified value.
+* `ArithmeticError` signals that a quadrature or the two-precision check
+  failed, instead of returning an unchecked value.
 * Only $\operatorname{Im}S$, $S - S(0) - sS'(0)$ and $S''$ are provided; see
   above.
 

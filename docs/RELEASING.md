@@ -1,21 +1,18 @@
 # Research-alpha release checklist
 
-Current candidate: **0.3.0a3**, prepared to replace accidentally deleted
-TestPyPI releases. Deleted filenames cannot be reused, so restoration uses a
-new version. Numerical algorithms are unchanged from 0.3.0a2.
+Current candidate: **0.3.0a4**, correcting the six nonblocking review findings.
+Numerical algorithms are unchanged from the reviewed 0.3.0a2 source. See
+{doc}`SCIENTIFIC_REVIEW` for the review scope, original report and dispositions.
 
-The [0.3.0a2 rehearsal](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/39977936252)
-passed full validation, trusted-publisher upload and installation outside the
-checkout. Published hashes matched the validated artifacts at that time; those
-files were subsequently deleted from TestPyPI. Historical artifacts and review
-materials remain attached to the GitHub draft for `v0.3.0a2`.
+The [0.3.0a3 restoration](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40006767164)
+passed full validation, TestPyPI upload, hash verification and installation
+outside the checkout. It remains available; the earlier a1/a2 files were deleted.
 
 The replacement TestPyPI publisher authorizes `publish.yml`, environment `pypi`.
-Its authentication passed in [this check](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40005623395).
-The former `testpypi.yml` workflow has been replaced by an explicit TestPyPI
-operation in `publish.yml`. Production PyPI requires separate account-side
-configuration. Independent AI review is planned; no review report has been
-received and no human peer review is claimed.
+Production PyPI separately accepted that identity in the
+[authentication preflight](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40056000753).
+Authentication alone does not publish a release. The final candidate still
+requires validation, rehearsal and a verified production installation.
 
 ## Local preparation
 
@@ -38,7 +35,7 @@ python -m pytest -q
 python tools/audit_sunset.py --output benchmarks/data/sunset_audit.json
 python tools/check_notebook.py notebooks/research_alpha.ipynb
 python tools/check_doc_snippets.py docs
-python tools/check_release_metadata.py --tag v0.3.0a3
+python tools/check_release_metadata.py --tag v0.3.0a4
 python -m build --outdir dist .
 python -m twine check --strict dist/*
 python tools/smoke_release.py --dist dist --format wheel
@@ -52,20 +49,21 @@ reference data, audit tooling, documentation and the research notebook.
 
 ## Before a public announcement
 
-- [ ] Obtain and record external scientific review in {doc}`SCIENTIFIC_REVIEW`.
+- [x] Record the supplementary review and its limitations in {doc}`SCIENTIFIC_REVIEW`.
+- [x] Address the six nonblocking review corrections. Human peer review remains welcome.
 - [x] Run hosted CI on the rehearsed `3b00bd6` candidate.
 - [x] Verify its Linux, Windows and macOS artifacts and supported Python jobs.
 - [ ] Freeze the final candidate/version and rerun validation on that exact commit.
 - [ ] Review the generated documentation and notebook from the candidate.
 - [ ] Confirm the candidate version is unused on each target index; if needed,
   increment it consistently before rebuilding. Never replace a published artifact.
-- [x] Configure the separate `testpypi` trusted publisher/environment and run
+- [x] Configure the separate TestPyPI publisher (`publish.yml`, environment `pypi`) and run
   the **manual** TestPyPI rehearsal on the candidate ref.
 - [x] Verify the rehearsed install-from-TestPyPI job succeeds outside the checkout.
 - [ ] Rehearse the final candidate on TestPyPI if its artifacts have changed.
 - [x] Pass real-browser startup, example, numerical-reference and reset checks
   on merged browser-fix commit `73ee2b7`; CI repeats these for the new candidate.
-- [ ] Configure the `pypi` trusted publisher/environment, with maintainer review.
+- [x] Verify the production `pypi` trusted publisher/environment through authentication.
 - [ ] Approve the concrete candidate, tag its matching version, and publish a prerelease
   with the reviewed notes. This triggers PyPI publication only after validation.
 
@@ -94,7 +92,7 @@ token exchange. Credentials remain in memory and are not logged or archived.
 To rebuild, validate, upload and install the replacement TestPyPI release:
 
 ```bash
-gh workflow run publish.yml --ref v0.3.0a3 -f operation=testpypi-release -f index=testpypi
+gh workflow run publish.yml --ref v0.3.0a4 -f operation=testpypi-release -f index=testpypi
 ```
 
 `testpypi-release` always uploads to `https://test.pypi.org/legacy/`, regardless
@@ -142,7 +140,7 @@ that exact version from PyPI and runs the smoke check outside the checkout.
 
 ## Draft release notes
 
-Version 0.3.0a3 includes exact graph-polynomial and Schwinger bracket compilation,
+Version 0.3.0a4 includes exact graph-polynomial and Schwinger bracket compilation,
 a hybrid numerical graph evaluator, and justified multivariate Gamma series
 for two massive D=2 sunset charts. A separately named equal-mass Taylor backend
 adds vacuum and finite Euclidean momentum coverage with an analytic tail bound.
@@ -156,4 +154,4 @@ contribution is their implementation, graph interface, validation and error
 controls. This release does not claim general multiloop RMT evaluation,
 epsilon expansions, massless or physical-region series coverage, or rigorous
 interval certification. Unequal-mass continuation between the RMT charts remains
-open. External-review status must be reported honestly in the announcement.
+open. The supplementary review and its limitations are recorded in the review packet.

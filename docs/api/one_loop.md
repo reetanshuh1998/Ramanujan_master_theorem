@@ -1,6 +1,6 @@
 # `ramanujan_qft.one_loop`
 
-Scalar one-loop integrals in LoopTools conventions, certified to any number of
+Scalar one-loop integrals in LoopTools conventions, precision-checked at the requested number of
 digits. User guide: {doc}`/user_guide/one_loop`; conventions:
 {doc}`/user_guide/conventions`.
 

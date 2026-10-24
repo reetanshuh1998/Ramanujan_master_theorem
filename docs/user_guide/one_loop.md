@@ -15,7 +15,7 @@ to one:
 All masses are **squared** masses. The metric is Minkowski, so $p^2>0$ is
 time-like, and propagators carry the Feynman $+i0$. {doc}`conventions` gives the
 normalisation in full. Every function returns an `mpmath.mpc` and is
-*certified* to `dps` digits (see {doc}`precision`).
+*precision-checked* to `dps` digits (see {doc}`precision`).
 
 The examples use:
 
@@ -138,8 +138,8 @@ Traceback (most recent call last):
 ValueError: C0(0,0,s) with m1 = m2 = 0 or m2 = m3 = 0 is IR (collinear) divergent
 ```
 
-**Extreme kinematics.** The results are certified, so mass hierarchies and
-$s \ll m^2$ or $s \gg m^2$ do not lose digits. An example from
+**Extreme kinematics.** Working precision adapts against cancellation at mass
+hierarchies and $s \ll m^2$ or $s \gg m^2$. An example from
 {doc}`/COMPARISON`, where LoopTools 2.16 in double precision returns −0.69637 and
 an independent 90-digit quadrature agrees with the value below:
 
@@ -194,7 +194,7 @@ mpc(real='1.3333721684892301', imag='0.0')
 | Exception | When |
 |---|---|
 | `ValueError` | a negative squared mass, a non-finite input, `mu2 <= 0`, a scaleless or IR-divergent configuration, `bubble_3d` exactly at threshold, `B0_mob`/`C0_mob` with a zero mass |
-| `ArithmeticError` | certification failed: two working precisions did not agree within the precision cap (not observed in the tests; it would signal a numerical problem rather than return a wrong value) |
+| `ArithmeticError` | precision check failed: two working precisions did not agree within the precision cap (not observed in the tests; it would signal a numerical problem rather than return a wrong value) |
 
 ## Cost
 

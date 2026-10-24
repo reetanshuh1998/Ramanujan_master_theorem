@@ -1,4 +1,4 @@
-# Precision and certification
+# Precision and numerical checks
 
 The original numerical APIs take `dps=`, the number of **decimal digits**
 requested, and returns an mpmath number (`mpf` or `mpc`). This page explains
@@ -91,10 +91,10 @@ Decimal strings are sized exactly: `product_integral` reads the number of digits
 in each string, so a long decimal input next to a pole of the integrand is formed
 without rounding.
 
-## Certification of the Feynman integrals
+## Precision checks for the Feynman integrals
 
 The one-loop functions (`B0`, `B0_mob`, `C0`, `C0_mob`, `bubble_3d`) and the sunset
-functions (`sunset_im`, `sunset_subtracted`, `sunset_d2`) are *certified*:
+functions (`sunset_im`, `sunset_subtracted`, `sunset_d2`) are *precision-checked*:
 
 1. The formula is evaluated at a working precision of `dps + 10` digits.
 2. It is evaluated again at a higher working precision, `max(step, wp/2)` digits
@@ -105,8 +105,8 @@ functions (`sunset_im`, `sunset_subtracted`, `sunset_d2`) are *certified*:
    up to 14 times, and then `ArithmeticError` is raised.
 
 Because the inputs are exact, the only thing that changes between the two
-evaluations is the rounding of the intermediate steps. Certification therefore
-detects and removes **loss of digits to cancellation and rounding**. This is what
+evaluations is the rounding of the intermediate steps. Comparing precisions
+helps detect **loss of digits to cancellation and rounding**. This is what
 makes closed forms trustworthy at $p^2 \ll m^2$, at strong mass hierarchies,
 near thresholds and at $s \gg m^2$, where double-precision codes lose many
 digits.
@@ -151,7 +151,7 @@ mpf('1.7032818257102438e-98')
 |---|---|---|
 | `ValueError` | the input is outside the domain: a divergent integral (the message gives the strip), a negative squared mass, a non-finite number, an IR-divergent or scaleless configuration | change the input, or pass `continuation=True` to `product_integral` for the analytic continuation |
 | `SeriesConvergenceError` (from `ramanujan_qft.mellin`, a subclass of `ArithmeticError`) | `product_integral` found no expansion that reaches the accuracy target: the convergence boundary $\rho=1$, too many terms, or too much precision needed | use quadrature or a closed form; or raise `max_terms` / `max_dps` if the message names them |
-| `ArithmeticError` | a certification or a quadrature did not reach the requested digits | report it: it means the function refused rather than return an uncertain value |
+| `ArithmeticError` | a precision check or a quadrature did not reach the requested digits | report it: it means the function refused rather than return an uncertain value |
 
 ## Cost and precision
 

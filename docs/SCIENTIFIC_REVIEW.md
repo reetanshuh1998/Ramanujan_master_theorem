@@ -1,7 +1,9 @@
 # Scientific review packet
 
-Status: implementation checks are automated; external scientific review is
-pending. This document does not claim peer review or an independent human audit.
+Status: a supplementary automated review of the frozen 0.3.0a2 source
+recommended approval within the documented scope and found no release blockers.
+Its six nonblocking corrections are addressed in 0.3.0a4 below. This is not
+human peer review or a proof of correctness.
 
 ## Review scope
 
@@ -40,8 +42,11 @@ python tools/audit_sunset.py --output benchmarks/data/sunset_audit.json
 ```
 
 The audit uses fixed random seed 1729, records package-source SHA-256 hashes,
-the base git commit and numerical-library versions, and reports actual versus
-estimated error. Source hashes identify uncommitted implementation changes too.
+numerical-library versions and actual versus estimated error. The per-file
+SHA-256 hashes are the binding identifiers for the evaluated sources.
+`base_commit` is optional checkout context: it can predate the commit containing
+the report and is `null` in a source archive or when Git is unavailable. It does
+not identify uncommitted changes; the source hashes do.
 Timings are descriptive measurements on the executing machine, not promises.
 
 The reference is obtained from the projective parameter integral by setting
@@ -65,7 +70,7 @@ and budget exhaustion are counted separately from successful evaluations.
 
 ## Findings from the local audit
 
-The refreshed 0.3.0a3 report records 34 passing cases: 27 evaluations, three expected
+The refreshed 0.3.0a4 report records 34 passing cases: 27 evaluations, three expected
 domain refusals and four expected budget refusals. Its source hashes match the
 candidate numerical code. This is a bounded local audit, not a claim of
 exhaustive domain coverage.
@@ -80,15 +85,31 @@ exhaustive domain coverage.
   growing mode is covered by extra guard digits, propagated arithmetic error,
   two-precision agreement, and an explicit precision-budget regression test.
 
-## External review record
+## Review record and corrections
 
-The release preparation also adds an accuracy-checked product benchmark against
-three quadrature methods. This comparison is separate from the sunset scientific
-audit and does not extend its domain or establish scientific independence.
-The candidate remains unsuitable for a claim of completed external review until
-an identified reviewer supplies findings on the frozen source below.
+The original [automated review report](https://github.com/reetanshuh1998/Ramanujan_master_theorem/releases/download/v0.3.0a4/INDEPENDENT_REVIEW_REPORT.md)
+is retained unchanged with the release evidence. It identifies its reviewer,
+methods and limitations. It reviewed commit
+`e74a2233913f4e0c9f6a319e305c0cfc908fe251` (0.3.0a2), dated 2026-10-24,
+and recommended **approval within the documented scope**, with no blockers.
+Report SHA-256: `fb1a1fe3014341ecce48c474fd39ace2976aa20dcc7dec3103ed2f2e8ea8e8cf`.
 
-- Reviewer: pending.
-- Reviewed source hashes/release commit: pending.
-- Findings and resolutions: pending.
-- Recommendation for public research-alpha release: pending.
+Numerical calculations are unchanged since that reviewed candidate; public
+API docstrings now describe precision checks without implying interval proofs.
+The later release tooling and documentation have separate regression and
+artifact checks; the report does not constitute review of those later edits.
+A qualified human scientific review remains welcome. No human peer-review
+claim is made for this research alpha.
+
+| Finding | Correction in 0.3.0a4 | Evidence |
+|---|---|---|
+| N1: reports fail outside Git | Optional `base_commit`, including absent Git | Regression tests and complete report generation from an archive without `.git` |
+| N2: ambiguous numerical guarantees | Use “precision-checked”; explain precision agreement and its limits | README, API and user guides |
+| N3: vanishing family | Explain the dimension-independent reciprocal Gamma zero | Sunset RMT derivation |
+| N4: practical budget coverage | Measured 10/20/30-digit grid at default budgets; report refusals separately | `benchmarks/data/sunset_budgets.json` and RMT guide |
+| N5: report provenance | Source hashes bind the evaluated files; commit is optional context | This page and comparison guide |
+| N6: benchmark reference independence | Gaussian Fourier/angular representation replaces the timed oscillatory method as reference | Two-precision reference agreement, cross-representation tests and refreshed raw timings |
+
+The product benchmark is separate from the sunset audit. Its new reference
+uses a different integral representation; it shares mpmath arithmetic with the
+evaluators, so agreement still does not establish a rigorous interval enclosure.
