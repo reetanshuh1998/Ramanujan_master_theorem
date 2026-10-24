@@ -1,7 +1,8 @@
 # Research-alpha release record and checklist
 
-Released: **[0.3.0a4](https://pypi.org/project/ramanujan-qft/0.3.0a4/)**
-on 2026-10-24, correcting the six nonblocking review findings.
+Latest release: **[0.3.0a5](https://pypi.org/project/ramanujan-qft/0.3.0a5/)**
+on 2026-10-24, correcting the author metadata and documentation.
+Version 0.3.0a4 addressed the six nonblocking review findings.
 Numerical algorithms are unchanged from the reviewed 0.3.0a2 source. See
 {doc}`SCIENTIFIC_REVIEW` for the review scope, original report and dispositions.
 
@@ -23,9 +24,18 @@ retain the verification records, source archive, review report and dispositions.
 ## Metadata correction for 0.3.0a5
 
 Version 0.3.0a5 corrects the author credit to **Reet** and updates documentation.
-The numerical algorithms are unchanged. It must pass the same validation,
-TestPyPI upload and fresh-install checks before production publication.
-The records above and completed checklist below refer to 0.3.0a4.
+The numerical algorithms are unchanged. The frozen candidate
+`8163607ea7cd7aa14f95480efc41da321a69e785` passed the
+[TestPyPI rehearsal](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40089544384)
+and [production workflow](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40096086667),
+including fresh installations outside the checkout. The first install on each
+index ran before the new version appeared in its package listing; rerunning
+those install jobs succeeded.
+Both published artifacts have the corrected author field and README, and their
+hashes match the validated production artifacts. The
+[0.3.0a5 release assets](https://github.com/reetanshuh1998/Ramanujan_master_theorem/releases/tag/v0.3.0a5)
+retain the verification records and fresh numerical audit. The original
+review, benchmark evidence and completed checklist below refer to 0.3.0a4.
 
 ## Local preparation
 

@@ -30,8 +30,10 @@ was published on 2026-10-24 after the corrected candidate passed its
 [TestPyPI rehearsal](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40056460397)
 and [production workflow](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40057042071).
 The completed checklist and artifact evidence are in {doc}`RELEASING`.
-Version 0.3.0a5 prepares an author-metadata and documentation correction;
-it changes no numerical algorithms and follows the same release checks.
+Version **[0.3.0a5](https://pypi.org/project/ramanujan-qft/0.3.0a5/)**
+subsequently corrected the author metadata and documentation. It changes no
+numerical algorithms and passed the same release checks, including TestPyPI
+and production installation. Its verification records are in {doc}`RELEASING`.
 
 ## Scope
 
