@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Track the five objectives for 0.3.0 and define a proposed compatibility
+  contract separating stable candidates, experimental and legacy interfaces.
+- Add `sunset_second_derivative` as an explicit spelling of `sunset_d2`.
+  The existing name, arguments, numerical implementation and exceptions remain
+  unchanged; neither name denotes a D=2 graph integral.
+
 ## 0.3.0a5 — author metadata and documentation
 
 - Correct the author credit to **Reet** in package metadata, citations and the

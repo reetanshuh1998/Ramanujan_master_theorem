@@ -13,6 +13,8 @@ api/index
 validation
 CAPABILITIES
 RELEASE_PLAN
+STABLE_RELEASE_PLAN
+API_STABILITY
 SCIENTIFIC_REVIEW
 RELEASING
 Comparison <COMPARISON>
@@ -67,6 +69,8 @@ GitHub
 
 See {doc}`CAPABILITIES` for supported domains and error guarantees, and
 {doc}`RELEASE_PLAN` for the research-alpha release status.
+The next development milestones are tracked in {doc}`STABLE_RELEASE_PLAN`;
+{doc}`API_STABILITY` defines the proposed compatibility contract.
 
 ## What is in the package
 

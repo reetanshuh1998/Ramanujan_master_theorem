@@ -3,6 +3,8 @@
 The public research-alpha scope is explicit below. General multiloop RMT
 evaluation remains a research objective. Inputs are squared masses; the graph
 APIs use positive Euclidean propagators and $d^Dk/\pi^{D/2}$ per loop.
+The proposed stable-versus-experimental interface classification is in
+{doc}`API_STABILITY`; work toward the next release is in {doc}`STABLE_RELEASE_PLAN`.
 
 | API | Supported calculation | Method | Error information |
 |---|---|---|---|

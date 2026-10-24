@@ -117,6 +117,11 @@ $G(s) = \frac{s^2-M^2}{2s}\log(1-s/M) + M\,\mathrm{Li}_2(s/M)$ at $s\to s+i0$:
 
 ## The second derivative
 
+In development after 0.3.0a5, `sunset_second_derivative` provides a clearer
+spelling of `sunset_d2`. Both names take the same arguments and compute the
+same four-dimensional quantity. The existing name remains supported;
+`d2` means a second derivative, not dimension D=2.
+
 Below threshold, $S''(s) = \frac{2}{\pi}\int_{s_{\rm th}}^\infty dt\,
 \operatorname{Im}S(t)/(t-s)^3$ is finite and real:
 
