@@ -32,7 +32,7 @@ flowchart TD
 | 1 | Define the stable API | Implemented; validation recorded below | Compatibility policy, classified interfaces, naming clarification, executable contract checks |
 | 2 | Strengthen scientific validation | Automated audit passed; human review pending | Reproducible boundary/error audit, independent references, review disposition |
 | 3 | Make the RMT calculation inspectable | Implemented; validation recorded below | Versioned explanation/export format, exact graph-to-series trace, reference checks |
-| 4 | Improve first-use experience | Implemented; browser check running | Method-selection guide, actionable errors, three executed end-to-end examples |
+| 4 | Improve first-use experience | Local/browser/notebook checks passed; interactive Colab pending | Method-selection guide, actionable errors, three executed end-to-end examples |
 | 5 | Harden release automation | Implemented; full qualification pending | Bounded index retry, dependency and upgrade checks, frozen candidate evidence |
 
 Finish and record each implementation milestone before starting the next.
@@ -79,8 +79,8 @@ independent methods.
   empirical coverage fraction into a universal confidence guarantee.
 - [x] Include mass permutations, scaling identities and agreement in overlapping
   domains as additional checks, with their dependence on shared formulas stated.
-- [ ] Obtain a human review of the prepared frozen packet covering normalization, convergence,
-  collision limits and error estimates for a qualified human reviewer. Record
+- [ ] Obtain a human review of the prepared frozen packet by a qualified reviewer covering normalization, convergence,
+  collision limits and error estimates. Record
   findings and dispositions; retain the existing automated review unchanged.
 
 Completion: no unexplained discrepancies in the declared grid; reference and
@@ -122,8 +122,10 @@ estimate is a rigorous enclosure.
   diagnostics and compares with an independent reference.
 - [x] Link the RMT explanation/export from the sunset example. Demonstrate a
   useful domain or budget refusal as well as a successful evaluation.
-- [ ] Run the examples locally, in the documentation and in the supported
-  browser/Colab paths. Label optional SciPy requirements accurately.
+- [x] Run the examples locally, in the documentation, in the browser and through
+  the notebook calculation checker. Label optional SciPy requirements accurately.
+- [ ] Confirm the development notebook in an interactive hosted Colab session;
+  local/CI notebook execution is recorded separately.
 
 Completion: installation-to-reference comparison is reproducible from each
 example, and a new user can identify supported methods and their limitations.
@@ -133,10 +135,10 @@ example, and a new user can identify supported methods and their limitations.
 - [x] Add bounded retries for a newly uploaded version becoming visible in the
   selected index. Test the observed missing-version case, eventual success and
   exhaustion. Preserve genuine install/smoke failures and never reupload files.
-- [ ] Exercise supported dependency minima and current dependencies on suitable
+- [x] Exercise supported dependency minima and current dependencies on suitable
   Python versions. Document the tested combinations; do not promise untested
   combinations of old dependencies and new interpreters.
-- [ ] Test a clean installation and an upgrade from 0.3.0a5 outside the checkout,
+- [x] Test a clean installation and an upgrade from 0.3.0a5 outside the checkout,
   including optional dependencies and legacy imports.
 - [ ] Run the complete test, audit, documentation, browser and platform/artifact
   checks on the frozen 0.3.0rc1 candidate. Rehearse on TestPyPI and verify hashes.
@@ -218,7 +220,8 @@ retained as reproducible release evidence. Do not overwrite the 0.3.0a5 reports.
   console. A regression check prevents copies drifting. Notebook cells passed
   locally; the network installation cell is checked separately through artifacts.
 - Thirteen walkthrough/export tests and the warnings-as-errors Sphinx build
-  passed. The full documentation snippet and real-browser checks are running.
+  passed. All 70 documentation blocks and all eleven real-browser examples
+  passed, including reference assertions, reset and custom dependency wheels.
 - An interactive Colab session remains a user check; the notebook is not claimed
   to have been run on Google's hosted service by this development run.
 
@@ -235,8 +238,22 @@ retained as reproducible release evidence. Do not overwrite the 0.3.0a5 reports.
 - Version, citation and package metadata identify development 0.3.0rc1.dev1.
   This is not the frozen 0.3.0rc1 candidate and has not been published.
 - Full tests, artifact installs/upgrades, source-bound audits and hosted checks
-  are running. Their results will be recorded before this implementation is
-  considered verified.
+  are tracked in [PR #10](https://github.com/reetanshuh1998/Ramanujan_master_theorem/pull/10).
+  The development suite now contains 527 tests, including 25 slow checks.
+- The expanded audit passed again on 0.3.0rc1.dev1 (all 25 series cases, eight
+  invariants and 32 hybrid samples); the original 34-case audit also passed.
+  Nineteen docstring examples, strict Twine metadata and actionlint checks passed.
+- Local source-archive installation and upgrades from 0.3.0a5 with/without SciPy
+  passed outside the checkout. Hosted minimum-dependency, Python 3.9/3.11,
+  six platform/artifact jobs, both upgrades, audits and documentation/browser
+  jobs passed on implementation commit `3fed46f`. The full slow suite and the
+  subsequent packet-completeness regression are recorded in PR checks.
+- The packet builder now includes examples, notebooks and browser source;
+  a regression checks that copied walkthroughs agree and every manifest hash
+  matches. Eleven audit/packet regression tests passed.
+- A fresh development review snapshot is prepared at
+  `/home/reet/ramanujan-stable-development-review`. It binds this numerical
+  implementation and its audit, not a frozen or externally approved candidate.
 
 Remaining external gates: qualified human scientific review, interactive Colab
 and outside-user feedback, then frozen-candidate TestPyPI rehearsal and final

@@ -73,3 +73,20 @@ def test_review_packet_rejects_mismatched_source(tmp_path):
     with pytest.raises(ValueError, match='mismatch'):
         prepare(audit, output, source)
     assert not output.exists()
+
+
+def test_review_packet_contains_shared_walkthrough_and_matches_manifest(tmp_path):
+    import hashlib
+    import json
+    import runpy
+    from tools.prepare_review_packet import prepare, ROOT
+    report = tmp_path/'audit.json'
+    report.write_text(json.dumps({'passed': True, 'source_sha256': {
+        'pyproject.toml': hashlib.sha256((ROOT/'pyproject.toml').read_bytes()).hexdigest()}}))
+    packet = prepare(report, tmp_path/'packet')
+    shared = runpy.run_path(str(packet/'source/tests/test_first_calculations.py'))
+    shared['test_shared_walkthrough']()
+    assert (packet/'source/ramanujan_qft/schemas/sunset-rmt-v1.json').is_file()
+    for line in (packet/'SHA256SUMS').read_text().splitlines():
+        digest, name = line.split('  ', 1)
+        assert hashlib.sha256((packet/name).read_bytes()).hexdigest() == digest

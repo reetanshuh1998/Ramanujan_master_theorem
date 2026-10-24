@@ -24,12 +24,14 @@ def prepare(report_path, output, root=ROOT):
             raise ValueError(f'audit source mismatch: {name}; rerun the audit on the final source')
     output.mkdir(parents=True, exist_ok=False)
     files = set()
-    for folder in ('ramanujan_qft', 'tools', 'tests', 'docs'):
+    for folder in ('ramanujan_qft', 'tools', 'tests', 'docs', 'examples', 'notebooks', '.github'):
         for p in (root/folder).rglob('*'):
-            if p.is_file() and p.suffix in ('.py', '.md', '.json', '.csv', '.txt') and not any(
+            if p.is_file() and p.suffix in ('.py', '.md', '.json', '.csv', '.txt', '.js',
+                                          '.css', '.html', '.rst', '.ipynb', '.yml') and not any(
                     part in ('__pycache__', '_build', 'auto_examples') for part in p.parts):
                 files.add(p)
-    for name in ('pyproject.toml', 'README.md', 'LICENSE', 'CHANGELOG.md', 'CITATION.cff', 'MANIFEST.in'):
+    for name in ('pyproject.toml', 'README.md', 'LICENSE', 'CHANGELOG.md', 'CITATION.cff',
+                 'MANIFEST.in', 'CONTRIBUTING.md', 'AUDIT.md', 'THIRD_PARTY_NOTICES.md'):
         files.add(root/name)
     for source in sorted(files):
         target = output/'source'/source.relative_to(root)
