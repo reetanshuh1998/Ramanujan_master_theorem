@@ -15,23 +15,23 @@ research milestones.
 flowchart TD
     A[1. API contract: implemented and checked]
     B[2. Audit implemented; human review pending]
-    C[3. Explain and export the RMT calculation: next]
-    D[4. Improve the first calculation experience]
+    C[3. Explanation export implemented]
+    D[4. First calculation experience: next]
     E[5. Harden releases and qualify the candidate]
     A --> B --> C --> D --> E
     E --> R[0.3.0rc1: feedback and blocker review]
     R --> S[0.3.0: publish when gates pass]
     classDef done fill:#d8f3dc,stroke:#2d6a4f,color:#102a1b
     classDef next fill:#fff3cd,stroke:#856404,color:#332701
-    class A,B done
-    class C next
+    class A,C done
+    class B,D next
 ```
 
 | Order | Objective | Status | Evidence required to finish |
 |---|---|---|---|
 | 1 | Define the stable API | Implemented; validation recorded below | Compatibility policy, classified interfaces, naming clarification, executable contract checks |
 | 2 | Strengthen scientific validation | Automated audit passed; human review pending | Reproducible boundary/error audit, independent references, review disposition |
-| 3 | Make the RMT calculation inspectable | Planned | Versioned explanation/export format, exact graph-to-series trace, reference checks |
+| 3 | Make the RMT calculation inspectable | Implemented; validation recorded below | Versioned explanation/export format, exact graph-to-series trace, reference checks |
 | 4 | Improve first-use experience | Planned | Method-selection guide, actionable errors, three executed end-to-end examples |
 | 5 | Harden release automation | Planned | Bounded index retry, dependency and upgrade checks, frozen candidate evidence |
 
@@ -93,17 +93,17 @@ keep an API experimental without preventing release of other qualified APIs.
 Build on `compile_sunset_rmt`, `ScalarGraph.symanzik` and `schwinger_brackets`.
 Decide the public explanation API after the contract and audit are in place.
 
-- [ ] Produce a structured trace containing input conventions, exact U/F
+- [x] Produce a structured trace containing input conventions, exact U/F
   polynomials, exponent matrix and offsets, selected families, Gamma terms,
   regulator/pole limit and the resolved coefficient expression.
-- [ ] Include chart-selection conditions and exact convergence bounds. Label
+- [x] Include chart-selection conditions and exact convergence bounds. Label
   a formal bracket solution separately from a justified evaluable series.
-- [ ] Attach optional evaluation diagnostics: value, requested and working
+- [x] Attach optional evaluation diagnostics: value, requested and working
   precision, terms, tail bound and arithmetic estimates.
-- [ ] Export a versioned JSON schema with exact symbolic/decimal strings,
+- [x] Export a versioned JSON schema with exact symbolic/decimal strings,
   package/source provenance and documented encoding. Never deserialize exported
   expressions through unrestricted `eval`.
-- [ ] Test both RMT charts, pole collisions, unsupported inputs, export precision
+- [x] Test both RMT charts, pole collisions, unsupported inputs, export precision
   and the relationship between the exported trace and evaluated series.
 
 Completion: a user can reproduce a supported graph-to-series calculation from
@@ -193,4 +193,17 @@ retained as reproducible release evidence. Do not overwrite the 0.3.0a5 reports.
 - See {doc}`STABILITY_AUDIT` for reproduction and statistical limitations.
   Human review remains pending; no human assessment has been fabricated.
 
-Next: objective 3, a structured graph-to-series explanation and export.
+### Objective 3 implementation
+
+- `explain_sunset_rmt` exports the exact compiler trace and optional evaluation
+  diagnostics. Budget failures retain an explicit status and partial diagnostics;
+  unsupported domains still raise typed exceptions without fallback.
+- A bundled draft-2020-12 JSON Schema defines provisional format version 1.
+  Binary mantissa/exponent fields preserve mpmath values exactly; symbolic strings
+  are descriptive and are never evaluated when reading an export.
+- Ten export tests passed: both charts, mass vacuum, matrix constraints, graph
+  reconstruction, provenance, 60-digit round-trip at low global precision,
+  schema validation and typed domain/budget failures.
+- See {doc}`user_guide/explanation` for the runnable graph-to-series example.
+
+Next: objective 4, method selection and three checked first calculations.

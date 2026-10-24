@@ -45,8 +45,9 @@ Exact graph algebra and series compilation are inspectable research interfaces:
 `ScalarGraph.symanzik`, `ScalarGraph.uv_margins`, `schwinger_brackets`,
 `BracketSystem`, `BracketSolution`, `compile_sunset_rmt`, `SunsetRMTSeries`,
 `compile_sunset_taylor` and `SunsetTaylorSeries`. Their symbolic expressions,
-family ordering and dataclass layouts are not frozen. Objective 3 will define a
-separate versioned export contract without freezing implementation details.
+family ordering and dataclass layouts are not frozen. `explain_sunset_rmt` and
+`sunset_rmt_schema` provide a separate, provisional version 1 JSON export; see
+{doc}`user_guide/explanation`. Its schema does not freeze compiler internals.
 
 The version 0.1 classes and modules under `core`, `solvers` and `utils` retain
 their documented compatibility behavior; see {doc}`api/legacy`. Withdrawn

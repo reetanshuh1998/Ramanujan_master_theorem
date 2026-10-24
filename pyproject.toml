@@ -26,7 +26,7 @@ classifiers = [
 
 [project.optional-dependencies]
 multiloop = ["scipy>=1.10"]
-test = ["pytest>=7", "scipy>=1.10"]
+test = ["pytest>=7", "scipy>=1.10", "jsonschema>=4.18"]
 benchmarks = ["scipy>=1.10"]
 
 [project.urls]
@@ -40,3 +40,6 @@ include = ["ramanujan_qft*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = ["slow: nested quadratures (seconds each)"]
+
+[tool.setuptools.package-data]
+ramanujan_qft = ["schemas/*.json"]

@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Add a source-bound stability audit covering series boundaries, budget refusals,
+  independent references, scaling identities and repeated hybrid estimates.
+- Add `explain_sunset_rmt` and a bundled provisional JSON schema for exact
+  graph-to-series traces, source provenance and optional evaluation diagnostics.
+
 - Track the five objectives for 0.3.0 and define a proposed compatibility
   contract separating stable candidates, experimental and legacy interfaces.
 - Add `sunset_second_derivative` as an explicit spelling of `sunset_d2`.

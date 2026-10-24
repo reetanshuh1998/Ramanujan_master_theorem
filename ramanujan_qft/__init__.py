@@ -27,6 +27,7 @@ from .sunset_rmt import (SunsetRMTSeries, RMTSeriesResult, RMTDomainError,
                          RMTSeriesConvergenceError, compile_sunset_rmt, integrate_graph_rmt)
 from .sunset_taylor import (SunsetTaylorSeries, SunsetTaylorResult, SunsetTaylorConvergenceError,
                             compile_sunset_taylor, integrate_sunset_taylor)
+from .explain import explain_sunset_rmt, sunset_rmt_schema
 from .solvers.feynman_mob_solver import FeynmanMoBSolver
 from .utils.ramanujan_continuation import RamanujanContinuationEngine
 
