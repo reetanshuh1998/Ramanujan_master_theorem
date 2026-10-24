@@ -112,7 +112,7 @@ frequency 1, RACE also beats the measured tanh–sinh and Gauss–Legendre calls
 These are selected product integrals, not a general Feynman-integral speed claim.
 See [the reproducible comparisons](docs/COMPARISON.md) and [audit](AUDIT.md).
 
-Developed and maintained by **Reetamshu**.
+Developed and maintained by **Reet**.
 
 ## Install
 
