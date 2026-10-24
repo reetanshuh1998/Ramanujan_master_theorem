@@ -62,7 +62,7 @@ mpmath number:
 * `s` is any number that `mpmath.mpmathify` accepts: an int, float, complex,
   mpmath number or string. Pass decimal values as strings (`"0.1"`) to keep them
   exact (see [Precision](precision.md)).
-* `dps` is the number of decimal digits (default: the global `mp.dps`).
+* `dps` is the number of decimal digits (default: the global `mp.mp.dps`).
 
 The function does not know the strip of convergence of your integral. Outside it,
 it returns the analytic continuation without a warning (see
@@ -112,7 +112,7 @@ substitution $x = t^2/4$):
 ```
 
 With `dps=` the result carries the requested precision, but `print` and `str`
-show digits at the global `mp.dps`. Use `mp.nstr(x, n)` (or `mp.workdps`) to see
+show digits at the global `mp.mp.dps`. Use `mp.nstr(x, n)` (or `mp.workdps`) to see
 them all:
 
 ```pycon

@@ -47,11 +47,10 @@ contribution is the implementation. See [docs/PRIOR_ART.md](docs/PRIOR_ART.md).
 
 ## RACE (Mellin residue engine): two adversarial audits
 
-Each round used independent hunters that tried to break the engine with
+Each round used automated stress tests to exercise the engine with
 about 2,000–4,000 cases checked against closed forms (DLMF, Gradshteyn–Ryzhik,
 SymPy) and independent quadratures (contour rotation, Gauss–Legendre,
-QUADPACK). Separate agents then reproduced every claimed defect with a
-different method.
+QUADPACK). Reported defects were then reproduced with a different method.
 
 **Round 1 (19 confirmed defects in the first rewrite), all fixed:**
 
@@ -88,7 +87,7 @@ different method.
 *One-loop and sunset:*
 
 * Catastrophic cancellation in B0 and C0 at extreme kinematics: B0(10⁻¹²; 1, 10⁶)
-  was 330% off. All one-loop functions are now certified by two-precision agreement.
+  was 330% off. All one-loop functions are now checked by two-precision agreement.
 * C0 raised ZeroDivisionError at regular points.
 * The all-massless sunset returned an undefined quantity.
 * A quadrature node landing on t = s caused a crash.
@@ -135,7 +134,7 @@ A third round targeted silent wrong results only.
 * **`sunset_subtracted` / `sunset_d2`.** These were up to 22% wrong at scales
   around 10¹², and wrong at small scales and large |s|/th. They are now scaled
   to the threshold, use a 1/t tail map, normalise each integrand, and are
-  certified. They are validated against a closed form for masses (0, 0, M).
+  precision-checked. They are validated against a closed form for masses (0, 0, M).
 * **C0 with a massless internal line.** It was refused with a false "IR
   divergent" message. IR-finite configurations are now supported through a
   general imaginary part with clipped roots. Only the truly divergent cases

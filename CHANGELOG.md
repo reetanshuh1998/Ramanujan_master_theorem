@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 0.3.0a5 — author metadata and documentation
+
+- Correct the author credit to **Reet** in package metadata, citations and the
+  documentation, matching the maintainer's README correction.
+- Make README links work on PyPI as well as GitHub; reconcile benchmark
+  statements with the retained 0.3.0a4 measurements.
+- Correct precision-setting notation, argument descriptions and grammar;
+  update test counts, review status and the sunset continuation roadmap.
+- Remove draft writing advice and promotional wording from user documentation.
+  Keep mathematical references, limitations and original review records.
+- Numerical code and algorithms are unchanged from 0.3.0a4.
+
 ## 0.3.0a4 — research alpha
 
 - Address all six nonblocking findings in the supplementary review of 0.3.0a2;
@@ -14,7 +26,8 @@
   accurate values and typed budget refusals reported separately.
 - Validate product benchmarks against a separate Gaussian Fourier/angular
   representation, then regenerate the accuracy-checked measurements.
-- Credit Reetamshu consistently in package and citation metadata.
+- Standardize package and citation author metadata; the name was corrected
+  in 0.3.0a5.
 - Numerical algorithms and documented domains are unchanged from 0.3.0a2.
 
 ## 0.3.0a3 — replacement TestPyPI release
@@ -115,7 +128,7 @@
   and pole collisions (logarithmic results). Atlas: exponential, gaussian,
   bessel_j, cosine, sine, inverse_power, gaussian_bessel.
 - `ramanujan_qft.one_loop`: `B0` (all masses), `B0_mob`, `C0`, `C0_mob`, `bubble_3d`
-  in LoopTools conventions, certified to the requested digits (evaluation at two
+  in LoopTools conventions, checked at the requested precision (evaluation at two
   working precisions, raised until they agree).
 - `ramanujan_qft.sunset`: `sunset_im`, `sunset_subtracted`, `sunset_d2`.
 - Test suite (311 tests) with LoopTools 2.16 reference values, independent
@@ -142,12 +155,12 @@
   - cancellation-compensated precision;
   - Wynn epsilon only for alternating series;
   - Richardson-extrapolated pole collisions;
-  - honest `error_estimate`.
-- B0/C0 cancellation at extreme kinematics (certification), C0 ZeroDivisionError at
+  - explicit `error_estimate`.
+- B0/C0 cancellation at extreme kinematics (precision checks), C0 ZeroDivisionError at
   regular points, massless D=3 bubble, sunset edge cases, `mellin_numeric` checks.
 - Round 3:
   - sunset functions rewritten (scaling, factored Kallen functions, normalised
-    and error-checked quadrature, certification); accurate at threshold and for
+    and error-checked quadrature, precision checks); accurate at threshold and for
     scales 1e-12..1e12;
   - C0 with IR-finite massless internal lines;
   - exact C0 at s = 0;

@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.abspath(".."))
 import ramanujan_qft  # noqa: E402
 
 project = "ramanujan-qft"
-author = "Reetamshu"
+author = "Reet"
 copyright = f"{date.today().year}, ramanujan-qft contributors. In memory of Srinivasa Ramanujan"
 release = ramanujan_qft.__version__
 version = ".".join(release.split(".")[:2])

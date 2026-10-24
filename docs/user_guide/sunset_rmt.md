@@ -296,8 +296,9 @@ permutations, and strict boundary refusal. The reference generator is
 `tools/generate_sunset_rmt_references.py`; it imports no package evaluator.
 The numerical pole-limit calculation is used only in tests.
 
-The next extension is justified continuation into the gap between these
-charts, particularly the equal-mass vacuum and low-momentum region. Further
+Further RMT extensions need justified continuation between the charts,
+particularly for unequal masses. Equal-mass vacuum and low Euclidean momentum
+are already covered by the separate Taylor method. Other
 topologies need their own family selection, collision resolution and
 convergence proof. Non-unit powers, epsilon expansions, massless graphs,
 tensors and physical-region continuation are not implemented by this API.

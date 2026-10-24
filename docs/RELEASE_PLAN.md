@@ -30,13 +30,15 @@ was published on 2026-10-24 after the corrected candidate passed its
 [TestPyPI rehearsal](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40056460397)
 and [production workflow](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40057042071).
 The completed checklist and artifact evidence are in {doc}`RELEASING`.
+Version 0.3.0a5 prepares an author-metadata and documentation correction;
+it changes no numerical algorithms and follows the same release checks.
 
 ## Scope
 
 The first release targets a credible, reproducible research tool. General
 topology-specific convergence selection, epsilon expansions, overlapping
 subtractions, massless integrals and physical-region continuation remain later
-research objectives. Existing user changes are preserved throughout.
+research objectives.
 
 ## Historical implementation evidence
 
@@ -44,8 +46,8 @@ The entries below describe earlier milestones; the completed release status is a
 
 - Initial state: graph-derived RMT sunset charts require momentum dominance or
   mass dominance. Equal-mass vacuum is explicitly refused.
-- Existing release workflow builds and publishes but does not depend on a
-  validation job. CI currently runs on Linux only.
+- The initial release workflow built and published without a validation
+  dependency; CI ran only on Linux.
 - Objective 1: added a separately named equal-mass Taylor backend. Its
   transformed parameter-integral series converges for every finite Euclidean
   momentum, subject to work budgets. It is not presented as a new RMT family.
@@ -54,8 +56,8 @@ The entries below describe earlier milestones; the completed release status is a
   quadrature and overlap with the generated RMT series.
 - Objective 2: the fixed-seed audit passed all cases after resolving an
   inadequate-reference-precision finding. Source hashes and individual results
-  are in `benchmarks/data/sunset_audit.json`; external review is explicitly
-  pending in [the review packet](SCIENTIFIC_REVIEW.md).
+  are in `benchmarks/data/sunset_audit.json`. The subsequent review and
+  corrections are recorded in [the review packet](SCIENTIFIC_REVIEW.md).
 - Objective 3: [the capability table](CAPABILITIES.md) describes each method,
   accepted domain and error contract, including the unequal-mass gap.
 - Objective 4: publication now depends on a reusable validation workflow:
@@ -69,9 +71,9 @@ The entries below describe earlier milestones; the completed release status is a
 - The 0.3.0a1 wheel and source distribution installed successfully into fresh
   environments outside the checkout. Both numerical series APIs passed with
   SciPy unavailable. The source archive contains the reproduction material.
-- The candidate notebook, citation version, contribution guide and draft
-  release notes are prepared. Follow [the release checklist](RELEASING.md);
-  external review and production PyPI publication remain pending.
+- The initial candidate included a notebook, citation metadata, contribution
+  guide and draft release notes. Review and publication were still pending
+  at that milestone; their completion is recorded above.
 - Hosted validation for candidate `b224380` passed: [tests, audit and six
   platform/artifact combinations](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/39865347949)
   and [full documentation/gallery checks](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/39865347891).

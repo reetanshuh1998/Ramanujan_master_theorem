@@ -18,12 +18,14 @@ Adamchik–Marichev, Slater, Fikioris, SymPy `meijerint` and mpmath `meijerg`.
 | SciPy `quad` (QUADPACK, QAWO/QAWF) | adaptive quadrature, Fourier weights | fast, general, double precision | loses digits on oscillatory, cancelling integrands |
 | Ooura–Mori, Ogata double-exponential | DE quadrature for Fourier / Hankel integrals | fast and robust in double precision | needs node tables; slower at high precision |
 | mpmath `quadosc` | oscillatory quadrature, arbitrary precision | general | slow |
-| **ramanujan-qft `product_integral`** | numerical Mellin residue summation with validity check, cancellation control and honest refusal | arbitrary precision; cost nearly independent of the oscillation frequency; three-factor products without closed forms | only atlas factors; raises at the convergence boundary (e.g. e^(−x) J₀(x)); slower than closed forms |
+| **ramanujan-qft `product_integral`** | numerical Mellin residue summation with validity checks, cancellation control and explicit errors | arbitrary precision; selected high-frequency products converge quickly; handles Gaussian–Bessel products | only atlas factors; raises at the convergence boundary (e.g. e^(−x) J₀(x)); slower than closed forms |
 
 ### Accuracy-checked product benchmarks
 
 Measured with **ramanujan-qft 0.3.0a4**, Python 3.12.3 and mpmath 1.3.0 on Linux.
-The numerical algorithms are unchanged from the reviewed 0.3.0a2 candidate.
+These retained measurements describe 0.3.0a4; they were not rerun for the
+metadata and documentation update in 0.3.0a5. The numerical algorithms are
+unchanged from the reviewed 0.3.0a2 candidate.
 All methods run at 30 working digits (RACE adds its own guard digits); the target
 is relative error at most $10^{-30}$. Times are milliseconds, median of three
 calls after one warm-up per method. Node/zero caches remain warm; setup and

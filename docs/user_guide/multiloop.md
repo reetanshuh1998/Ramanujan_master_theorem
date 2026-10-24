@@ -7,7 +7,7 @@ remaining parameters in Hepp sectors. This is an experimental **hybrid**
 evaluator: the remaining integration uses scrambled Sobol quadrature, not a
 multivariate Ramanujan/Method-of-Brackets residue sum.
 
-For a genuine multivariate series, the separate {doc}`sunset_rmt` backend now
+For a multivariate residue series, the separate {doc}`sunset_rmt` backend now
 supports the unit-power massive $D=2$ sunset in two explicitly justified
 convergence charts. This hybrid evaluator remains an independent reference.
 

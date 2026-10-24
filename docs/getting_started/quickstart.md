@@ -1,8 +1,7 @@
 # Quickstart
 
-A ten-minute tour of the four parts of the package. Every example on this page
-was run against the current version, and the outputs shown are the real ones.
-The whole page runs in a few seconds.
+This quickstart introduces RMT, Mellin products, one-loop integrals and the
+dispersive sunset functions. CI executes the examples and checks their output.
 
 To follow along, {doc}`install the package <installation>`, or run the same
 calls without installing anything on the {doc}`/try_it` page.
@@ -155,7 +154,7 @@ they are not run on this page. See {doc}`/user_guide/sunset`.
 ## 5. Precision and printing
 
 A result carries the precision you requested, but `print` and `repr` show it
-at mpmath's *global* precision, `mp.dps`, which is 15 by default. Use
+at mpmath's *global* precision, `mp.mp.dps`, which is 15 by default. Use
 `mp.nstr(x, n)` or a `with mp.workdps(n):` block to see all the digits:
 
 ```pycon

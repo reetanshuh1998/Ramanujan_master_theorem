@@ -1,13 +1,14 @@
 # Precision and numerical checks
 
 The original numerical APIs take `dps=`, the number of **decimal digits**
-requested, and returns an mpmath number (`mpf` or `mpc`). This page explains
-what that number of digits means, how it is guaranteed, and the two pitfalls to
-know: printing, and decimal inputs.
+requested, and return mpmath numbers (`mpf` or `mpc`). This page explains
+how precision is checked, how to print the stored digits, and how decimal
+inputs differ from binary floating-point inputs.
 
 The experimental {doc}`multiloop` graph evaluator instead uses float64,
 `epsrel`/`epsabs`, and statistical error diagnostics. It does not accept `dps`
-or certify decimal digits; the guarantees below do not apply to that backend.
+or verify a requested number of decimal digits; the checks below do not apply
+to that backend.
 
 The separate {doc}`sunset_rmt` evaluator accepts `dps=30` by default and
 returns an `RMTSeriesResult` containing an mpmath value. Its analytic tail bound
@@ -23,7 +24,7 @@ from ramanujan_qft import B0, C0, product_integral, exponential, sine, gaussian,
 
 ## Requesting digits
 
-`dps=None`, the default, means the global `mp.dps` (15 unless you changed it).
+`dps=None`, the default, means the global `mp.mp.dps` (15 unless you changed it).
 The result is rounded to `dps` digits, so it carries about that much precision.
 
 ```pycon
@@ -34,7 +35,7 @@ The result is rounded to `dps` digits, so it carries about that much precision.
 
 ## Printing high-precision results
 
-`print(x)`, `str(x)` and `repr(x)` format the number at the *global* `mp.dps`, not
+`print(x)`, `str(x)` and `repr(x)` format the number at the *global* `mp.mp.dps`, not
 at the precision it carries. A 40-digit result therefore prints with 15 digits
 unless you ask for more:
 
@@ -106,10 +107,8 @@ functions (`sunset_im`, `sunset_subtracted`, `sunset_d2`) are *precision-checked
 
 Because the inputs are exact, the only thing that changes between the two
 evaluations is the rounding of the intermediate steps. Comparing precisions
-helps detect **loss of digits to cancellation and rounding**. This is what
-makes closed forms trustworthy at $p^2 \ll m^2$, at strong mass hierarchies,
-near thresholds and at $s \gg m^2$, where double-precision codes lose many
-digits.
+helps detect **loss of digits to cancellation and rounding**, for example at
+$p^2 \ll m^2$, at strong mass hierarchies, near thresholds and at $s \gg m^2$.
 
 It is not a proof of correctness. An error that does not depend on the working
 precision, such as a wrong formula or a wrong branch, would pass the check. The
@@ -155,7 +154,9 @@ mpf('1.7032818257102438e-98')
 
 ## Cost and precision
 
-Measured on one machine (Python 3.13, mean of repeated calls):
+Historical measurements on one machine (Python 3.13, mean of repeated calls);
+these are not a fresh benchmark of each release. See {doc}`/COMPARISON` for
+the retained accuracy-checked product benchmark and its source hashes:
 
 | call | 15 digits | 30 | 50 | 100 | 200 |
 |---|---|---|---|---|---|

@@ -72,8 +72,11 @@ and budget exhaustion are counted separately from successful evaluations.
 
 The refreshed 0.3.0a4 report records 34 passing cases: 27 evaluations, three expected
 domain refusals and four expected budget refusals. Its source hashes match the
-candidate numerical code. This is a bounded local audit, not a claim of
-exhaustive domain coverage.
+frozen 0.3.0a4 source. Those retained hashes include version metadata and
+should not be compared to the 0.3.0a5 metadata update as though they identified
+the same release. The numerical algorithms are unchanged; each release workflow
+also produces its own audit report. This is a bounded audit, not exhaustive
+domain coverage.
 
 - The first fixed-precision run failed the reference check for squared masses
   `(1e-16, 1, 1e16)`. The 35- and 50-digit quadratures disagreed; this was not

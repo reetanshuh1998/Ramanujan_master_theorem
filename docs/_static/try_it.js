@@ -103,7 +103,7 @@ print("C0 to 50 digits:", mp.nstr(C0(10, 1, 2, 3, dps=50), 50))
 from ramanujan_qft import B0
 
 x = B0(10, 1, 2, dps=40)
-print(x)                  # printed at the global mp.dps = 15
+print(x)                  # printed at the global mp.mp.dps = 15
 print(mp.nstr(x, 40))     # all 40 digits
 
 # floats are binary numbers; strings are exact decimals

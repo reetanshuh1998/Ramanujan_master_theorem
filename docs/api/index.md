@@ -2,10 +2,12 @@
 
 Every public object is importable from the top-level package, for example
 `from ramanujan_qft import B0, product_integral`. The pages below document them
-by module. Masses are squared masses, `dps` is the number of decimal digits
-requested, and results are mpmath numbers (see {doc}`/user_guide/precision`),
-except for the hybrid `integrate_graph` API, which uses `epsrel`/`epsabs`
-and returns float64 estimates with statistical diagnostics.
+by module. Mass inputs are squared masses. The scalar RMT, Mellin, one-loop
+and dispersive sunset functions return mpmath numbers, with precision controlled
+by `dps` (see {doc}`/user_guide/precision`). The graph evaluators return result
+objects containing values and diagnostics: the RMT/Taylor series use arbitrary
+precision, while hybrid `integrate_graph` uses `epsrel`/`epsabs` and float64
+estimates with statistical diagnostics.
 
 ## Ramanujan's Master Theorem — `ramanujan_qft.rmt`
 

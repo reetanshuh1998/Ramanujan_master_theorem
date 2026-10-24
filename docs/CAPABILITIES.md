@@ -54,7 +54,7 @@ RMT charts, non-unit powers, epsilon expansions, overlapping-divergence
 subtraction, massless limits, tensor numerators or physical-region continuation.
 Topology-independent family selection and convergence proofs are also open.
 
-The new sunset backends have local numerical audit evidence, but external
-scientific review remains pending; see {doc}`SCIENTIFIC_REVIEW` and
-{doc}`RELEASE_PLAN`. The historical audits of other APIs do not transfer
-automatically to these new methods.
+The sunset backends have numerical audit evidence and a supplementary
+automated review with its findings addressed; see {doc}`SCIENTIFIC_REVIEW`.
+This is not human peer review. Historical audits of other APIs do not transfer
+automatically to these methods.

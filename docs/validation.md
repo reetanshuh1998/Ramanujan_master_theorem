@@ -1,14 +1,13 @@
 # Validation
 
-A numerical library is only useful if its numbers can be trusted. This page
-lists what each part of ramanujan-qft is checked against, how to rerun the
-checks, and what the adversarial audits found before release.
+This page lists the reference calculations used to test ramanujan-qft,
+instructions for rerunning the checks, and findings from the historical audits.
 
 ## The test suite
 
-The original 311 tests are supplemented by 58 hybrid graph-backend tests and
-52 multivariate sunset RMT tests, 15 equal-mass Taylor tests and four independent
-audit-reference checks (`tests/`).
+The suite contains **455 tests**, including the graph and series backends,
+independent references, release authentication, and report reproducibility.
+The table below counts parameterized cases collected by pytest.
 The 24 tests marked `slow` run independent nested quadratures and take several
 minutes. In addition, the examples in the docstrings and on these documentation
 pages are executed in CI.
@@ -27,6 +26,8 @@ pages are executed in CI.
 | `test_sunset_rmt.py` | 52 | exact bracket matrices, Gamma-family collisions, both convergence charts, tail bounds, domain and budget refusals | independent 40/55-digit simplex references; live parameter quadrature; hybrid graph backend |
 | `test_sunset_taylor.py` | 15 | equal-mass continuation, recurrence precision, tails and budgets | Clausen vacuum; independent parameter quadrature; overlap with RMT |
 | `test_sunset_audit.py` | 4 | independent audit-reference formula | existing nested simplex fixtures |
+| `test_publisher_preflight.py` | 9 | publisher endpoint selection and safe authentication diagnostics | simulated service responses |
+| `test_report_reproducibility.py` | 6 | reports without Git and the independent angular benchmark reference | non-repository/missing-Git cases; oscillatory Bessel quadrature |
 
 The experimental graph backend has statistical float64 error diagnostics.
 It has not undergone the historical adversarial audits described below, and
@@ -44,7 +45,7 @@ The separate {doc}`user_guide/sunset_taylor` API now covers equal-mass vacuum.
 The reproducible audit driver `tools/audit_sunset.py` records a fixed benchmark
 grid, actual versus reported errors and source hashes in
 `benchmarks/data/sunset_audit.json`. See {doc}`SCIENTIFIC_REVIEW` for findings
-and the outstanding external-review step.
+and the supplementary review’s scope and limitations.
 
 ## LoopTools comparison
 
@@ -101,10 +102,9 @@ ramanujan-qft. One such case is shown on the {doc}`/user_guide/one_loop` page.
 
 ## Audit history
 
-Before release, the package went through adversarial audits. Independent
-"hunter" agents tried to break the code with thousands of cases. Every claimed
-defect was then reproduced by a separate agent with a different method. All
-confirmed defects were fixed and turned into regression tests. The full record
+Historical automated stress tests exercised thousands of cases. Reported
+defects were checked using a different method before being fixed and added
+to the regression suite. The full record
 is in [AUDIT.md](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/main/AUDIT.md).
 
 | round | scope | cases | confirmed defects | examples of what was fixed |
@@ -114,8 +114,8 @@ is in [AUDIT.md](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob
 | 3 | one-loop and sunset | 1,820 random cases + 1,740 at $s = 0$ + 24,000 vs LoopTools | 6 groups | `sunset_im` cancellation near threshold; `sunset_subtracted` / `sunset_d2` up to 22% wrong at scales near $10^{12}$; C0 with a massless line wrongly refused; non-finite inputs |
 | 3 | RACE (bounded run) | 785 | 3 | a second peak of the residue terms for $(x+m)^{-v}$ with large $v$; long decimal-string inputs next to a pole; strip edges at construction precision |
 
-In the final sweeps, every result was either correct to the requested accuracy or
-an explicit error. No silent wrong result remained. This is evidence, not a proof:
+In the recorded final sweeps, accepted values met their accuracy targets; other
+cases raised errors. This finite coverage is evidence, not a proof:
 please report any case where a function returns a wrong value without raising.
 
 ## Reproducing the checks
@@ -128,7 +128,7 @@ python -m pytest -q --doctest-modules ramanujan_qft/rmt.py ramanujan_qft/mellin.
        ramanujan_qft/one_loop.py ramanujan_qft/sunset.py   # docstring examples
 python tools/check_doc_snippets.py docs        # examples on the documentation pages
 bash benchmarks/looptools/compare_looptools.sh # LoopTools values and timings
-python benchmarks/bench_fair.py                # RACE vs closed forms and quadosc
+python benchmarks/bench_release.py             # accuracy-checked product timings
 ```
 
 ## Known limitations

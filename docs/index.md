@@ -78,7 +78,8 @@ See {doc}`CAPABILITIES` for supported domains and error guarantees, and
 :link-type: doc
 
 `ramanujan_master_theorem(phi, s)` returns $\Gamma(s)\,\varphi(-s)$, and
-`mellin_numeric` checks any use of the theorem by direct numerical integration.
+`mellin_numeric` provides a numerical cross-check for suitable non-oscillatory
+integrands. The theorem’s hypotheses remain the caller’s responsibility.
 :::
 
 :::{grid-item-card} Product integrals by Mellin residues
@@ -150,8 +151,8 @@ conventions and the printing of high-precision results.
   expression with large cancellations.
 * You need $\int_0^\infty x^{s-1} f(x)\,g(x)\,dx$ for products of exponentials,
   Gaussians, Bessel functions, trigonometric functions and powers **at high
-  precision**, in particular at high oscillation frequency or when no closed
-  form exists.
+  precision**, in particular at high oscillation frequency or when no suitable closed
+  form is available.
 * You want **explicit, readable series representations** (the Master Theorem,
   the Method of Brackets, residue sums) for teaching or for checking a
   derivation.
@@ -165,7 +166,7 @@ conventions and the printing of high-precision results.
   benchmark was roughly 300–450 times faster for the two measured calls;
   no COLLIER speed ratio was measured.
 * **Integrals with a closed form.** Evaluating an available closed form can be much
-  faster: about 80–265 times in the current two-factor benchmark. That timing
+  faster: about 86–239 times in the retained two-factor benchmark. That timing
   excludes finding the symbolic expression; it does not measure SymPy or
   Mathematica integration time.
 * **Multiloop regulator expansions or physical-region integrals.** The
