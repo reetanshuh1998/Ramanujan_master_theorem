@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add a method-selection guide and shared reference-checked examples for local
+  Python, documentation, notebooks and the browser. Domain/precision refusals
+  now include relevant inputs and explicit next steps.
+
 - Add a source-bound stability audit covering series boundaries, budget refusals,
   independent references, scaling identities and repeated hybrid estimates.
 - Add `explain_sunset_rmt` and a bundled provisional JSON schema for exact

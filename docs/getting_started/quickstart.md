@@ -17,6 +17,9 @@ For a graph-generated multivariate Gamma series with arbitrary precision,
 see {doc}`/user_guide/sunset_rmt`, currently restricted to two justified
 convergence charts of the massive, unit-power D=2 sunset.
 
+For a method-selection table and three reference-checked graph calculations,
+see {doc}`choose_method`.
+
 ## 1. Ramanujan's Master Theorem
 
 If $f(x) = \sum_{n\ge 0} \varphi(n)\,(-x)^n/n!$, then, under Hardy's growth

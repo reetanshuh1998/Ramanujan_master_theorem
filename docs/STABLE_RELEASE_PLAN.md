@@ -16,15 +16,15 @@ flowchart TD
     A[1. API contract: implemented and checked]
     B[2. Audit implemented; human review pending]
     C[3. Explanation export implemented]
-    D[4. First calculation experience: next]
-    E[5. Harden releases and qualify the candidate]
+    D[4. First-use implementation checked]
+    E[5. Release hardening: next]
     A --> B --> C --> D --> E
     E --> R[0.3.0rc1: feedback and blocker review]
     R --> S[0.3.0: publish when gates pass]
     classDef done fill:#d8f3dc,stroke:#2d6a4f,color:#102a1b
     classDef next fill:#fff3cd,stroke:#856404,color:#332701
-    class A,C done
-    class B,D next
+    class A,C,D done
+    class B,E next
 ```
 
 | Order | Objective | Status | Evidence required to finish |
@@ -32,7 +32,7 @@ flowchart TD
 | 1 | Define the stable API | Implemented; validation recorded below | Compatibility policy, classified interfaces, naming clarification, executable contract checks |
 | 2 | Strengthen scientific validation | Automated audit passed; human review pending | Reproducible boundary/error audit, independent references, review disposition |
 | 3 | Make the RMT calculation inspectable | Implemented; validation recorded below | Versioned explanation/export format, exact graph-to-series trace, reference checks |
-| 4 | Improve first-use experience | Planned | Method-selection guide, actionable errors, three executed end-to-end examples |
+| 4 | Improve first-use experience | Implemented; browser check running | Method-selection guide, actionable errors, three executed end-to-end examples |
 | 5 | Harden release automation | Planned | Bounded index retry, dependency and upgrade checks, frozen candidate evidence |
 
 Finish and record each implementation milestone before starting the next.
@@ -113,14 +113,14 @@ estimate is a rigorous enclosure.
 
 ## 4. Improve the first calculation experience
 
-- [ ] Add a decision guide based on topology, dimension, masses, momentum and
+- [x] Add a decision guide based on topology, dimension, masses, momentum and
   requested precision. Explain each method without silently switching backends.
-- [ ] Make domain/budget errors describe the failed condition, relevant inputs
+- [x] Make domain/budget errors describe the failed condition, relevant inputs
   and useful next action; preserve exception types from objective 1.
-- [ ] Provide three complete examples: a scalar one-loop integral, a D=2 sunset
+- [x] Provide three complete examples: a scalar one-loop integral, a D=2 sunset
   RMT series and a hybrid multiloop graph. Each states normalization, reports
   diagnostics and compares with an independent reference.
-- [ ] Link the RMT explanation/export from the sunset example. Demonstrate a
+- [x] Link the RMT explanation/export from the sunset example. Demonstrate a
   useful domain or budget refusal as well as a successful evaluation.
 - [ ] Run the examples locally, in the documentation and in the supported
   browser/Colab paths. Label optional SciPy requirements accurately.
@@ -206,4 +206,20 @@ retained as reproducible release evidence. Do not overwrite the 0.3.0a5 reports.
   schema validation and typed domain/budget failures.
 - See {doc}`user_guide/explanation` for the runnable graph-to-series example.
 
-Next: objective 4, method selection and three checked first calculations.
+### Objective 4 implementation
+
+- {doc}`getting_started/choose_method` maps graph, dimension, kinematics and
+  precision to explicit methods. Domain errors now include exact inputs and
+  alternatives; precision-budget errors name the adjustable limit.
+- `examples/08_first_calculations.py` passed three independent reference checks:
+  one-loop Feynman parameters, the frozen sunset simplex fixture and a D=1
+  three-loop Fourier formula. Each states its normalization and diagnostics.
+- The same calculation code is embedded in the development notebook and browser
+  console. A regression check prevents copies drifting. Notebook cells passed
+  locally; the network installation cell is checked separately through artifacts.
+- Thirteen walkthrough/export tests and the warnings-as-errors Sphinx build
+  passed. The full documentation snippet and real-browser checks are running.
+- An interactive Colab session remains a user check; the notebook is not claimed
+  to have been run on Google's hosted service by this development run.
+
+Next: objective 5, bounded index retries and dependency/upgrade validation.
