@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 0.3.0a4 — research alpha
+
+- Address all six nonblocking findings in the supplementary review of 0.3.0a2;
+  retain the original report and its scope with the release evidence.
+- Make audit and benchmark reports work from source archives without Git,
+  using source SHA-256 hashes as the binding provenance identifiers.
+- Replace ambiguous numerical “certified” claims with precision checks and
+  explain the dimension-independent zero in the sunset Gamma families.
+- Publish measured default-budget coverage at 10, 20 and 30 digits, with
+  accurate values and typed budget refusals reported separately.
+- Validate product benchmarks against a separate Gaussian Fourier/angular
+  representation, then regenerate the accuracy-checked measurements.
+- Credit Reetamshu consistently in package and citation metadata.
+- Numerical algorithms and documented domains are unchanged from 0.3.0a2.
+
 ## 0.3.0a3 — replacement TestPyPI release
 
 - Restore TestPyPI availability after the earlier releases were accidentally
@@ -11,8 +26,7 @@
   TestPyPI and require full validation and an installation check.
 - Authentication diagnostics now select PyPI or TestPyPI explicitly and report
   allowlisted rejection codes without exposing credentials.
-- Numerical algorithms are unchanged from 0.3.0a2. Independent AI review and
-  production PyPI publication remain pending.
+- Numerical algorithms are unchanged from 0.3.0a2. Review and production PyPI publication were pending at preparation time.
 
 ## 0.3.0a2 — historical TestPyPI rehearsal (files subsequently deleted)
 

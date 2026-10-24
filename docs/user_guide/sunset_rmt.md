@@ -164,8 +164,10 @@ The two right-pole choices for each mass generate eight families, exactly the
 choices between a mass index and the complementary $U$ index in the bracket
 matrix. The standard Lauricella contour closure applies when
 $\sum_i m_i/Q<1$. Analytic continuation in the powers then permits
-$\nu_i\to1$ inside this region. At $D=2$, one of the eight regulated families
-vanishes through a reciprocal Gamma zero; the full sum has a finite limit.
+$\nu_i\to1$ inside this region. One of the eight regulated families vanishes
+identically: the all-$U$-index family contains $1/\Gamma(-N)=0$ for $N=n_1+n_2+n_3\ge0$, independently
+of dimension and propagator powers. The sum of the remaining regulated
+families has a finite limit at $D=2$, $\nu_i=1$.
 The resulting series has the absolute majorant given below.
 
 For the mass chart, there are four small-mass pole families. It can also be
@@ -252,6 +254,37 @@ rounding contribute to `error_estimate`. This is not a rigorous interval
 arithmetic certificate. Work is bounded by `max_shells`, `max_terms`, and
 `max_dps`; an unmet target raises `RMTSeriesConvergenceError`. A partial result
 is attached when available. Close to the boundary the series may be impractical.
+
+### Measured default-budget coverage
+
+These measurements use `max_shells=128`, `max_terms=250000` and the default
+precision cap. “Pass” means the returned value met the requested relative
+accuracy and its reported error against a separate 45/60-digit parameter
+reference. “Budget” means a typed `RMTSeriesConvergenceError`, not a divergent
+integral or an inaccurate accepted result. All rows are inside a justified chart.
+Mass inputs below are squared masses; $Q$ is Euclidean momentum.
+
+| $(m_1^2,m_2^2,m_3^2)$ | $Q$ | Chart | $\rho$ | 10 digits | 20 digits | 30 digits |
+|---|---:|---|---:|---|---|---|
+| $(1,1,1)$ | 10 | momentum | 0.09 | Pass | Pass | Pass |
+| $(1,1,1)$ | 6 | momentum | 0.25 | Pass | Pass | Pass |
+| $(1,1,1)$ | $30/7$ | momentum | 0.49 | Pass | Pass | Pass |
+| $(1,1,1)$ | 4 | momentum | 0.5625 | Pass | Pass | Budget |
+| $(1,1,4)$ | 5 | momentum | 0.64 | Pass | Budget | Budget |
+| $(1,1,16)$ | 1 | mass | 0.5625 | Pass | Pass | Budget |
+
+Reproduce with `python tools/audit_sunset_budgets.py`; raw outcomes, source
+hashes, shell counts and timings are in `benchmarks/data/sunset_budgets.json`.
+This finite grid is not a universal cutoff in $\rho$: logarithms, cancellation,
+scale, precision and zero ratios also affect cost. With three nonzero ratios,
+shell $N$ has $(N+1)(N+2)/2$ terms. The default term cap can therefore stop a
+run before the shell cap; the measured refusals stopped after 113 shells and
+246,905 terms per precision pass.
+
+Increase the budgets explicitly for an interior point, reduce the requested
+digits when appropriate, or use the separately named equal-mass Taylor backend.
+For unequal masses, `integrate_graph` offers a float64 statistical estimate
+within its supported domain. An RMT call does not silently select a fallback.
 
 ## Validation and remaining work
 

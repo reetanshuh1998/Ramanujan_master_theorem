@@ -6,30 +6,29 @@ independent scientific review and from publication.
 ```mermaid
 flowchart TD
     A[1. Equal-mass coverage: implemented and tested]
-    B[2. Local audit passed: external review pending]
+    B[2. Local audit and review corrections complete]
     C[3. Capabilities and guarantees: documented]
     D[4. Hosted CI and TestPyPI rehearsal passed]
     E[5. Alpha candidate prepared: publication pending]
     A --> B --> C --> D --> E
     classDef ready fill:#d8f3dc,stroke:#2d6a4f,color:#102a1b
     classDef pending fill:#fff3cd,stroke:#997404,color:#332701
-    class A,C,D ready
-    class B,E pending
+    class A,B,C,D ready
+    class E pending
 ```
 
 | Order | Objective | Completion criteria | Status |
 |---|---|---|---|
 | 1 | Close the equal-mass Euclidean gap | Derived convergent series, documented normalization and tail bound; vacuum, quadrature and overlap checks; bounded work | Implemented; validation recorded below |
-| 2 | Audit the numerical backend | Reproducible benchmark grid, independent references, actual versus reported errors, boundary and budget failures, review packet | Local audit passed; external scientific review pending |
+| 2 | Audit the numerical backend | Reproducible benchmark grid, independent references, actual versus reported errors, boundary and budget failures, review packet | Local audit passed; supplementary review corrections complete; human peer review welcome |
 | 3 | Make capabilities explicit | One capability table; distinguish RMT, analytic continuation and numerical integration; describe all error guarantees | Implemented |
 | 4 | Gate publication on validation | Release-commit tests, wheel and source-distribution checks outside checkout, platform smoke tests, TestPyPI rehearsal workflow | Hosted validation and TestPyPI upload/install passed for `3b00bd6`; changed candidates must be revalidated |
-| 5 | Prepare the public research alpha | Runnable notebook, versioned release notes, citation/contribution instructions and release checklist | Candidate 0.3.0a3 replaces deleted TestPyPI releases; production release pending |
+| 5 | Prepare the public research alpha | Runnable notebook, versioned release notes, citation/contribution instructions and release checklist | Candidate 0.3.0a4 addresses review corrections; production release pending |
 
-External scientific review needs a human reviewer. Repository changes cannot
-stand in for that review. Earlier TestPyPI rehearsals passed, but their files were subsequently deleted.
-Version 0.3.0a3 restores test-index availability; production publication remains
-pending. The maintainer plans an independent AI review, which must be labelled
-separately from human review.
+The supplementary review and all six corrections are recorded in
+{doc}`SCIENTIFIC_REVIEW`; no human peer review is claimed. Version 0.3.0a3
+restored TestPyPI availability. Version 0.3.0a4 prepares the corrected research
+alpha for production publication after validation and a new rehearsal.
 
 ## Scope
 

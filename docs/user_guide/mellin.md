@@ -19,7 +19,7 @@ mpmath's `meijerg` rest on the same theory. See {doc}`/PRIOR_ART`. What this
 module adds is the bookkeeping that makes the method safe to use as a numerical
 black box. It checks that the integral exists and that the chosen expansion
 converges. It raises the working precision against cancellation. It raises an
-error instead of returning a number it cannot certify.
+error instead of returning a number that fails its accuracy checks.
 
 The examples on this page use these imports:
 

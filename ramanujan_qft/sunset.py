@@ -20,7 +20,7 @@ S'' like 1/lambda under s, m^2 -> lambda s, lambda m^2) is used to normalise to
 unit scale; the Kallen functions are used in factored form with the substitution
 t = lo + w sin^2(u/2), so the threshold width w is formed without cancellation;
 every quadrature's error estimate is checked, and every public function is
-certified by evaluation at two working precisions (as in :mod:`one_loop`).
+precision-checked by evaluation at two working precisions (as in :mod:`one_loop`).
 
 The full finite part of S additionally needs the scheme-dependent constants S(0) and
 S'(0) (known in closed form, e.g. Davydychev & Tausk, Nucl. Phys. B397 (1993) 123);
@@ -72,7 +72,7 @@ def _inputs(s, msq):
 
 def _quad(f, pts):
     """mpmath.quad with a relative error check (one retry at higher degree). The working
-    precision is >= 10 digits above the requested accuracy, and the result is certified
+    precision is >= 10 digits above the requested accuracy, and the result is precision-checked
     by evaluation at two precisions, so the check allows for those guard digits."""
     tol = mpmath.mpf(10)**(-(mpmath.mp.dps - 9))
     # mpmath.quad's error control is absolute: normalise the integrand by its magnitude
@@ -184,7 +184,7 @@ def _d2_kernel(s, m1sq, m2sq, m3sq, dps=None):
 
 def sunset_im(s, m1sq, m2sq, m3sq, dps=None):
     r"""
-    Imaginary part of the two-loop sunset, certified.
+    Imaginary part of the two-loop sunset, precision-checked.
 
     .. math::
 
@@ -212,7 +212,7 @@ def sunset_im(s, m1sq, m2sq, m3sq, dps=None):
     ValueError
         For a negative squared mass or a non-finite input.
     ArithmeticError
-        If a quadrature or the certification fails.
+        If a quadrature or the precision check fails.
 
     Examples
     --------
@@ -226,7 +226,7 @@ def sunset_im(s, m1sq, m2sq, m3sq, dps=None):
 
 def sunset_subtracted(s, m1sq, m2sq, m3sq, dps=None):
     r"""
-    The finite, scheme-independent :math:`S(s) - S(0) - s\,S'(0)` of the sunset, certified.
+    The finite, scheme-independent :math:`S(s) - S(0) - s\,S'(0)` of the sunset, precision-checked.
 
     Computed from the twice-subtracted dispersion relation
 
@@ -256,7 +256,7 @@ def sunset_subtracted(s, m1sq, m2sq, m3sq, dps=None):
     ValueError
         For invalid inputs, or all masses zero (then :math:`S'(0)` does not exist).
     ArithmeticError
-        If a quadrature or the certification fails, for example exactly at threshold.
+        If a quadrature or the precision check fails, for example exactly at threshold.
 
     Notes
     -----
@@ -268,7 +268,7 @@ def sunset_subtracted(s, m1sq, m2sq, m3sq, dps=None):
 
 def sunset_d2(s, m1sq, m2sq, m3sq, dps=None):
     r"""
-    Second derivative :math:`S''(s)` of the sunset below threshold, certified.
+    Second derivative :math:`S''(s)` of the sunset below threshold, precision-checked.
 
     .. math:: S''(s) = \frac{2}{\pi}\int_{s_{\rm th}}^\infty dt\,\frac{\operatorname{Im} S(t)}{(t - s)^3}.
 
@@ -290,7 +290,7 @@ def sunset_d2(s, m1sq, m2sq, m3sq, dps=None):
     ValueError
         At or above threshold, or for invalid inputs.
     ArithmeticError
-        If a quadrature or the certification fails.
+        If a quadrature or the precision check fails.
 
     Notes
     -----

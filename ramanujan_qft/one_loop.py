@@ -16,7 +16,7 @@ reproduces LoopTools' default output.
 All internal masses are *squared* masses. The Feynman ``+i0`` prescription is
 implemented exactly (no small numerical imaginary parts).
 
-Every public function is *certified*: the formula is evaluated at two working
+Every public function is *precision-checked*: the formula is evaluated at two working
 precisions, which are raised until the results agree to the requested number
 of digits (inputs are exact binary or decimal numbers, so this removes the
 cancellation that closed forms suffer for p2 << m^2, hierarchical or nearly
@@ -354,7 +354,7 @@ def _bubble_3d_kernel(p2, m1sq, m2sq, dps=None):
 
 
 # ---------------------------------------------------------------------------
-#  certified public functions
+#  precision-checked public functions
 # ---------------------------------------------------------------------------
 
 def _certified(kernel, *args, dps=None, cert_step=20, **kw):
@@ -376,7 +376,7 @@ def _certified(kernel, *args, dps=None, cert_step=20, **kw):
 
 def B0(p2, m1sq, m2sq, mu2=1, delta=0, dps=None):
     r"""
-    Scalar two-point function :math:`B_0(p^2; m_1^2, m_2^2)`, certified to ``dps`` digits.
+    Scalar two-point function :math:`B_0(p^2; m_1^2, m_2^2)`, precision-checked to ``dps`` digits.
 
     .. math::
 
@@ -409,7 +409,7 @@ def B0(p2, m1sq, m2sq, mu2=1, delta=0, dps=None):
         For a negative squared mass, a non-finite input, ``mu2 <= 0``, or the
         scaleless :math:`B_0(0; 0, 0)`.
     ArithmeticError
-        If certification fails.
+        If the precision check fails.
 
     See Also
     --------
@@ -428,7 +428,7 @@ def B0(p2, m1sq, m2sq, mu2=1, delta=0, dps=None):
 
 def B0_mob(p2, msq, mu2=1, delta=0, dps=None):
     r"""
-    Equal-mass :math:`B_0(p^2; m^2, m^2)` from its Method-of-Brackets series, certified.
+    Equal-mass :math:`B_0(p^2; m^2, m^2)` from its Method-of-Brackets series, precision-checked.
 
     The Method of Brackets gives :math:`B_0(\epsilon) = \Gamma(\epsilon)(m^2)^{-\epsilon}\,
     {}_2F_1(\epsilon, 1; 3/2; w)`. Its :math:`\epsilon` expansion is the exact series
@@ -468,7 +468,7 @@ def B0_mob(p2, msq, mu2=1, delta=0, dps=None):
 
 def C0_mob(s, msq, dps=None):
     r"""
-    Equal-mass :math:`C_0(0, 0, s; m^2, m^2, m^2)` in closed form, certified.
+    Equal-mass :math:`C_0(0, 0, s; m^2, m^2, m^2)` in closed form, precision-checked.
 
     The Method of Brackets gives :math:`C_0 = -\frac{1}{2m^2}\,[{}_2F_1(\tfrac12, \tfrac12;
     \tfrac32; \tfrac{s}{4m^2})]^2 = -\frac{2}{s}\arcsin^2\sqrt{s/4m^2}`, continued to all
@@ -502,7 +502,7 @@ def C0_mob(s, msq, dps=None):
 
 def C0(s, m1sq, m2sq, m3sq, dps=None):
     r"""
-    Scalar three-point function :math:`C_0(0, 0, s; m_1^2, m_2^2, m_3^2)`, certified.
+    Scalar three-point function :math:`C_0(0, 0, s; m_1^2, m_2^2, m_3^2)`, precision-checked.
 
     .. math::
 
@@ -536,7 +536,7 @@ def C0(s, m1sq, m2sq, m3sq, dps=None):
         (and, at :math:`s = 0`, two vanishing masses), a negative squared mass, or a
         non-finite input.
     ArithmeticError
-        If certification fails.
+        If the precision check fails.
 
     Examples
     --------
@@ -548,7 +548,7 @@ def C0(s, m1sq, m2sq, m3sq, dps=None):
 
 def bubble_3d(p2, m1sq, m2sq, dps=None):
     r"""
-    The finite two-point function in :math:`D = 3`, certified.
+    The finite two-point function in :math:`D = 3`, precision-checked.
 
     .. math:: \Gamma(\tfrac12)\int_0^1 dx\,\big(x m_1^2 + (1-x)m_2^2 - x(1-x)p^2 - i0\big)^{-1/2},
 

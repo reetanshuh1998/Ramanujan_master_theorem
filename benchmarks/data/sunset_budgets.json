@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "package_version": "0.3.0a4",
+  "python": "3.12.3",
+  "mpmath": "1.3.0",
+  "sympy": "1.14.0",
+  "base_commit": null,
+  "source_sha256": {
+    "tools/audit_sunset_budgets.py": "2c0fa7aeed65f77423ad93f893322e350168045ad48e6913ea2f7e0541a89b38",
+    "tools/audit_sunset.py": "3b525abbcf1d43dc942046470d29c03487b2e456ffcc9e236ab2238ce9493dd4",
+    "ramanujan_qft/sunset_rmt.py": "8f3e9e6fbb7c6646c9647a7eb1fa387f5e2450b8030adf8619e9441f9843a6c1",
+    "ramanujan_qft/brackets.py": "287ccf7749b50118e1992f49c2ff078c32e51fb870eb3868a6f5ee686a3e5554",
+    "ramanujan_qft/multiloop.py": "42bc1037ada4fff3acf9006ba1c42d04db30949ca3ff0bcc7455024b84c64887",
+    "ramanujan_qft/__init__.py": "14c5f6fa471267da80e2808c92caa5a905c1a951e33029af6d5e390925f5563c"
+  },
+  "defaults": {
+    "max_shells": 128,
+    "max_terms": 250000
+  },
+  "reference": "Cheng-Wu parameter integral at 45/60 digits",
+  "cases": [
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "momentum": "10",
+      "chart": "momentum",
+      "rho_upper": "9/100",
+      "dps": 10,
+      "outcome": "value",
+      "seconds": 0.014559454000846017,
+      "terms": 364,
+      "shells": 12,
+      "relative_error": "3.966999706e-12",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "momentum": "10",
+      "chart": "momentum",
+      "rho_upper": "9/100",
+      "dps": 20,
+      "outcome": "value",
+      "seconds": 0.07651308499771403,
+      "terms": 2024,
+      "shells": 22,
+      "relative_error": "5.556825505e-22",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "momentum": "10",
+      "chart": "momentum",
+      "rho_upper": "9/100",
+      "dps": 30,
+      "outcome": "value",
+      "seconds": 0.2535850560016115,
+      "terms": 5456,
+      "shells": 31,
+      "relative_error": "7.124700531e-32",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "momentum": "6",
+      "chart": "momentum",
+      "rho_upper": "1/4",
+      "dps": 10,
+      "outcome": "value",
+      "seconds": 0.06634944500547135,
+      "terms": 1771,
+      "shells": 21,
+      "relative_error": "2.230237853e-12",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "momentum": "6",
+      "chart": "momentum",
+      "rho_upper": "1/4",
+      "dps": 20,
+      "outcome": "value",
+      "seconds": 0.37533648800308583,
+      "terms": 9880,
+      "shells": 38,
+      "relative_error": "2.102181022e-22",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "momentum": "6",
+      "chart": "momentum",
+      "rho_upper": "1/4",
+      "dps": 30,
+      "outcome": "value",
+      "seconds": 1.0730670430057216,
+      "terms": 27720,
+      "shells": 54,
+      "relative_error": "6.469611269e-32",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "momentum": "30/7",
+      "chart": "momentum",
+      "rho_upper": "49/100",
+      "dps": 10,
+      "outcome": "value",
+      "seconds": 0.6084392150005442,
+      "terms": 13244,
+      "shells": 42,
+      "relative_error": "2.948636728e-12",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "momentum": "30/7",
+      "chart": "momentum",
+      "rho_upper": "49/100",
+      "dps": 20,
+      "outcome": "value",
+      "seconds": 2.718623375003517,
+      "terms": 70300,
+      "shells": 74,
+      "relative_error": "4.718205879e-22",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "momentum": "30/7",
+      "chart": "momentum",
+      "rho_upper": "49/100",
+      "dps": 30,
+      "outcome": "value",
+      "seconds": 8.276235008001095,
+      "terms": 204156,
+      "shells": 106,
+      "relative_error": "6.282340485e-32",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "momentum": "4",
+      "chart": "momentum",
+      "rho_upper": "9/16",
+      "dps": 10,
+      "outcome": "value",
+      "seconds": 0.8665193030028604,
+      "terms": 24804,
+      "shells": 52,
+      "relative_error": "3.306175227e-12",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "momentum": "4",
+      "chart": "momentum",
+      "rho_upper": "9/16",
+      "dps": 20,
+      "outcome": "value",
+      "seconds": 4.87481494199892,
+      "terms": 134044,
+      "shells": 92,
+      "relative_error": "1.488802506e-22",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        1
+      ],
+      "momentum": "4",
+      "chart": "momentum",
+      "rho_upper": "9/16",
+      "dps": 30,
+      "outcome": "budget",
+      "seconds": 4.560436337000283,
+      "terms": 246905,
+      "shells": 113
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        4
+      ],
+      "momentum": "5",
+      "chart": "momentum",
+      "rho_upper": "16/25",
+      "dps": 10,
+      "outcome": "value",
+      "seconds": 2.0603910850040847,
+      "terms": 54740,
+      "shells": 68,
+      "relative_error": "8.003848928e-13",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        4
+      ],
+      "momentum": "5",
+      "chart": "momentum",
+      "rho_upper": "16/25",
+      "dps": 20,
+      "outcome": "budget",
+      "seconds": 4.79100556299818,
+      "terms": 246905,
+      "shells": 113
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        4
+      ],
+      "momentum": "5",
+      "chart": "momentum",
+      "rho_upper": "16/25",
+      "dps": 30,
+      "outcome": "budget",
+      "seconds": 4.926409435000096,
+      "terms": 246905,
+      "shells": 113
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        16
+      ],
+      "momentum": "1",
+      "chart": "mass",
+      "rho_upper": "9/16",
+      "dps": 10,
+      "outcome": "value",
+      "seconds": 0.6758676099998411,
+      "terms": 23426,
+      "shells": 51,
+      "relative_error": "4.726380889e-13",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        16
+      ],
+      "momentum": "1",
+      "chart": "mass",
+      "rho_upper": "9/16",
+      "dps": 20,
+      "outcome": "value",
+      "seconds": 3.9103725669992855,
+      "terms": 134044,
+      "shells": 92,
+      "relative_error": "3.102461808e-23",
+      "within_reported_error": true
+    },
+    {
+      "mass_squared": [
+        1,
+        1,
+        16
+      ],
+      "momentum": "1",
+      "chart": "mass",
+      "rho_upper": "9/16",
+      "dps": 30,
+      "outcome": "budget",
+      "seconds": 3.648428435000824,
+      "terms": 246905,
+      "shells": 113
+    }
+  ]
+}

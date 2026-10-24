@@ -87,7 +87,7 @@ See {doc}`CAPABILITIES` for supported domains and error guarantees, and
 
 `product_integral(f, g, s)` evaluates $\int_0^\infty x^{s-1} f(x)\,g(x)\,dx$ for
 exponentials, Gaussians, Bessel $J_\nu$, sines, cosines and powers, and raises
-an error when it cannot certify the result.
+an error when it cannot verify the result.
 :::
 
 :::{grid-item-card} One-loop integrals
@@ -95,7 +95,7 @@ an error when it cannot certify the result.
 :link-type: doc
 
 `B0`, `C0(s, m1sq, m2sq, m3sq)` $= C_0(0,0,s;m_1^2,m_2^2,m_3^2)$ and the
-$D=3$ bubble in LoopTools conventions, certified to any number of digits.
+$D=3$ bubble in LoopTools conventions, precision-checked at the requested number of digits.
 :::
 
 :::{grid-item-card} Two-loop sunset
@@ -103,7 +103,7 @@ $D=3$ bubble in LoopTools conventions, certified to any number of digits.
 :link-type: doc
 
 The imaginary part of the massive sunset and its twice-subtracted dispersion
-relation $S(s)-S(0)-s\,S'(0)$, from certified numerical integration.
+relation $S(s)-S(0)-s\,S'(0)$, from precision-checked numerical integration.
 :::
 
 :::{grid-item-card} Experimental multiloop graphs
@@ -171,9 +171,9 @@ conventions and the printing of high-precision results.
 * **Multiloop regulator expansions or physical-region integrals.** The
   experimental graph backend covers convergent massive Euclidean cases only.
   For broader coverage, use pySecDec, FIESTA or AMFlow, and TSIL for
-  two-loop self-energies; a certified `sunset_subtracted` call takes about 10 s.
+  two-loop self-energies; a precision-checked `sunset_subtracted` call takes about 10 s.
 * **Integrals at the convergence boundary.** `product_integral` raises
-  `SeriesConvergenceError` instead of returning a value it cannot certify, for
+  `SeriesConvergenceError` instead of returning a value it cannot verify, for
   example for $\int_0^\infty e^{-x} J_0(x)\,dx$. Use quadrature or a closed form there.
 
 The methods are classical (Ramanujan and Hardy; Marichev and Slater;

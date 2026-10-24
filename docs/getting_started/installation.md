@@ -13,7 +13,7 @@ There is nothing to compile.
 
 ## Install from GitHub
 
-This is the recommended way until the first release on PyPI:
+For the latest development source:
 
 ```bash
 pip install "git+https://github.com/reetanshuh1998/Ramanujan_master_theorem"
@@ -43,19 +43,22 @@ source take effect without reinstalling.
 
 ## PyPI
 
-`ramanujan-qft` is **not yet released on PyPI**. Once it is, the command will
-be:
+Install the published research alpha:
 
 ```bash
-pip install ramanujan-qft
+pip install --pre ramanujan-qft
 ```
+
+To pin this candidate once published, use `ramanujan-qft==0.3.0a4`.
+Alpha releases require `--pre` or an explicit version. For the optional hybrid
+graph evaluator, use `pip install --pre "ramanujan-qft[multiloop]"`.
 
 ## Check the installation
 
 ```pycon
 >>> import ramanujan_qft
 >>> ramanujan_qft.__version__
-'0.3.0a3'
+'0.3.0a4'
 >>> from ramanujan_qft import B0
 >>> B0(5, 1, 1)
 mpc(real='1.5695910590359961', imag='1.4049629462081452')

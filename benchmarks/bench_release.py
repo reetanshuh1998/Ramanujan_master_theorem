@@ -1,6 +1,6 @@
 """Accuracy-checked, same-precision product-integral timings.
 
-Run from an installed checkout: python benchmarks/bench_release.py
+Run from an installed source tree: python benchmarks/bench_release.py
 Results describe these inputs and methods only, not a library-wide ranking.
 """
 import argparse
@@ -14,6 +14,32 @@ import time
 
 import mpmath as mp
 import ramanujan_qft as rq
+
+
+def _base_commit(root):
+    """Optional checkout context; source hashes identify the evaluated files."""
+    try:
+        return subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=root,
+                              capture_output=True, text=True, check=True).stdout.strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+
+
+def triple_reference(frequency):
+    """Gaussian Fourier/angular representation, independent of Bessel quadrature.
+
+    DLMF 10.9.2 gives J1(z) = 2/pi int_0^(pi/2) cos(t) sin(z cos(t)) dt.
+    Complete the square in int_0^inf exp(-x*x/2 - 2*x + i*b*x) dx
+    to obtain sqrt(pi/2)*exp((2-i*b)**2/2)*erfc((2-i*b)/sqrt(2)).
+    Absolute Gaussian decay justifies interchanging the two integrals.
+    No package evaluator, Bessel routine, or quadosc is used here.
+    """
+    def angular(theta):
+        c = mp.cos(theta)
+        z = (2-mp.j*frequency*c)/mp.sqrt(2)
+        transform = mp.sqrt(mp.pi/2)*mp.exp(z*z)*mp.erfc(z)
+        return c*mp.im(transform)
+    return 2/mp.pi*mp.quad(angular, [0, mp.pi/4, mp.pi/2])
 
 
 def benchmark(repetitions):
@@ -34,7 +60,7 @@ def benchmark(repetitions):
         references = []
         for precision in (50, 70):
             with mp.workdps(precision):
-                references.append(oscillatory() if triple else closed())
+                references.append(triple_reference(frequency) if triple else closed())
         with mp.workdps(80):
             reference = references[-1]
             reference_difference = abs(references[0]-reference)/abs(reference)
@@ -52,7 +78,7 @@ def benchmark(repetitions):
             methods['closed form'] = closed
         row = {'integral': f'exp(-2*x-x*x/2)*J1({frequency}*x)' if triple else f'exp(-x)*J0({frequency}*x)',
                'reference': mp.nstr(reference, 75),
-               'reference_method': 'quadosc at 50/70 digits' if triple else 'closed form at 50/70 digits',
+               'reference_method': 'Gaussian Fourier/angular integral at 50/70 digits' if triple else 'closed form at 50/70 digits',
                'reference_relative_difference': mp.nstr(reference_difference, 8), 'methods': {}}
         for name, function in methods.items():
             samples, errors = [], []
@@ -75,7 +101,7 @@ def benchmark(repetitions):
     paths = ['benchmarks/bench_release.py', 'ramanujan_qft/mellin.py', 'ramanujan_qft/__init__.py']
     return {'schema_version': 1, 'package_version': rq.__version__, 'python': platform.python_version(),
             'platform': platform.platform(), 'processor': platform.processor(), 'mpmath': mp.__version__,
-            'base_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip(),
+            'base_commit': _base_commit(root),
             'source_sha256': {p: hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths},
             'requested_dps': dps, 'repetitions': repetitions, 'summary': 'median after one warm-up; caches retained',
             'quadrature_maxdegree': 8, 'quadrature_intervals': '[0, 1, infinity]',

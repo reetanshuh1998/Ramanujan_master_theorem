@@ -37,10 +37,10 @@ control:
    using the Mellin-convolution (Meijer-G / Slater) method of Marichev and others.
    Before summing, it checks which expansion legitimately closes the contour.
    It compensates cancellation by raising the working precision, and it raises
-   an error rather than return a number it cannot certify.
+   an error rather than return a number that fails its accuracy checks.
 3. **Feynman integrals** with known hypergeometric or dispersive
    representations: one-loop B0 and C0, the D=3 bubble, and the
-   scheme-independent part of the two-loop sunset. Results are certified to the requested precision,
+   scheme-independent part of the two-loop sunset. Results are precision-checked to the requested precision,
    and checked against LoopTools.
 4. **`multiloop.integrate_graph`**: an experimental graph-based evaluator for
    UV-convergent massive Euclidean scalar integrals. It builds Symanzik
@@ -106,13 +106,23 @@ evaluation of known closed forms also beat residue summation in the measured
 product-integral cases. These timings do not establish a speed ranking for the
 new multiloop backends against pySecDec, FIESTA, AMFlow or TSIL.
 For a measured strength of the Ramanujan/Mellin approach, the current 30-digit
-product benchmark evaluates $e^{-2x-x^2/2}J_1(100x)$ in **3.93 ms**, versus
-**1018 ms** for `mpmath.quadosc`, with both meeting the accuracy target. At
+product benchmark evaluates $e^{-2x-x^2/2}J_1(100x)$ in **3.92 ms**, versus
+**1021 ms** for `mpmath.quadosc`, with both meeting the accuracy target. At
 frequency 1, RACE also beats the measured tanh–sinh and Gauss–Legendre calls.
 These are selected product integrals, not a general Feynman-integral speed claim.
 See [the reproducible comparisons](docs/COMPARISON.md) and [audit](AUDIT.md).
 
+Developed and maintained by **Reetamshu**.
+
 ## Install
+
+Install a published research alpha from PyPI (Python >= 3.9):
+
+```bash
+pip install --pre ramanujan-qft
+```
+
+For the latest development source or a local clone:
 
 ```bash
 pip install "git+https://github.com/reetanshuh1998/Ramanujan_master_theorem"   # latest version, requires Python >= 3.9
@@ -140,7 +150,7 @@ product_integral(exponential(1), bessel_j(0, 1e5), dps=30)
 B0(5, 1, 1)                 # (1.5695910590 + 1.4049629462j)   = LoopTools
 C0(10, 1, 2, 3, dps=50)     # C0(0,0,s; m1², m2², m3²) to 50 digits
 
-# Two-loop sunset: imaginary part (certified)
+# Two-loop sunset: imaginary part (precision-checked)
 sunset_im(100, 1, 2, 3)     # -88.1849955516
 ```
 
@@ -241,7 +251,7 @@ python benchmarks/bench_fair.py      # RACE vs closed forms and mpmath.quadosc a
   above threshold.
 * The sunset's Im S, S″ and twice-subtracted S agree with independent
   Feynman-parameter integrations to 10⁻⁸ to 10⁻¹⁴.
-* One-loop results are *certified*: each is evaluated at two working precisions,
+* One-loop results are *precision-checked*: each is evaluated at two working precisions,
   raised until they agree, which removes cancellation at extreme kinematics
   (p² ≪ m², mass hierarchies, s ≫ m²).
 * RACE went through three adversarial audit rounds against closed forms and
