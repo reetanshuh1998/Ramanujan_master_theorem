@@ -1,6 +1,27 @@
 # Changelog
 
-## Unreleased
+## Unreleased — 0.3.0rc1.dev1
+
+- Retry only the selected index's exact missing-version response, with bounded
+  attempts. Other install failures and smoke checks fail immediately.
+- Add minimum-dependency CI, source-bound stability reports and clean/upgrade
+  artifact checks with base and optional SciPy dependencies. The development
+  version distinguishes these artifacts from the published 0.3.0a5.
+
+- Add a method-selection guide and shared reference-checked examples for local
+  Python, documentation, notebooks and the browser. Domain/precision refusals
+  now include relevant inputs and explicit next steps.
+
+- Add a source-bound stability audit covering series boundaries, budget refusals,
+  independent references, scaling identities and repeated hybrid estimates.
+- Add `explain_sunset_rmt` and a bundled provisional JSON schema for exact
+  graph-to-series traces, source provenance and optional evaluation diagnostics.
+
+- Track the five objectives for 0.3.0 and define a proposed compatibility
+  contract separating stable candidates, experimental and legacy interfaces.
+- Add `sunset_second_derivative` as an explicit spelling of `sunset_d2`.
+  The existing name, arguments, numerical implementation and exceptions remain
+  unchanged; neither name denotes a D=2 graph integral.
 
 ## 0.3.0a5 — author metadata and documentation
 

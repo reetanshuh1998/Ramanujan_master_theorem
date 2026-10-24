@@ -95,7 +95,7 @@ jobs:
       - name: Install the published version from the selected release index
         run: |
           VERSION=$(python tools/check_release_metadata.py)
-          python -m pip install --no-deps --index-url "$RELEASE_INDEX" "ramanujan-qft==$VERSION"
+          python tools/install_from_index.py --index-url "$RELEASE_INDEX" --version "$VERSION"
       - name: Verify installation outside the checkout
         run: |
           python - <<'PY'

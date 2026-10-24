@@ -261,6 +261,10 @@ python benchmarks/bench_release.py   # accuracy-checked 30-digit product timings
 
 ## Roadmap
 
+The [five-objective stable-release plan](https://reetanshuh1998.github.io/Ramanujan_master_theorem/STABLE_RELEASE_PLAN.html)
+tracks API compatibility, scientific validation, inspectable RMT calculations,
+first-use examples and release automation toward 0.3.0.
+
 * Extend the D=2 sunset RMT charts into the uncovered Euclidean region, then
   add topologies with derived convergence rules. Broaden the graph backend with
   efficient sector strategies, epsilon expansions and subtraction,

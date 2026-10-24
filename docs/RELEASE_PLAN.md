@@ -1,5 +1,8 @@
 # Research-alpha release plan — completed for 0.3.0a4
 
+This page records the completed research-alpha milestones. Current work toward
+0.3.0 is tracked separately in {doc}`STABLE_RELEASE_PLAN`.
+
 Work proceeds in this order. A completed implementation is distinct from
 independent scientific review and from publication.
 

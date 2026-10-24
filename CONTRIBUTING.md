@@ -3,6 +3,10 @@
 The aim is a reproducible scientific package built around Ramanujan and Mellin
 methods. Read [the capability table](docs/CAPABILITIES.md) and
 [the release plan](docs/RELEASE_PLAN.md) before proposing extensions.
+Current development follows the [stable-release plan](docs/STABLE_RELEASE_PLAN.md)
+and [proposed API contract](docs/API_STABILITY.md). Preserve documented calls,
+result attributes and exception types; describe compatibility changes in the
+changelog and include a migration path where required by the contract.
 
 ## Development
 

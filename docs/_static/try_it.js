@@ -29,6 +29,10 @@
 
   const EXAMPLES = [
     {
+      title: "Three reference-checked calculations",
+      code: "import json\nimport mpmath as mp\nimport scipy  # Explicit import also loads SciPy in the browser console.\nfrom ramanujan_qft import (B0, ScalarEdge, ScalarGraph, explain_sunset_rmt,\n                           integrate_graph, RMTDomainError)\n\n# 1. B0: LoopTools finite-part convention, Delta=0, mu^2=1; p^2=-2.\n# Independent Feynman-parameter reference, evaluated with extra precision.\nbubble = B0(-2, 1, 4, dps=30)\nwith mp.workdps(45):\n    reference = -mp.quad(lambda x: mp.log(x + 4*(1-x) + 2*x*(1-x)), [0, 1])\n    difference = abs(bubble-reference)\n    assert difference < mp.mpf('1e-29')\nprint('B0:', mp.nstr(bubble, 30), 'absolute reference difference:', mp.nstr(difference, 4))\nprint('B0 returns a precision-checked scalar, not a separate error estimate.')\n\n# 2. D=2 sunset: positive Euclidean propagators; d^2k d^2l / pi^2.\n# Q=10 > m1+m2+m3=3 selects the momentum RMT chart.\nsunset = ScalarGraph([ScalarEdge(0, 1, 1)]*3, {0: [10], 1: [-10]})\ntrace = explain_sunset_rmt(sunset, evaluate=True, dps=25)\ndiagnostics = trace['evaluation']['diagnostics']\nassert trace['evaluation']['status'] == 'converged'\n# Reference from independent simplex quadrature at 40 and 55 digits:\n# tests/data/sunset_rmt_reference.json (precision difference < 2.4e-42).\nwith mp.workdps(45):\n    reference = mp.mpf('0.6290167075906141495908272538835833416123070767')\n    difference = abs(mp.mpf(diagnostics['value']['decimal'])-reference)\n    assert difference <= mp.mpf(diagnostics['error_estimate']['decimal']) + mp.mpf('3e-42')\nprint('RMT value:', diagnostics['value']['decimal'])\nprint('RMT chart:', trace['convergence']['chart'], 'condition:', trace['convergence']['condition'])\nprint('RMT tail bound:', diagnostics['truncation_bound']['decimal'])\nprint('RMT estimated error:', diagnostics['error_estimate']['decimal'])\nprint('Gamma families:', len(trace['families']), 'terms:', diagnostics['terms'])\nexported_json = json.dumps(trace, indent=2)  # Inspect without evaluating expression strings.\ntry:\n    explain_sunset_rmt(ScalarGraph([ScalarEdge(0, 1, 1)]*3))\nexcept RMTDomainError as error:\n    print('Expected domain refusal:', error)\nelse:\n    raise AssertionError('The RMT chart must refuse equal-mass vacuum')\n\n# 3. D=1 three-loop banana: d^1k / sqrt(pi) for each of three loops.\n# Fourier convolution gives pi^(3/2)*sum(m)/(prod(m)*(sum(m)^2+Q^2)).\nbanana = ScalarGraph([ScalarEdge(0, 1, m*m) for m in (1, 2, 3, 4)], {0: [2], 1: [-2]})\nhybrid = integrate_graph(banana, D=1, epsrel=3e-3, max_evaluations=4000000, seed=1729)\nreference = float(mp.pi**mp.mpf('1.5')*10/(24*(100+4)))\nassert abs(hybrid.value-reference) <= hybrid.error_estimate\nprint('Hybrid value:', hybrid.value, '+/-', hybrid.error_estimate)\nprint('Fourier reference:', reference)\nprint('Hybrid method:', hybrid.method)\nprint('The hybrid estimate is float64 with statistical errors; it is not a full RMT series.')\n",
+    },
+    {
       title: "Ramanujan's Master Theorem",
       code: `import mpmath as mp
 from ramanujan_qft import ramanujan_master_theorem, mellin_numeric
@@ -55,7 +59,7 @@ print(info)
 `,
     },
     {
-      title: "Three factors, no closed form",
+      title: "Exponential, Gaussian and Bessel product",
       code: `import mpmath as mp
 from ramanujan_qft import product_integral, exponential, gaussian_bessel
 
@@ -66,7 +70,7 @@ for b in (1, 10, 100):
 `,
     },
     {
-      title: "An honest refusal",
+      title: "Convergence and divergence refusals",
       code: `from ramanujan_qft import product_integral, exponential, bessel_j, cosine, SeriesConvergenceError
 
 # Int exp(-x) J_0(x) dx = 1/sqrt(2) exists, but its residue series sit on the

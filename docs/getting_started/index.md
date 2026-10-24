@@ -5,4 +5,5 @@
 
 installation
 quickstart
+choose_method
 ```

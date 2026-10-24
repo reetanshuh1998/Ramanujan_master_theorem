@@ -34,7 +34,8 @@ import mpmath
 
 from ramanujan_qft.one_loop import _certified
 
-__all__ = ["sunset_threshold", "sunset_im", "sunset_subtracted", "sunset_d2"]
+__all__ = ["sunset_threshold", "sunset_im", "sunset_subtracted", "sunset_d2",
+           "sunset_second_derivative"]
 
 
 def sunset_threshold(m1sq, m2sq, m3sq):
@@ -294,6 +295,24 @@ def sunset_d2(s, m1sq, m2sq, m3sq, dps=None):
 
     Notes
     -----
+    ``d2`` denotes a second derivative, not spacetime dimension D=2.
+    :func:`sunset_second_derivative` is an equivalent, more explicit spelling.
     About 10-20 s per value, like :func:`sunset_subtracted`.
     """
     return _certified(_d2_kernel, s, m1sq, m2sq, m3sq, dps=dps, cert_step=12)
+
+
+def sunset_second_derivative(s, m1sq, m2sq, m3sq, dps=None):
+    r"""Compute :math:`S''(s)` in the four-dimensional dispersive convention.
+
+    This is the explicit spelling of :func:`sunset_d2`, with the same
+    arguments, precision checks and exceptions. ``s`` and the three masses
+    are squared quantities; ``s`` must be below the three-particle threshold.
+    The result is an mpmath real number. ``dps=None`` uses the current mpmath
+    precision. This function does not evaluate a D=2 sunset integral.
+
+    Invalid inputs raise :class:`ValueError`; failed quadrature or precision
+    checks raise :class:`ArithmeticError`. The existing ``sunset_d2`` name
+    remains supported without a deprecation warning.
+    """
+    return sunset_d2(s, m1sq, m2sq, m3sq, dps=dps)

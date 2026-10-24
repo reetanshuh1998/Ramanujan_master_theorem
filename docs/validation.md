@@ -5,10 +5,10 @@ instructions for rerunning the checks, and findings from the historical audits.
 
 ## The test suite
 
-The suite contains **455 tests**, including the graph and series backends,
+The development suite contains **489 tests**, including the graph and series backends,
 independent references, release authentication, and report reproducibility.
 The table below counts parameterized cases collected by pytest.
-The 24 tests marked `slow` run independent nested quadratures and take several
+The 25 tests marked `slow` run independent nested quadratures and take several
 minutes. In addition, the examples in the docstrings and on these documentation
 pages are executed in CI.
 
@@ -28,6 +28,7 @@ pages are executed in CI.
 | `test_sunset_audit.py` | 4 | independent audit-reference formula | existing nested simplex fixtures |
 | `test_publisher_preflight.py` | 9 | publisher endpoint selection and safe authentication diagnostics | simulated service responses |
 | `test_report_reproducibility.py` | 6 | reports without Git and the independent angular benchmark reference | non-repository/missing-Git cases; oscillatory Bessel quadrature |
+| `test_api_contract.py` | 34 | proposed stable calling signatures, result fields, typed refusals and precision-context preservation | independent Mellin identity; closed-form sunset derivative; baseline compatibility fixture |
 
 The experimental graph backend has statistical float64 error diagnostics.
 It has not undergone the historical adversarial audits described below, and

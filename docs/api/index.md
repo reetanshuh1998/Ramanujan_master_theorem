@@ -1,5 +1,8 @@
 # API reference
 
+See {doc}`/API_STABILITY` for the proposed stable interfaces, experimental
+interfaces and compatibility policy for the next release.
+
 Every public object is importable from the top-level package, for example
 `from ramanujan_qft import B0, product_integral`. The pages below document them
 by module. Mass inputs are squared masses. The scalar RMT, Mellin, one-loop
@@ -50,6 +53,7 @@ estimates with statistical diagnostics.
 | {py:func}`~ramanujan_qft.sunset.sunset_im` | $\operatorname{Im}S(s)$ |
 | {py:func}`~ramanujan_qft.sunset.sunset_subtracted` | $S(s)-S(0)-s\,S'(0)$ |
 | {py:func}`~ramanujan_qft.sunset.sunset_d2` | $S''(s)$ below threshold |
+| {py:func}`~ramanujan_qft.sunset.sunset_second_derivative` | Explicit spelling of `sunset_d2`; a second derivative, not a D=2 integral |
 
 ## Multiloop graphs — `ramanujan_qft.multiloop`
 

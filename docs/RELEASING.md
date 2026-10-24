@@ -180,3 +180,51 @@ controls. This release does not claim general multiloop RMT evaluation,
 epsilon expansions, massless or physical-region series coverage, or rigorous
 interval certification. Unequal-mass continuation between the RMT charts remains
 open. The supplementary review and its limitations are recorded in the review packet.
+
+## Development checks for the first stable release
+
+The working version is **0.3.0rc1.dev1**, not a published release candidate.
+The stable milestones and remaining external gates are in {doc}`STABLE_RELEASE_PLAN`.
+Do not upload a changed artifact under the already published 0.3.0a5 name.
+
+The validation workflow adds these combinations:
+
+| Check | Interpreter / dependencies |
+|---|---|
+| Supported-version suite | CPython 3.9, 3.11 and 3.13 with currently resolvable dependencies |
+| Minimum declared dependencies | CPython 3.9; mpmath 1.3.0, SymPy 1.12, NumPy 1.24.0, SciPy 1.10.0, pytest 7.0.0, jsonschema 4.18.0 |
+| Installed wheel and source archive | CPython 3.12 on Linux, macOS and Windows; base numerical APIs with SciPy imports blocked |
+| Upgrade from published 0.3.0a5 | CPython 3.12 on Linux; base install and separate optional-SciPy install |
+| Browser | Pyodide 0.26.4 with its bundled compiled dependencies; all visible examples, reference assertions, reset and custom dependency wheels |
+
+Minimum pins live in `tests/constraints-minimum.txt`. This checks a compatible
+combination, not every cross-product of interpreter and dependency versions.
+The explanation schema is shipped in both distributions and exercised after
+installation, outside the checkout. Upgrade tests verify the old version first,
+then the artifact's actual version, retained imports and numerical references.
+
+```bash
+python tools/audit_stability.py --output /tmp/stability-audit.json
+python tools/check_notebook.py notebooks/stable_walkthrough.ipynb
+python examples/08_first_calculations.py
+python tools/check_release_metadata.py
+python -m build --outdir /tmp/stable-dist .
+python -m twine check --strict /tmp/stable-dist/*
+python tools/smoke_release.py --dist /tmp/stable-dist --format wheel --upgrade-from 0.3.0a5
+python tools/smoke_release.py --dist /tmp/stable-dist --format wheel --upgrade-from 0.3.0a5 --with-multiloop
+```
+
+After an upload, `tools/install_from_index.py` permits at most six installation
+attempts, 15 seconds apart. Only pip's exact missing-version response for the
+requested package/version is retried. Connection warnings, incompatible-Python
+errors, other dependency/build failures and timeouts fail immediately. Smoke
+checks run once after installation. No retry uploads or rebuilds a package.
+The selected index is fixed to PyPI or TestPyPI, and dependencies are installed
+separately from production PyPI.
+
+Before freezing 0.3.0rc1, bind a fresh audit and review packet to the final source,
+replace the development notebook's branch reference with the candidate tag,
+collect review findings and user feedback, and resolve their blockers. Rehearse
+that frozen candidate on TestPyPI and verify artifact hashes. Those external
+steps and final production publication are not completed by these development
+checks.

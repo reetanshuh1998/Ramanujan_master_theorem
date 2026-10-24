@@ -1,0 +1,626 @@
+{
+  "schema_version": 1,
+  "status": "proposed for 0.3.0; not a promotion of the current alpha",
+  "callables": {
+    "ramanujan_master_theorem": {
+      "module": "ramanujan_qft.rmt",
+      "parameters": [
+        {
+          "name": "phi",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "s",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "mellin_numeric": {
+      "module": "ramanujan_qft.rmt",
+      "parameters": [
+        {
+          "name": "f",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "s",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "massive_propagator_rmt": {
+      "module": "ramanujan_qft.rmt",
+      "parameters": [
+        {
+          "name": "msq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "D",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "product_integral": {
+      "module": "ramanujan_qft.mellin",
+      "parameters": [
+        {
+          "name": "f",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "g",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "s",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "1"
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        },
+        {
+          "name": "tol",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        },
+        {
+          "name": "max_terms",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "4000"
+        },
+        {
+          "name": "return_info",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "False"
+        },
+        {
+          "name": "continuation",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "False"
+        },
+        {
+          "name": "max_dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "exponential": {
+      "module": "ramanujan_qft.mellin",
+      "parameters": [
+        {
+          "name": "k",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        }
+      ]
+    },
+    "gaussian": {
+      "module": "ramanujan_qft.mellin",
+      "parameters": [
+        {
+          "name": "a",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        }
+      ]
+    },
+    "bessel_j": {
+      "module": "ramanujan_qft.mellin",
+      "parameters": [
+        {
+          "name": "nu",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "b",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        }
+      ]
+    },
+    "cosine": {
+      "module": "ramanujan_qft.mellin",
+      "parameters": [
+        {
+          "name": "b",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        }
+      ]
+    },
+    "sine": {
+      "module": "ramanujan_qft.mellin",
+      "parameters": [
+        {
+          "name": "b",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        }
+      ]
+    },
+    "inverse_power": {
+      "module": "ramanujan_qft.mellin",
+      "parameters": [
+        {
+          "name": "m",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "v",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        }
+      ]
+    },
+    "gaussian_bessel": {
+      "module": "ramanujan_qft.mellin",
+      "parameters": [
+        {
+          "name": "a",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "b",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "nu",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        }
+      ]
+    },
+    "B0": {
+      "module": "ramanujan_qft.one_loop",
+      "parameters": [
+        {
+          "name": "p2",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m1sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m2sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "mu2",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "1"
+        },
+        {
+          "name": "delta",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "0"
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "B0_mob": {
+      "module": "ramanujan_qft.one_loop",
+      "parameters": [
+        {
+          "name": "p2",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "msq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "mu2",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "1"
+        },
+        {
+          "name": "delta",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "0"
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "C0": {
+      "module": "ramanujan_qft.one_loop",
+      "parameters": [
+        {
+          "name": "s",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m1sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m2sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m3sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "C0_mob": {
+      "module": "ramanujan_qft.one_loop",
+      "parameters": [
+        {
+          "name": "s",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "msq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "bubble_3d": {
+      "module": "ramanujan_qft.one_loop",
+      "parameters": [
+        {
+          "name": "p2",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m1sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m2sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "sunset_threshold": {
+      "module": "ramanujan_qft.sunset",
+      "parameters": [
+        {
+          "name": "m1sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m2sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m3sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        }
+      ]
+    },
+    "sunset_im": {
+      "module": "ramanujan_qft.sunset",
+      "parameters": [
+        {
+          "name": "s",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m1sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m2sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m3sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "sunset_subtracted": {
+      "module": "ramanujan_qft.sunset",
+      "parameters": [
+        {
+          "name": "s",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m1sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m2sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m3sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "sunset_d2": {
+      "module": "ramanujan_qft.sunset",
+      "parameters": [
+        {
+          "name": "s",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m1sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m2sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m3sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "sunset_second_derivative": {
+      "module": "ramanujan_qft.sunset",
+      "parameters": [
+        {
+          "name": "s",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m1sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m2sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "m3sq",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "dps",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "ScalarEdge": {
+      "module": "ramanujan_qft.multiloop",
+      "parameters": [
+        {
+          "name": "source",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "target",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "mass_squared",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "power",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "1"
+        }
+      ]
+    },
+    "ScalarGraph": {
+      "module": "ramanujan_qft.multiloop",
+      "parameters": [
+        {
+          "name": "edges",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "external_momenta",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "None"
+        }
+      ]
+    },
+    "integrate_graph_rmt": {
+      "module": "ramanujan_qft.sunset_rmt",
+      "parameters": [
+        {
+          "name": "graph",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "D",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "2"
+        },
+        {
+          "name": "chart",
+          "kind": "KEYWORD_ONLY",
+          "default": "'auto'"
+        },
+        {
+          "name": "dps",
+          "kind": "KEYWORD_ONLY",
+          "default": "30"
+        },
+        {
+          "name": "max_shells",
+          "kind": "KEYWORD_ONLY",
+          "default": "128"
+        },
+        {
+          "name": "max_terms",
+          "kind": "KEYWORD_ONLY",
+          "default": "250000"
+        },
+        {
+          "name": "max_dps",
+          "kind": "KEYWORD_ONLY",
+          "default": "None"
+        }
+      ]
+    },
+    "integrate_sunset_taylor": {
+      "module": "ramanujan_qft.sunset_taylor",
+      "parameters": [
+        {
+          "name": "graph",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": null
+        },
+        {
+          "name": "D",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default": "2"
+        },
+        {
+          "name": "dps",
+          "kind": "KEYWORD_ONLY",
+          "default": "30"
+        },
+        {
+          "name": "max_terms",
+          "kind": "KEYWORD_ONLY",
+          "default": "512"
+        },
+        {
+          "name": "max_dps",
+          "kind": "KEYWORD_ONLY",
+          "default": "2000"
+        }
+      ]
+    }
+  },
+  "result_fields": {
+    "RMTSeriesResult": [
+      "value",
+      "error_estimate",
+      "truncation_bound",
+      "terms",
+      "shells",
+      "working_dps",
+      "chart",
+      "convergence_ratio",
+      "converged",
+      "method"
+    ],
+    "SunsetTaylorResult": [
+      "value",
+      "error_estimate",
+      "truncation_bound",
+      "terms",
+      "working_dps",
+      "convergence_ratio",
+      "converged",
+      "method"
+    ]
+  },
+  "mellin_info_keys": [
+    "method",
+    "error_estimate",
+    "terms",
+    "working_dps"
+  ]
+}

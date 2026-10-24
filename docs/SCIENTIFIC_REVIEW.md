@@ -5,6 +5,9 @@ recommended approval within the documented scope and found no release blockers.
 Its six nonblocking corrections are addressed in 0.3.0a4 below. This is not
 human peer review or a proof of correctness.
 
+The expanded development grid and packet-generation instructions are in
+{doc}`STABILITY_AUDIT`; they do not replace this historical review.
+
 ## Review scope
 
 Review the unit-power massive D=2 sunset in the positive Euclidean normalization
