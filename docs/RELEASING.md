@@ -1,18 +1,21 @@
 # Research-alpha release checklist
 
-Current candidate: **0.3.0a2**. External scientific review remains pending.
+Current candidate: **0.3.0a3**, prepared to replace accidentally deleted
+TestPyPI releases. Deleted filenames cannot be reused, so restoration uses a
+new version. Numerical algorithms are unchanged from 0.3.0a2.
 
-Previously rehearsed version: **0.3.0a1**, uploaded to TestPyPI from commit `3b00bd6`.
-The [rehearsal](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/39924746748)
-passed validation, trusted-publisher upload and installation outside the checkout.
-Both published file hashes matched the validated distribution artifacts.
-This is a TestPyPI rehearsal; production PyPI publication and external scientific
-review remain pending. The code remains a scoped research tool.
+The [0.3.0a2 rehearsal](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/39977936252)
+passed full validation, trusted-publisher upload and installation outside the
+checkout. Published hashes matched the validated artifacts at that time; those
+files were subsequently deleted from TestPyPI. Historical artifacts and review
+materials remain attached to the GitHub draft for `v0.3.0a2`.
 
-The 0.3.0a2 candidate includes the browser fix, current comparison report and
-publishing checks. Rehearse its frozen commit on TestPyPI before production
-publication; the existing `0.3.0a1` files are immutable. Candidate-specific hosted
-results and artifact hashes are recorded in the GitHub candidate release notes.
+The replacement TestPyPI publisher authorizes `publish.yml`, environment `pypi`.
+Its authentication passed in [this check](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40005623395).
+The former `testpypi.yml` workflow has been replaced by an explicit TestPyPI
+operation in `publish.yml`. Production PyPI requires separate account-side
+configuration. Independent AI review is planned; no review report has been
+received and no human peer review is claimed.
 
 ## Local preparation
 
@@ -35,7 +38,7 @@ python -m pytest -q
 python tools/audit_sunset.py --output benchmarks/data/sunset_audit.json
 python tools/check_notebook.py notebooks/research_alpha.ipynb
 python tools/check_doc_snippets.py docs
-python tools/check_release_metadata.py --tag v0.3.0a2
+python tools/check_release_metadata.py --tag v0.3.0a3
 python -m build --outdir dist .
 python -m twine check --strict dist/*
 python tools/smoke_release.py --dist dist --format wheel
@@ -81,15 +84,25 @@ their `action.yml` runtime and nested actions as well as their release notes.
 Hosted jobs, account configuration, independent review and uploads cannot be
 verified by a local build alone.
 
-## Production authentication preflight
+## Authentication and TestPyPI upload
 
-After merging and freezing the candidate, dispatch `publish.yml` on its `v*` tag.
-The `publisher-preflight` job uses the existing protected `pypi` environment and
-checks whether PyPI accepts that workflow identity. The manual-dispatch path
-cannot upload a distribution. PyPI can activate a pending publisher and create
-its empty project during token exchange; this is publishing setup, not a release.
-A release publication is a separate trigger.
-Credentials stay in memory and are not logged or stored as artifacts.
+Dispatch `publish.yml` on a frozen `v*` tag. The default operation is
+`authenticate`, with `index=pypi` or `index=testpypi`. Authentication uploads no
+files. PyPI can activate a pending publisher and create its empty project during
+token exchange. Credentials remain in memory and are not logged or archived.
+
+To rebuild, validate, upload and install the replacement TestPyPI release:
+
+```bash
+gh workflow run publish.yml --ref v0.3.0a3 -f operation=testpypi-release -f index=testpypi
+```
+
+`testpypi-release` always uploads to `https://test.pypi.org/legacy/`, regardless
+of the authentication-only `index` input. It uses the protected `pypi`
+environment because that is the name in the configured replacement TestPyPI
+publisher. The workflow builds once, validates the resulting artifacts and
+installs the uploaded version outside the checkout. The separate production
+upload job runs only when a GitHub release is published, after full validation.
 
 For a new project, the account owner must configure a
 [pending publisher](https://docs.pypi.org/trusted-publishers/creating-a-project-through-oidc/)
@@ -129,7 +142,7 @@ that exact version from PyPI and runs the smoke check outside the checkout.
 
 ## Draft release notes
 
-Version 0.3.0a2 includes exact graph-polynomial and Schwinger bracket compilation,
+Version 0.3.0a3 includes exact graph-polynomial and Schwinger bracket compilation,
 a hybrid numerical graph evaluator, and justified multivariate Gamma series
 for two massive D=2 sunset charts. A separately named equal-mass Taylor backend
 adds vacuum and finite Euclidean momentum coverage with an analytic tail bound.

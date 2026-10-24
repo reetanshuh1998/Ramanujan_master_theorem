@@ -20,9 +20,10 @@ Adamchik–Marichev, Slater, Fikioris, SymPy `meijerint` and mpmath `meijerg`.
 | mpmath `quadosc` | oscillatory quadrature, arbitrary precision | general | slow |
 | **ramanujan-qft `product_integral`** | numerical Mellin residue summation with validity check, cancellation control and honest refusal | arbitrary precision; cost nearly independent of the oscillation frequency; three-factor products without closed forms | only atlas factors; raises at the convergence boundary (e.g. e^(−x) J₀(x)); slower than closed forms |
 
-### Current candidate: accuracy-checked product benchmarks
+### Retained accuracy-checked product benchmarks
 
 Measured with **ramanujan-qft 0.3.0a2**, Python 3.12.3 and mpmath 1.3.0 on Linux.
+The numerical algorithms are unchanged in the 0.3.0a3 replacement TestPyPI release.
 All methods run at 30 working digits (RACE adds its own guard digits); the target
 is relative error at most $10^{-30}$. Times are milliseconds, median of three
 calls after one warm-up per method. Node/zero caches remain warm; setup and

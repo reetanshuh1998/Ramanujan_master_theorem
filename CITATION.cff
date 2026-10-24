@@ -3,7 +3,7 @@ message: >-
   If you use ramanujan-qft, please cite it as below, and please also cite the
   original methods it implements (see docs/PRIOR_ART.md).
 title: "ramanujan-qft: Ramanujan's Master Theorem, Mellin residue summation and arbitrary-precision Feynman integrals"
-version: 0.3.0a2
+version: 0.3.0a3
 license: MIT
 authors:
   - given-names: Reet

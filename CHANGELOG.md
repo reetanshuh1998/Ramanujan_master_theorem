@@ -2,7 +2,19 @@
 
 ## Unreleased
 
-## 0.3.0a2 — research-alpha candidate (production publication pending)
+## 0.3.0a3 — replacement TestPyPI release
+
+- Restore TestPyPI availability after the earlier releases were accidentally
+  deleted. A new version is required because deleted filenames cannot be reused.
+- Use `publish.yml` and the protected `pypi` environment for TestPyPI uploads,
+  matching the replacement trusted publisher. Manual uploads target only
+  TestPyPI and require full validation and an installation check.
+- Authentication diagnostics now select PyPI or TestPyPI explicitly and report
+  allowlisted rejection codes without exposing credentials.
+- Numerical algorithms are unchanged from 0.3.0a2. Independent AI review and
+  production PyPI publication remain pending.
+
+## 0.3.0a2 — historical TestPyPI rehearsal (files subsequently deleted)
 
 - Fixed browser startup by loading Pyodide's compiled NumPy before importing
   the package, including custom dependency-wheel configurations.
