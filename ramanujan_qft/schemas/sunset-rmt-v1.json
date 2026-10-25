@@ -1,0 +1,693 @@
+{
+  "type": "object",
+  "required": [
+    "schema_version",
+    "kind",
+    "provenance",
+    "conventions",
+    "graph",
+    "polynomials",
+    "bracket_system",
+    "families",
+    "pole_limit",
+    "convergence",
+    "limitations",
+    "evaluation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "kind": {
+      "const": "sunset-rmt-explanation"
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "package_version",
+        "sympy_version",
+        "mpmath_version",
+        "source_sha256"
+      ],
+      "properties": {
+        "package_version": {
+          "type": "string"
+        },
+        "sympy_version": {
+          "type": "string"
+        },
+        "mpmath_version": {
+          "type": "string"
+        },
+        "source_sha256": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "conventions": {
+      "type": "object",
+      "required": [
+        "dimension",
+        "propagators",
+        "loop_measure",
+        "masses"
+      ],
+      "properties": {
+        "dimension": {
+          "const": "2"
+        },
+        "propagators": {
+          "type": "string"
+        },
+        "loop_measure": {
+          "type": "string"
+        },
+        "masses": {
+          "const": "squared"
+        }
+      },
+      "additionalProperties": false
+    },
+    "graph": {
+      "type": "object",
+      "required": [
+        "vertices",
+        "edges",
+        "external_momenta"
+      ],
+      "properties": {
+        "vertices": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "source",
+              "target",
+              "mass_squared",
+              "power"
+            ],
+            "properties": {
+              "source": {
+                "type": "integer"
+              },
+              "target": {
+                "type": "integer"
+              },
+              "mass_squared": {
+                "type": "string"
+              },
+              "power": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "external_momenta": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "polynomials": {
+      "type": "object",
+      "required": [
+        "parameters",
+        "U",
+        "F"
+      ],
+      "properties": {
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "U": {
+          "type": "string"
+        },
+        "F": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "bracket_system": {
+      "type": "object",
+      "required": [
+        "matrix",
+        "offsets",
+        "indices",
+        "coefficients",
+        "gamma_denominator",
+        "normalization"
+      ],
+      "properties": {
+        "matrix": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "offsets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "indices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "coefficients": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "gamma_denominator": {
+          "type": "string"
+        },
+        "normalization": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "families": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "status",
+          "bound_columns",
+          "free_columns",
+          "determinant",
+          "solved_indices",
+          "gamma_term"
+        ],
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "bound_columns": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "free_columns": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "determinant": {
+            "type": "string"
+          },
+          "solved_indices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "gamma_term": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "pole_limit": {
+      "type": "object",
+      "required": [
+        "regulator",
+        "limit",
+        "summation_indices",
+        "coefficient_expression"
+      ],
+      "properties": {
+        "regulator": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "string"
+        },
+        "summation_indices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "coefficient_expression": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "convergence": {
+      "type": "object",
+      "required": [
+        "status",
+        "requested_chart",
+        "chart",
+        "condition",
+        "momentum_squared",
+        "mass_order",
+        "scale",
+        "ratios",
+        "rho_upper",
+        "domain_digits",
+        "criterion",
+        "derivation"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "requested_chart": {
+          "enum": [
+            "auto",
+            "momentum",
+            "mass"
+          ]
+        },
+        "chart": {
+          "enum": [
+            "momentum",
+            "mass"
+          ]
+        },
+        "condition": {
+          "type": "string"
+        },
+        "momentum_squared": {
+          "type": "string"
+        },
+        "mass_order": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "scale": {
+          "type": "string"
+        },
+        "ratios": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rho_upper": {
+          "type": "string"
+        },
+        "domain_digits": {
+          "type": "integer"
+        },
+        "criterion": {
+          "type": "string"
+        },
+        "derivation": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "required": [
+        "status",
+        "requested_dps",
+        "budgets",
+        "diagnostics",
+        "exception"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "not_requested",
+            "converged",
+            "budget_exceeded"
+          ]
+        },
+        "requested_dps": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "budgets": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "max_shells",
+                "max_terms",
+                "max_dps"
+              ],
+              "properties": {
+                "max_shells": {
+                  "type": "integer"
+                },
+                "max_terms": {
+                  "type": "integer"
+                },
+                "max_dps": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "diagnostics": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "value",
+                "error_estimate",
+                "truncation_bound",
+                "convergence_ratio",
+                "terms",
+                "shells",
+                "working_dps",
+                "converged",
+                "chart",
+                "method"
+              ],
+              "properties": {
+                "value": {
+                  "type": "object",
+                  "required": [
+                    "decimal",
+                    "sign",
+                    "mantissa_hex",
+                    "exponent2"
+                  ],
+                  "properties": {
+                    "decimal": {
+                      "type": "string"
+                    },
+                    "sign": {
+                      "enum": [
+                        0,
+                        1
+                      ]
+                    },
+                    "mantissa_hex": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]+$"
+                    },
+                    "exponent2": {
+                      "type": "integer"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "error_estimate": {
+                  "type": "object",
+                  "required": [
+                    "decimal",
+                    "sign",
+                    "mantissa_hex",
+                    "exponent2"
+                  ],
+                  "properties": {
+                    "decimal": {
+                      "type": "string"
+                    },
+                    "sign": {
+                      "enum": [
+                        0,
+                        1
+                      ]
+                    },
+                    "mantissa_hex": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]+$"
+                    },
+                    "exponent2": {
+                      "type": "integer"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "truncation_bound": {
+                  "type": "object",
+                  "required": [
+                    "decimal",
+                    "sign",
+                    "mantissa_hex",
+                    "exponent2"
+                  ],
+                  "properties": {
+                    "decimal": {
+                      "type": "string"
+                    },
+                    "sign": {
+                      "enum": [
+                        0,
+                        1
+                      ]
+                    },
+                    "mantissa_hex": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]+$"
+                    },
+                    "exponent2": {
+                      "type": "integer"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "convergence_ratio": {
+                  "type": "object",
+                  "required": [
+                    "decimal",
+                    "sign",
+                    "mantissa_hex",
+                    "exponent2"
+                  ],
+                  "properties": {
+                    "decimal": {
+                      "type": "string"
+                    },
+                    "sign": {
+                      "enum": [
+                        0,
+                        1
+                      ]
+                    },
+                    "mantissa_hex": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]+$"
+                    },
+                    "exponent2": {
+                      "type": "integer"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "terms": {
+                  "type": "integer"
+                },
+                "shells": {
+                  "type": "integer"
+                },
+                "working_dps": {
+                  "type": "integer"
+                },
+                "converged": {
+                  "type": "boolean"
+                },
+                "chart": {
+                  "enum": [
+                    "momentum",
+                    "mass"
+                  ]
+                },
+                "method": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "exception": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ramanujan-qft sunset RMT explanation, version 1 (provisional)",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "evaluation": {
+            "properties": {
+              "status": {
+                "const": "converged"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evaluation": {
+            "properties": {
+              "diagnostics": {
+                "type": "object",
+                "properties": {
+                  "converged": {
+                    "const": true
+                  }
+                }
+              },
+              "exception": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evaluation": {
+            "properties": {
+              "status": {
+                "const": "not_requested"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evaluation": {
+            "properties": {
+              "requested_dps": {
+                "type": "null"
+              },
+              "budgets": {
+                "type": "null"
+              },
+              "diagnostics": {
+                "type": "null"
+              },
+              "exception": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evaluation": {
+            "properties": {
+              "status": {
+                "const": "budget_exceeded"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evaluation": {
+            "properties": {
+              "exception": {
+                "type": "string",
+                "minLength": 1
+              },
+              "requested_dps": {
+                "type": "integer"
+              },
+              "budgets": {
+                "type": "object"
+              },
+              "diagnostics": {
+                "properties": {
+                  "converged": {
+                    "const": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

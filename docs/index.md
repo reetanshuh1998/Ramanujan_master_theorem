@@ -13,7 +13,12 @@ api/index
 validation
 CAPABILITIES
 RELEASE_PLAN
+STABLE_RELEASE_PLAN
+STABILITY_AUDIT
+API_STABILITY
 SCIENTIFIC_REVIEW
+CLAUDE_REVIEW_BRIEF
+REVIEW_DISPOSITION
 RELEASING
 Comparison <COMPARISON>
 Prior art <PRIOR_ART>
@@ -66,7 +71,10 @@ GitHub
 ::::
 
 See {doc}`CAPABILITIES` for supported domains and error guarantees, and
-{doc}`RELEASE_PLAN` for the research-alpha release status.
+{doc}`RELEASING` for beta 0.3.0b5 and the historical release evidence.
+The implemented objectives and remaining stable-release gates are tracked in
+{doc}`STABLE_RELEASE_PLAN`;
+{doc}`API_STABILITY` defines the proposed compatibility contract.
 
 ## What is in the package
 

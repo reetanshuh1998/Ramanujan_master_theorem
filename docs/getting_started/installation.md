@@ -13,15 +13,17 @@ There is nothing to compile.
 
 ## Install from PyPI
 
-Install the published research alpha:
+Install beta 0.3.0b5:
 
 ```bash
-pip install --pre ramanujan-qft
+pip install --upgrade "ramanujan-qft==0.3.0b5"
 ```
 
-To pin this version, use `ramanujan-qft==0.3.0a5`.
-Alpha releases require `--pre` or an explicit version. For the optional hybrid
-graph evaluator, use `pip install --pre "ramanujan-qft[multiloop]"`.
+The explicit version selects this beta without requiring `--pre`. For the
+optional hybrid graph evaluator, use
+`pip install --upgrade "ramanujan-qft[multiloop]==0.3.0b5"`.
+The older TestPyPI rc2 rehearsal sorts above beta versions; pin b5 explicitly
+when switching from that candidate.
 
 ## Install from GitHub
 
@@ -31,7 +33,7 @@ For the latest development source:
 pip install "git+https://github.com/reetanshuh1998/Ramanujan_master_theorem"
 ```
 
-To include the test dependencies (pytest, SciPy):
+To include the test dependencies (pytest, SciPy, jsonschema):
 
 ```bash
 pip install "ramanujan-qft[test] @ git+https://github.com/reetanshuh1998/Ramanujan_master_theorem"
@@ -46,7 +48,7 @@ change the code:
 git clone https://github.com/reetanshuh1998/Ramanujan_master_theorem
 cd Ramanujan_master_theorem
 pip install .            # the package
-pip install ".[test]"    # the package plus pytest and SciPy, for the test suite
+pip install ".[test]"    # the package plus pytest, SciPy and jsonschema, for the test suite
 pip install ".[multiloop]"  # plus SciPy for hybrid graph integration; RMT series need only the base package
 ```
 
@@ -58,7 +60,7 @@ source take effect without reinstalling.
 ```pycon
 >>> import ramanujan_qft
 >>> ramanujan_qft.__version__
-'0.3.0a5'
+'0.3.0b5'
 >>> from ramanujan_qft import B0
 >>> B0(5, 1, 1)
 mpc(real='1.5695910590359961', imag='1.4049629462081452')
@@ -84,7 +86,7 @@ Feynman-parameter checks of the two-loop sunset) and take seconds each.
 ## Build the documentation locally
 
 ```bash
-pip install ".[multiloop]" -r docs/requirements.txt
+pip install ".[test]" -r docs/requirements.txt
 python -m sphinx -b html docs docs/_build/html
 ```
 
@@ -109,3 +111,8 @@ examples that did not change. To skip running the examples, add
   ```
 
 Next: the [quickstart](quickstart.md), a ten-minute tour of the package.
+
+The output above identifies beta 0.3.0b5. It includes the implemented five
+development objectives; scientific qualification for a stable release remains
+pending.
+Dependency combinations exercised in CI are listed in {doc}`../RELEASING`.

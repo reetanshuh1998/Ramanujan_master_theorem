@@ -1,6 +1,6 @@
-# Research-alpha release record and checklist
+# Release record and checklist
 
-Latest release: **[0.3.0a5](https://pypi.org/project/ramanujan-qft/0.3.0a5/)**
+Previous production release: **[0.3.0a5](https://pypi.org/project/ramanujan-qft/0.3.0a5/)**
 on 2026-10-24, correcting the author metadata and documentation.
 Version 0.3.0a4 addressed the six nonblocking review findings.
 Numerical algorithms are unchanged from the reviewed 0.3.0a2 source. See
@@ -114,6 +114,9 @@ files. PyPI can activate a pending publisher and create its empty project during
 token exchange. Credentials remain in memory and are not logged or archived.
 
 For each new release, use an unused version and freeze its matching tag.
+TestPyPI upload requires a `refs/tags/v*` ref, and validation checks that the
+ref and tag both match package metadata. A branch named like a version is
+still rejected before upload.
 For the 0.3.0a5 correction:
 
 ```bash
@@ -180,3 +183,101 @@ controls. This release does not claim general multiloop RMT evaluation,
 epsilon expansions, massless or physical-region series coverage, or rigorous
 interval certification. Unequal-mass continuation between the RMT charts remains
 open. The supplementary review and its limitations are recorded in the review packet.
+
+## Development checks for the first stable release
+
+The rc2 candidate was rehearsed successfully; beta **0.3.0b5** packages that
+implementation. Stable qualification remains pending.
+The rc1 rehearsal was stopped before upload after the source-archive review
+support files were found to be incomplete. Its frozen tag is unchanged.
+The stable milestones and remaining external gates are in {doc}`STABLE_RELEASE_PLAN`.
+Do not upload a changed artifact under the already published 0.3.0a5 name.
+
+The validation workflow adds these combinations:
+
+| Check | Interpreter / dependencies |
+|---|---|
+| Supported-version suite | CPython 3.9, 3.11 and 3.13 with currently resolvable dependencies |
+| Minimum declared dependencies | CPython 3.9; mpmath 1.3.0, SymPy 1.12, NumPy 1.24.0, SciPy 1.10.0, pytest 7.0.0, jsonschema 4.18.0 |
+| Installed wheel and source archive | CPython 3.12 on Linux, macOS and Windows; base numerical APIs with SciPy imports blocked |
+| Upgrade from published 0.3.0a5 | CPython 3.12 on Linux; base install and separate optional-SciPy install |
+| Browser | Pyodide 0.26.4 with its bundled compiled dependencies; all visible examples, reference assertions, reset and custom dependency wheels |
+
+Minimum pins live in `tests/constraints-minimum.txt`. This checks a compatible
+combination, not every cross-product of interpreter and dependency versions.
+The explanation schema is shipped in both distributions and exercised after
+installation, outside the checkout. Upgrade tests verify the old version first,
+then the artifact's actual version, retained imports and numerical references.
+
+```bash
+python tools/audit_stability.py --output /tmp/stability-audit.json
+python tools/check_notebook.py notebooks/stable_walkthrough.ipynb
+python examples/08_first_calculations.py
+python tools/check_release_metadata.py
+python -m build --outdir /tmp/stable-dist .
+python -m twine check --strict /tmp/stable-dist/*
+python tools/smoke_release.py --dist /tmp/stable-dist --format wheel --upgrade-from 0.3.0a5
+python tools/smoke_release.py --dist /tmp/stable-dist --format wheel --upgrade-from 0.3.0a5 --with-multiloop
+```
+
+After an upload, `tools/install_from_index.py` permits at most six installation
+attempts, 15 seconds apart. Only pip's exact missing-version response for the
+requested package/version is retried. Connection warnings, incompatible-Python
+errors, other dependency/build failures and timeouts fail immediately. Smoke
+checks run once after installation. No retry uploads or rebuilds a package.
+The selected index is fixed to PyPI or TestPyPI, and dependencies are installed
+separately from production PyPI.
+
+Before qualifying the candidate, bind a fresh audit and review packet to the final source,
+replace the development notebook's branch reference with the candidate tag,
+collect review findings and user feedback, and resolve their blockers. Rehearse
+that frozen candidate on TestPyPI and verify artifact hashes. Those external
+steps and final production publication are not completed by these development
+checks.
+
+
+## Corrected candidate 0.3.0rc2: TestPyPI rehearsal
+
+On 2026-10-25, tag `v0.3.0rc2` at commit
+`e44085bd363248a46223ddb4afd9e28aada49278` passed the complete
+[TestPyPI workflow](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40193319458),
+including scientific tests, minimum dependencies, six platform/artifact jobs,
+both upgrades, numerical audits, upload and installation outside the checkout.
+The [candidate documentation/browser run](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40193318813)
+also passed. The candidate is available on
+[TestPyPI](https://test.pypi.org/project/ramanujan-qft/0.3.0rc2/).
+
+The wheel's 20 package source/schema files match the frozen reviewer packet.
+Both published file digests and independently downloaded bytes match the
+validated workflow artifacts:
+
+| Artifact | SHA-256 |
+|---|---|
+| `ramanujan_qft-0.3.0rc2-py3-none-any.whl` | `63bc1e0461313164d29983252211557cfc8c4797c5ec4198d60ff8ada318126b` |
+| `ramanujan_qft-0.3.0rc2.tar.gz` | `d72270b5b0b6b282867d26630eb679f13cada907bdb30d458dbd746ba57554ed` |
+
+Evidence, workflow logs, audits and hash verification are retained at
+`/home/reet/ramanujan-qft-0.3.0rc2-release-evidence`. The corrected human-review
+packet is `/home/reet/ramanujan-qft-0.3.0rc2-review`.
+
+The preceding rc1 rehearsal was cancelled before upload after discovering
+missing source-archive review-support files. Its frozen tag is unchanged;
+rc2 includes those files and validates archive contents in CI.
+
+**Production remains 0.3.0a5.** The maintainer explicitly retained the human
+scientific-review and outside-user/interactive-Colab gates on 2026-10-25.
+The successful rehearsal does not mark them complete or authorize stable
+publication. See {doc}`REVIEW_DISPOSITION` and {doc}`STABLE_RELEASE_PLAN`.
+
+
+## Beta 0.3.0b5
+
+The maintainer authorized production publication as a **beta prerelease**,
+including all five implemented engineering objectives and the rc2 review
+corrections. Human scientific review and outside-user/hosted-Colab feedback
+remain gates for stable 0.3.0, not completed claims for this beta.
+
+The beta has its own matching version tag, full validation, TestPyPI rehearsal
+and production upload/install checks. Final workflow and artifact-verification
+records are added here after publication; the earlier rc2 hashes do not identify
+b5 artifacts. The scientific algorithms are unchanged from rc2.

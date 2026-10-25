@@ -11,6 +11,10 @@ server.
 * The first run downloads Python, NumPy, mpmath and SymPy (tens of MB). Your
   browser caches them, so later visits start faster.
 * **Stop** ends a long calculation. Python then restarts on the next run.
+* **Three reference-checked calculations** runs a one-loop parameter check,
+  exports a two-loop RMT derivation, and compares a hybrid three-loop result
+  with a Fourier reference. It loads SciPy on first use. See
+  {doc}`getting_started/choose_method` for the full walkthrough.
 * To see the Ramanujan method on a coupled integral, choose **Two-loop sunset:
   graph to multivariate RMT**. It displays the exponent matrix, Gamma families,
   result and error diagnostics. The separate Taylor example covers equal-mass

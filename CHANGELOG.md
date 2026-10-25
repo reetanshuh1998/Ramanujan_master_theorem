@@ -1,6 +1,59 @@
 # Changelog
 
-## Unreleased
+## 0.3.0b5 — beta prerelease
+
+Packages the implemented engineering work from all five stable-release
+objectives and the corrections rehearsed in 0.3.0rc2:
+
+1. Proposed API compatibility contract and the `sunset_second_derivative` alias.
+2. Expanded independent-reference audits, exact binary numerical evidence,
+   explicit hybrid coverage alerts and reproducible reviewer packets.
+3. `explain_sunset_rmt` with graph-to-series traces, provenance, diagnostics and
+   a bundled provisional JSON schema.
+4. Method-selection guidance, actionable refusals and shared reference-checked
+   local, notebook and browser examples.
+5. Bounded missing-version retries, matching-tag publication guards,
+   minimum-dependency/platform/upgrade checks and complete source archives.
+
+Numerical algorithms and mathematical domains are unchanged from rc2. This is
+an explicitly requested beta label, not a rollback of the rc2 implementation.
+The hybrid evaluator and compiler/export research interfaces remain experimental
+or provisional. Human scientific review and outside-user/hosted-Colab feedback
+remain pending before stable publication; no such approval is claimed here.
+
+## 0.3.0rc2 — release candidate (qualification pending)
+
+- Include root review files and workflow definitions in the source distribution;
+  validate its review-support contents during every artifact build. The rc1
+  rehearsal was stopped before upload; its frozen tag remains unchanged.
+- Address the supplementary Claude review: include benchmark dependencies in
+  reviewer packets, enforce matching tag refs for TestPyPI, display values at
+  requested precision, and preserve input mass order in domain errors.
+- Separate hybrid accuracy and coverage in schema-v2 audits, retain every
+  coverage alert, and export exact binary evidence for numerical comparisons.
+- Correct the unverified Colab claim; preserve the review and pending release
+  qualifications explicitly.
+
+- Retry only the selected index's exact missing-version response, with bounded
+  attempts. Other install failures and smoke checks fail immediately.
+- Add minimum-dependency CI, source-bound stability reports and clean/upgrade
+  artifact checks with base and optional SciPy dependencies. The development
+  version distinguishes these artifacts from the published 0.3.0a5.
+
+- Add a method-selection guide and shared reference-checked examples for local
+  Python, documentation, notebooks and the browser. Domain/precision refusals
+  now include relevant inputs and explicit next steps.
+
+- Add a source-bound stability audit covering series boundaries, budget refusals,
+  independent references, scaling identities and repeated hybrid estimates.
+- Add `explain_sunset_rmt` and a bundled provisional JSON schema for exact
+  graph-to-series traces, source provenance and optional evaluation diagnostics.
+
+- Track the five objectives for 0.3.0 and define a proposed compatibility
+  contract separating stable candidates, experimental and legacy interfaces.
+- Add `sunset_second_derivative` as an explicit spelling of `sunset_d2`.
+  The existing name, arguments, numerical implementation and exceptions remain
+  unchanged; neither name denotes a D=2 graph integral.
 
 ## 0.3.0a5 — author metadata and documentation
 

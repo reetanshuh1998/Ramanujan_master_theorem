@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ramanujan-qft"
-version = "0.3.0a5"
+version = "0.3.0b5"
 description = "Ramanujan's Master Theorem, Mellin residue summation and arbitrary-precision Feynman integrals"
 readme = "README.md"
 license = "MIT"
@@ -21,12 +21,12 @@ classifiers = [
     "Operating System :: OS Independent",
     "Topic :: Scientific/Engineering :: Physics",
     "Topic :: Scientific/Engineering :: Mathematics",
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
 ]
 
 [project.optional-dependencies]
 multiloop = ["scipy>=1.10"]
-test = ["pytest>=7", "scipy>=1.10"]
+test = ["pytest>=7", "scipy>=1.10", "jsonschema>=4.18"]
 benchmarks = ["scipy>=1.10"]
 
 [project.urls]
@@ -40,3 +40,6 @@ include = ["ramanujan_qft*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = ["slow: nested quadratures (seconds each)"]
+
+[tool.setuptools.package-data]
+ramanujan_qft = ["schemas/*.json"]

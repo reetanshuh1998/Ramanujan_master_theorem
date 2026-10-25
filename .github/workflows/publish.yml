@@ -63,7 +63,7 @@ jobs:
         run: python tools/check_pypi_publisher.py --index "$PYPI_CHECK_INDEX"
 
   testpypi:
-    if: github.event_name == 'workflow_dispatch' && inputs.operation == 'testpypi-release'
+    if: github.event_name == 'workflow_dispatch' && inputs.operation == 'testpypi-release' && startsWith(github.ref, 'refs/tags/v')
     needs: validate
     runs-on: ubuntu-latest
     # Matches the replacement publisher configured on TestPyPI. The service
@@ -95,7 +95,7 @@ jobs:
       - name: Install the published version from the selected release index
         run: |
           VERSION=$(python tools/check_release_metadata.py)
-          python -m pip install --no-deps --index-url "$RELEASE_INDEX" "ramanujan-qft==$VERSION"
+          python tools/install_from_index.py --index-url "$RELEASE_INDEX" --version "$VERSION"
       - name: Verify installation outside the checkout
         run: |
           python - <<'PY'

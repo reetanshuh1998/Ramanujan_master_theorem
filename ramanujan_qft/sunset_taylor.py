@@ -151,7 +151,11 @@ def compile_sunset_taylor(graph, D=2):
         raise NotImplementedError("the Taylor sunset backend requires unit propagator powers")
     mass = graph.edges[0].mass_squared
     if any(e.mass_squared != mass for e in graph.edges):
-        raise NotImplementedError("the Taylor sunset backend requires exactly equal masses")
+        raise NotImplementedError(
+            "the Taylor sunset backend requires exactly equal masses; "
+            f"received squared masses={tuple(e.mass_squared for e in graph.edges)}. "
+            "Use compile_sunset_rmt if an RMT chart applies, or integrate_graph "
+            "with the multiloop extra as a numerical reference")
     momentum = graph.external_momenta[graph.vertices[0]]
     q2 = sum(c*c for c in momentum)
     return SunsetTaylorSeries(graph, mass, q2, q2/(9*mass+q2))

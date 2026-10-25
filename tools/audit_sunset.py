@@ -14,6 +14,11 @@ import random
 import subprocess
 import time
 
+try:  # Package import and direct script execution both work without Git.
+    from .audit_encoding import exact_fields
+except ImportError:
+    from audit_encoding import exact_fields
+
 import mpmath as mp
 
 
@@ -119,7 +124,11 @@ def audit(dps=20):
                         a, low_dps = b, high_dps
                 actual = abs(result.value-b)
                 allowance = result.error_estimate+reference_error
-                row.update(value=mp.nstr(result.value, dps+5), reference=mp.nstr(b, dps+30),
+                row.update(exact=exact_fields(value=result.value, reference=b,
+                                             reported_error=result.error_estimate,
+                                             reference_uncertainty=reference_error,
+                                             actual_error=actual, allowance=allowance),
+                           value=mp.nstr(result.value, dps+5), reference=mp.nstr(b, dps+30),
                            reference_precision_difference=mp.nstr(abs(a-b), 8),
                            reference_working_dps=[low_dps, high_dps],
                            actual_error=mp.nstr(actual, 8),
@@ -135,10 +144,10 @@ def audit(dps=20):
     root = Path(__file__).resolve().parents[1]
     paths = ['ramanujan_qft/sunset_rmt.py', 'ramanujan_qft/sunset_taylor.py',
              'ramanujan_qft/brackets.py', 'ramanujan_qft/multiloop.py', 'tools/audit_sunset.py',
-             'ramanujan_qft/__init__.py', 'pyproject.toml']
+             'ramanujan_qft/__init__.py', 'pyproject.toml', 'tools/audit_encoding.py']
     hashes = {p: hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths}
     commit = _base_commit(root)
-    return dict(schema_version=1, package_version=__version__, dps=dps, random_seed=1729, python=platform.python_version(),
+    return dict(schema_version=2, package_version=__version__, dps=dps, random_seed=1729, python=platform.python_version(),
                 mpmath=mp.__version__, sympy=sp.__version__, base_commit=commit,
                 source_sha256=hashes, reference='Cheng-Wu parameter integral; two working precisions',
                 external_scientific_review='See docs/SCIENTIFIC_REVIEW.md for scope and review record', passed=all(r['passed'] for r in rows), cases=rows)

@@ -13,4 +13,6 @@ The scheme-independent parts of the massive two-loop sunset. User guide:
 .. autofunction:: sunset_subtracted
 
 .. autofunction:: sunset_d2
+
+.. autofunction:: sunset_second_derivative
 ```
