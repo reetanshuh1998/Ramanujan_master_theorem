@@ -86,3 +86,17 @@ Never mark a missing review, user session or upload rehearsal as completed.
 
 reviews/CLAUDE_STABLE_REVIEW
 ```
+
+
+## Candidate outcome
+
+The corrected rc2 candidate passed its complete TestPyPI rehearsal, downloaded
+artifact hash verification and fresh index installation. See {doc}`RELEASING`
+for the exact commit, workflow and hashes. The isolated corrected-packet suite
+passed; the source-archive support files are now shipped and checked in CI.
+
+On 2026-10-25 the maintainer explicitly kept the human-review and outside-user/
+interactive-Colab gates. Production stable publication is therefore still on
+hold. A qualified reviewer should assess the continuation argument identified
+as U1 and the statistical-error limitations of the experimental hybrid API;
+passing numerical checks does not close those assessments.

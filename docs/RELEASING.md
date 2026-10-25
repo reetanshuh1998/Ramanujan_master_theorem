@@ -233,3 +233,37 @@ collect review findings and user feedback, and resolve their blockers. Rehearse
 that frozen candidate on TestPyPI and verify artifact hashes. Those external
 steps and final production publication are not completed by these development
 checks.
+
+
+## Corrected candidate 0.3.0rc2: TestPyPI rehearsal
+
+On 2026-10-25, tag `v0.3.0rc2` at commit
+`e44085bd363248a46223ddb4afd9e28aada49278` passed the complete
+[TestPyPI workflow](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40193319458),
+including scientific tests, minimum dependencies, six platform/artifact jobs,
+both upgrades, numerical audits, upload and installation outside the checkout.
+The [candidate documentation/browser run](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40193318813)
+also passed. The candidate is available on
+[TestPyPI](https://test.pypi.org/project/ramanujan-qft/0.3.0rc2/).
+
+The wheel's 20 package source/schema files match the frozen reviewer packet.
+Both published file digests and independently downloaded bytes match the
+validated workflow artifacts:
+
+| Artifact | SHA-256 |
+|---|---|
+| `ramanujan_qft-0.3.0rc2-py3-none-any.whl` | `63bc1e0461313164d29983252211557cfc8c4797c5ec4198d60ff8ada318126b` |
+| `ramanujan_qft-0.3.0rc2.tar.gz` | `d72270b5b0b6b282867d26630eb679f13cada907bdb30d458dbd746ba57554ed` |
+
+Evidence, workflow logs, audits and hash verification are retained at
+`/home/reet/ramanujan-qft-0.3.0rc2-release-evidence`. The corrected human-review
+packet is `/home/reet/ramanujan-qft-0.3.0rc2-review`.
+
+The preceding rc1 rehearsal was cancelled before upload after discovering
+missing source-archive review-support files. Its frozen tag is unchanged;
+rc2 includes those files and validates archive contents in CI.
+
+**Production remains 0.3.0a5.** The maintainer explicitly retained the human
+scientific-review and outside-user/interactive-Colab gates on 2026-10-25.
+The successful rehearsal does not mark them complete or authorize stable
+publication. See {doc}`REVIEW_DISPOSITION` and {doc}`STABLE_RELEASE_PLAN`.

@@ -144,7 +144,7 @@ example, and a new user can identify supported methods and their limitations.
   combinations of old dependencies and new interpreters.
 - [x] Test a clean installation and an upgrade from 0.3.0a5 outside the checkout,
   including optional dependencies and legacy imports.
-- [ ] Run the complete test, audit, documentation, browser and platform/artifact
+- [x] Run the complete test, audit, documentation, browser and platform/artifact
   checks on the frozen 0.3.0rc2 candidate. Rehearse on TestPyPI and verify hashes.
 - [ ] Collect feedback from users on their own integrals; record inputs,
   conventions, results and any unresolved blockers.
@@ -291,3 +291,28 @@ Candidate rc1 was frozen before an additional source-archive support-file gap
 was found. Its TestPyPI rehearsal was stopped before upload. Candidate rc2
 includes the root review-support files and workflow definitions, with an
 artifact-content check in the build job. The rc1 tag is retained unchanged.
+
+
+### Candidate rehearsal completed; external gates retained
+
+Tag `v0.3.0rc2`, commit `e44085bd363248a46223ddb4afd9e28aada49278`, passed
+[TestPyPI rehearsal and index installation](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40193319458).
+The complete candidate validation and documentation/browser jobs passed.
+Both published artifacts were downloaded and their bytes matched the validated
+workflow SHA-256 hashes; see {doc}`RELEASING` for the binding record.
+
+The full suite from an isolated copy of the corrected rc1 packet passed 537
+tests, with the known SciPy reference-quadrature roundoff warning. The rc2
+archive adds one guard regression; hosted candidate validation covers the
+538-test suite. Twenty review-tool tests also passed directly from an extracted
+pre-freeze rc2 source archive, confirming the reproduction support files.
+
+The rc2 extended audit (seeds 1000–1031) met all 128 hybrid accuracy targets,
+with 125/128 error estimates covering the reference difference. All three
+misses remain explicit coverage alerts; the hybrid API remains experimental.
+
+The maintainer chose to **keep** qualified-human scientific review and
+outside-user/interactive-Colab feedback as gates. These remain pending. No
+production stable release was created; PyPI remains at 0.3.0a5. The next action
+is review and feedback on `/home/reet/ramanujan-qft-0.3.0rc2-review`, not another
+unfrozen upload or an automatic promotion from green CI.
