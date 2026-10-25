@@ -26,7 +26,7 @@ requesting tiny tolerances does not turn float64 into arbitrary precision.
 
 ## Three complete calculations
 
-The development walkthrough uses features introduced after 0.3.0a5. From this
+The walkthrough uses features included in beta 0.3.0b5. From a matching
 source checkout install `pip install '.[multiloop]'`, then run
 `python examples/08_first_calculations.py`.
 It checks a one-loop value against a Feynman-parameter integral, a two-loop RMT
@@ -48,9 +48,9 @@ coverage guarantee; the wider audit is in {doc}`/STABILITY_AUDIT`.
 
 Run the same code by selecting **Three reference-checked calculations** on
 {doc}`/try_it`. That example downloads SciPy on first use.
-The development [notebook](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/v0.3.0rc2/notebooks/stable_walkthrough.ipynb)
-is intended to run in [Colab](https://colab.research.google.com/github/reetanshuh1998/Ramanujan_master_theorem/blob/v0.3.0rc2/notebooks/stable_walkthrough.ipynb).
+The beta [notebook](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/v0.3.0b5/notebooks/stable_walkthrough.ipynb)
+is intended to run in [Colab](https://colab.research.google.com/github/reetanshuh1998/Ramanujan_master_theorem/blob/v0.3.0b5/notebooks/stable_walkthrough.ipynb).
 Interactive hosted execution has not yet been verified.
-Its installation cell selects candidate tag `v0.3.0rc2`, not the published alpha.
+Its installation cell selects beta tag `v0.3.0b5`.
 Notebook calculation cells are checked locally and in CI. An interactive
 Google-hosted Colab session is a separate user check.

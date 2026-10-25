@@ -1,6 +1,6 @@
-# Research-alpha release record and checklist
+# Release record and checklist
 
-Latest release: **[0.3.0a5](https://pypi.org/project/ramanujan-qft/0.3.0a5/)**
+Previous production release: **[0.3.0a5](https://pypi.org/project/ramanujan-qft/0.3.0a5/)**
 on 2026-10-24, correcting the author metadata and documentation.
 Version 0.3.0a4 addressed the six nonblocking review findings.
 Numerical algorithms are unchanged from the reviewed 0.3.0a2 source. See
@@ -186,7 +186,8 @@ open. The supplementary review and its limitations are recorded in the review pa
 
 ## Development checks for the first stable release
 
-The current candidate is **0.3.0rc2**; stable qualification remains pending.
+The rc2 candidate was rehearsed successfully; beta **0.3.0b5** packages that
+implementation. Stable qualification remains pending.
 The rc1 rehearsal was stopped before upload after the source-archive review
 support files were found to be incomplete. Its frozen tag is unchanged.
 The stable milestones and remaining external gates are in {doc}`STABLE_RELEASE_PLAN`.
@@ -267,3 +268,16 @@ rc2 includes those files and validates archive contents in CI.
 scientific-review and outside-user/interactive-Colab gates on 2026-10-25.
 The successful rehearsal does not mark them complete or authorize stable
 publication. See {doc}`REVIEW_DISPOSITION` and {doc}`STABLE_RELEASE_PLAN`.
+
+
+## Beta 0.3.0b5
+
+The maintainer authorized production publication as a **beta prerelease**,
+including all five implemented engineering objectives and the rc2 review
+corrections. Human scientific review and outside-user/hosted-Colab feedback
+remain gates for stable 0.3.0, not completed claims for this beta.
+
+The beta has its own matching version tag, full validation, TestPyPI rehearsal
+and production upload/install checks. Final workflow and artifact-verification
+records are added here after publication; the earlier rc2 hashes do not identify
+b5 artifacts. The scientific algorithms are unchanged from rc2.

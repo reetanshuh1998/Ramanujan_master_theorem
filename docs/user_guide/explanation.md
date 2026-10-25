@@ -1,6 +1,6 @@
 # Inspect and export an RMT calculation
 
-`explain_sunset_rmt` is a development interface introduced after 0.3.0a5.
+`explain_sunset_rmt` is a provisional interface included in beta 0.3.0b5.
 It exposes the derivation for the supported massive, unit-power D=2 sunset.
 It does not compile arbitrary multiloop topologies into convergent series.
 The version 1 export format is provisional until release qualification.

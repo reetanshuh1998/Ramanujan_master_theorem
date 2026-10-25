@@ -1,6 +1,6 @@
 # API stability and compatibility
 
-This is the **proposed contract for 0.3.0**, under development after 0.3.0a5.
+This is the **proposed contract for 0.3.0**, implemented for evaluation in beta 0.3.0b5.
 The interfaces below are candidates for stability, subject to the validation
 and release gates in {doc}`STABLE_RELEASE_PLAN`. No new stable release is
 announced by this page.
@@ -32,7 +32,7 @@ stable contract. Use the factories rather than constructing private Mellin data.
 introduced during this development cycle. `sunset_d2` remains supported without
 a deprecation warning. Both compute S''(s) below threshold in the existing
 four-dimensional dispersive convention. For a D=2 integral, use one of the
-explicit graph evaluators. The new spelling is not in the published 0.3.0a5.
+explicit graph evaluators. The new spelling is included in 0.3.0b5 and was absent from 0.3.0a5.
 
 ## Experimental and legacy interfaces
 

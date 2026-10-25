@@ -1,8 +1,9 @@
 # Plan for the first stable release
 
-Target: **0.3.0**, following a tested **0.3.0rc2** candidate. The published
-baseline is 0.3.0a5; the next candidate is 0.3.0rc2. This page tracks development; it does not announce a new
-release or promote experimental calculations to stable status.
+Target: stable **0.3.0**. Beta **0.3.0b5** packages the implemented engineering
+work from all five objectives, including the corrections rehearsed as rc2.
+Human scientific review and outside-user/hosted-Colab feedback remain pending.
+This beta does not promote experimental calculations to stable status.
 
 The goal is a reproducible, documented interface for the calculations already
 supported in {doc}`CAPABILITIES`. Unequal-mass sunset continuation, new
@@ -316,3 +317,14 @@ outside-user/interactive-Colab feedback as gates. These remain pending. No
 production stable release was created; PyPI remains at 0.3.0a5. The next action
 is review and feedback on `/home/reet/ramanujan-qft-0.3.0rc2-review`, not another
 unfrozen upload or an automatic promotion from green CI.
+
+
+### Beta 0.3.0b5 publication
+
+The maintainer requested a production PyPI **prerelease**, 0.3.0b5, containing
+all five implemented engineering objectives. This authorizes beta publication,
+while retaining the external gates for stable 0.3.0. Mathematical domains and
+numerical algorithms are unchanged from the validated rc2 candidate.
+Version metadata, citation, installation examples and the walkthrough tag now
+identify b5. The beta's own frozen-tag validation, TestPyPI rehearsal and
+production verification are recorded in {doc}`RELEASING`.

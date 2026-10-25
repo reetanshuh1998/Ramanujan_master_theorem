@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.3.0b5 — beta prerelease
+
+Packages the implemented engineering work from all five stable-release
+objectives and the corrections rehearsed in 0.3.0rc2:
+
+1. Proposed API compatibility contract and the `sunset_second_derivative` alias.
+2. Expanded independent-reference audits, exact binary numerical evidence,
+   explicit hybrid coverage alerts and reproducible reviewer packets.
+3. `explain_sunset_rmt` with graph-to-series traces, provenance, diagnostics and
+   a bundled provisional JSON schema.
+4. Method-selection guidance, actionable refusals and shared reference-checked
+   local, notebook and browser examples.
+5. Bounded missing-version retries, matching-tag publication guards,
+   minimum-dependency/platform/upgrade checks and complete source archives.
+
+Numerical algorithms and mathematical domains are unchanged from rc2. This is
+an explicitly requested beta label, not a rollback of the rc2 implementation.
+The hybrid evaluator and compiler/export research interfaces remain experimental
+or provisional. Human scientific review and outside-user/hosted-Colab feedback
+remain pending before stable publication; no such approval is claimed here.
+
 ## 0.3.0rc2 — release candidate (qualification pending)
 
 - Include root review files and workflow definitions in the source distribution;

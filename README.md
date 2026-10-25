@@ -10,11 +10,19 @@
 **Ramanujan's Master Theorem, Mellin residue summation and arbitrary-precision
 Feynman integrals in pure Python.**
 
-**Research-alpha scope:** see the [capability table](https://reetanshuh1998.github.io/Ramanujan_master_theorem/CAPABILITIES.html) for
+**Beta prerelease 0.3.0b5:** see the [capability table](https://reetanshuh1998.github.io/Ramanujan_master_theorem/CAPABILITIES.html) for
 supported domains, methods and error guarantees, and the
 [release plan](https://reetanshuh1998.github.io/Ramanujan_master_theorem/RELEASE_PLAN.html) for validation and publication status.
 The runnable [research notebook](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/main/notebooks/research_alpha.ipynb) demonstrates
 graph-generated RMT families, equal-mass vacuum and an independent reference.
+
+This beta includes the engineering work from all five development objectives:
+the proposed API contract, expanded scientific audits, JSON RMT explanations,
+reference-checked walkthroughs and stronger release validation. See the
+[development plan](https://reetanshuh1998.github.io/Ramanujan_master_theorem/STABLE_RELEASE_PLAN.html)
+and [review dispositions](https://reetanshuh1998.github.io/Ramanujan_master_theorem/REVIEW_DISPOSITION.html).
+Human scientific review and outside-user/hosted-Colab feedback remain pending
+before a stable release. The hybrid graph evaluator remains experimental.
 
 ```
 f(x) = Σ φ(n) (-x)ⁿ / n!     ⟹     ∫₀^∞ x^(s-1) f(x) dx = Γ(s) φ(-s)
@@ -109,10 +117,10 @@ Developed and maintained by **Reet**.
 
 ## Install
 
-Install a published research alpha from PyPI (Python >= 3.9):
+Install the beta from PyPI (Python >= 3.9):
 
 ```bash
-pip install --pre ramanujan-qft
+pip install --upgrade "ramanujan-qft==0.3.0b5"
 ```
 
 For the latest development source or a local clone:
@@ -120,7 +128,7 @@ For the latest development source or a local clone:
 ```bash
 pip install "git+https://github.com/reetanshuh1998/Ramanujan_master_theorem"   # latest version, requires Python >= 3.9
 pip install .            # from a clone
-pip install ".[test]"    # + pytest, scipy for the test suite
+pip install ".[test]"    # + pytest, scipy and jsonschema for the test suite
 pip install ".[multiloop]"  # + scipy for the experimental graph evaluator
 ```
 
