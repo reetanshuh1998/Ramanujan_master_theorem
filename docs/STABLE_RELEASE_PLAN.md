@@ -1,7 +1,7 @@
 # Plan for the first stable release
 
 Target: **0.3.0**, following a tested **0.3.0rc1** candidate. The published
-baseline is 0.3.0a5; the working development version is 0.3.0rc1.dev1. This page tracks development; it does not announce a new
+baseline is 0.3.0a5; the next candidate is 0.3.0rc1. This page tracks development; it does not announce a new
 release or promote experimental calculations to stable status.
 
 The goal is a reproducible, documented interface for the calculations already
@@ -62,6 +62,10 @@ still work, and relevant tests plus documentation builds pass. This completes
 interface preparation; scientific promotion still depends on objective 2.
 
 ## 2. Strengthen scientific validation
+
+Use {doc}`CLAUDE_REVIEW_BRIEF` to request an additional automated review of the
+frozen development packet. It supplies the prompt, checks and report format;
+its results do not replace the human-review gate below.
 
 Build on `tools/audit_sunset.py`, its 34-case baseline and the existing regression
 fixtures. Avoid replacing earlier evidence or presenting repeated checks as new
@@ -258,3 +262,26 @@ retained as reproducible release evidence. Do not overwrite the 0.3.0a5 reports.
 Remaining external gates: qualified human scientific review, interactive Colab
 and outside-user feedback, then frozen-candidate TestPyPI rehearsal and final
 release qualification. The engineering changes do not mark these gates complete.
+
+
+### Supplementary Claude review
+
+The development-snapshot report has been received and its artifact hashes
+verified. It requests changes; see {doc}`REVIEW_DISPOSITION` for R1–R7 and the
+remaining qualification questions. The old packet remains intact. In particular,
+the previous packet-completeness claim was too broad: benchmark modules were
+missing and full collection failed. The replacement regression collects tests
+inside the packet rather than checking only shared examples and manifest hashes.
+
+Schema-v2 audits separate hybrid accuracy from empirical coverage and retain
+exact binary values. A coverage alert remains a review item, even when requested
+accuracy is met. The hybrid API remains experimental.
+
+
+### Corrected candidate 0.3.0rc1
+
+R1–R7 dispositions are recorded in {doc}`REVIEW_DISPOSITION`. The candidate
+pins the walkthrough installation to `v0.3.0rc1`; version, citation and release
+metadata agree. Stable publication remains conditional on the outstanding
+qualification decisions. The corrected candidate's tests, packet reproduction
+and TestPyPI results will be recorded with its frozen commit and artifact hashes.

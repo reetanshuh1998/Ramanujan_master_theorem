@@ -59,8 +59,11 @@ Each mpmath number has a readable `decimal` and an exact binary encoding:
 
 `(-1)**sign * int(mantissa_hex, 16) * 2**exponent2`.
 
-The decimal string is for display; the binary fields preserve every stored bit,
-including precision above the caller's global mpmath context. Hexadecimal avoids
+The value decimal is displayed at the requested `dps` significant digits;
+error diagnostics retain extra display digits. The decimal string is for display; the binary fields preserve every stored bit,
+including precision above the caller's global mpmath context. The error estimate
+applies to that encoded numerical result; rounding its display to `dps`
+significant digits can introduce an additional display-rounding difference. Hexadecimal avoids
 Python's decimal integer string-length limit. The encoding is not a statement
 that the computed number equals the mathematical integral exactly.
 

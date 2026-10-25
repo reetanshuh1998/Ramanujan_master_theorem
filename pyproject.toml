@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ramanujan-qft"
-version = "0.3.0rc1.dev1"
+version = "0.3.0rc1"
 description = "Ramanujan's Master Theorem, Mellin residue summation and arbitrary-precision Feynman integrals"
 readme = "README.md"
 license = "MIT"

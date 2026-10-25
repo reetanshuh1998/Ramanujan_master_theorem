@@ -48,9 +48,9 @@ coverage guarantee; the wider audit is in {doc}`/STABILITY_AUDIT`.
 
 Run the same code by selecting **Three reference-checked calculations** on
 {doc}`/try_it`. That example downloads SciPy on first use.
-The development [notebook](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/stable/01-api-contract/notebooks/stable_walkthrough.ipynb)
-also runs in [Colab](https://colab.research.google.com/github/reetanshuh1998/Ramanujan_master_theorem/blob/stable/01-api-contract/notebooks/stable_walkthrough.ipynb).
-Its installation cell selects this development branch, not the published alpha;
-freeze that reference to the candidate tag before release qualification.
+The development [notebook](https://github.com/reetanshuh1998/Ramanujan_master_theorem/blob/v0.3.0rc1/notebooks/stable_walkthrough.ipynb)
+is intended to run in [Colab](https://colab.research.google.com/github/reetanshuh1998/Ramanujan_master_theorem/blob/v0.3.0rc1/notebooks/stable_walkthrough.ipynb).
+Interactive hosted execution has not yet been verified.
+Its installation cell selects candidate tag `v0.3.0rc1`, not the published alpha.
 Notebook calculation cells are checked locally and in CI. An interactive
 Google-hosted Colab session is a separate user check.

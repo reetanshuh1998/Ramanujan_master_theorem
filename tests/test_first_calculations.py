@@ -33,3 +33,9 @@ def test_precision_refusal_names_adjustable_budget():
     graph = ScalarGraph([ScalarEdge(0, 1, 1)]*3, {0: [10], 1: [-10]})
     with pytest.raises(RMTSeriesConvergenceError, match='max_dps=30.*dps=30.*Increase max_dps'):
         compile_sunset_rmt(graph).evaluate(dps=30, max_dps=30)
+
+
+def test_refusal_preserves_input_edge_mass_order():
+    graph = ScalarGraph([ScalarEdge(0, 1, m) for m in (9, 1, 4)], {0: [5], 1: [-5]})
+    with pytest.raises(RMTDomainError, match=r'squared masses=\(9, 1, 4\)'):
+        compile_sunset_rmt(graph)

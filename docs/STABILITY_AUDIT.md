@@ -62,7 +62,27 @@ reference uncertainty, reported error, error-estimate coverage and requested
 accuracy. Budget and domain refusals have separate outcomes. Unexpected
 exceptions and uncovered errors fail rather than disappearing from the report.
 
-Hybrid coverage is reported for the declared samples, with named outliers.
+In schema version 2, hybrid accuracy and coverage are separate: `passed` requires
+resolved references, accepted evaluations and the accuracy target, while
+`hybrid_coverage_requires_review` records any coverage miss or failed evaluation.
+Every outlier remains in `hybrid_outliers`, with its graph, seed and error ratio;
+failed evaluations appear separately in `hybrid_failures`. Packet creation does
+not resolve coverage alerts or promote the experimental hybrid API.
+
+Hybrid coverage is reported as covered/assessed counts, both overall and per
+graph. A single statistical miss does not become a series-accuracy failure.
+No arbitrary coverage threshold or nominal binomial confidence interval is used
+for this heterogeneous, fixed-graph grid. The evaluator's estimate is unchanged.
+The supplementary Claude review observed three coverage misses across 288
+samples while all accuracy targets passed; see {doc}`REVIEW_DISPOSITION`.
+
+For a reproducible additional seed block, run:
+
+```bash
+python tools/audit_stability.py --seed-start 1000 --seed-count 32 --output /tmp/extended-stability-audit.json
+```
+
+Hybrid coverage is reported for all declared samples, with named outliers.
 It is not a confidence level for adaptive stopping or a guarantee for arbitrary
 graphs. No outlier is removed by choosing a favorable seed. The hybrid interface
 remains experimental even if this grid passes.
@@ -73,3 +93,17 @@ Human scientific review remains pending. The existing supplementary review is
 recorded in {doc}`SCIENTIFIC_REVIEW`. The frozen packet is ready for a reviewer
 after the final development audit passes. Findings must identify the audited
 source, and any blocker must be resolved or keep the affected API experimental.
+
+For a Claude-assisted review of the prepared development snapshot, use
+{doc}`CLAUDE_REVIEW_BRIEF`. It defines the evidence and report requirements and
+keeps automated assessment separate from the pending human review.
+
+## Exact audit numbers
+
+Schema version 2 of both sunset audit reports adds `exact` fields containing
+`sign`, hexadecimal `mantissa_hex` and integer `exponent2`. Reconstruct each
+finite value as `(-1)**sign * int(mantissa_hex, 16) * 2**exponent2`, using exact
+rational arithmetic or sufficient precision. These fields preserve the stored
+value, reference, uncertainty, errors and comparison allowance. Display decimals
+alone can obscure a small positive coverage margin. Exact storage does not make
+the underlying reference or arithmetic estimates rigorous enclosures.

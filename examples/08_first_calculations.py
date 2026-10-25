@@ -31,12 +31,14 @@ assert trace['evaluation']['status'] == 'converged'
 # tests/data/sunset_rmt_reference.json (precision difference < 2.4e-42).
 with mp.workdps(45):
     reference = mp.mpf('0.6290167075906141495908272538835833416123070767')
-    difference = abs(mp.mpf(diagnostics['value']['decimal'])-reference)
+    encoded = diagnostics['value']
+    exact_value = (-1)**encoded['sign'] * mp.ldexp(mp.mpf(int(encoded['mantissa_hex'], 16)), encoded['exponent2'])
+    difference = abs(exact_value-reference)
     assert difference <= mp.mpf(diagnostics['error_estimate']['decimal']) + mp.mpf('3e-42')
 print('RMT value:', diagnostics['value']['decimal'])
 print('RMT chart:', trace['convergence']['chart'], 'condition:', trace['convergence']['condition'])
 print('RMT tail bound:', diagnostics['truncation_bound']['decimal'])
-print('RMT estimated error:', diagnostics['error_estimate']['decimal'])
+print('RMT estimated error before display rounding:', diagnostics['error_estimate']['decimal'])
 print('Gamma families:', len(trace['families']), 'terms:', diagnostics['terms'])
 exported_json = json.dumps(trace, indent=2)  # Inspect without evaluating expression strings.
 try:

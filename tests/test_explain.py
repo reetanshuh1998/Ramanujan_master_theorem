@@ -67,7 +67,8 @@ def test_exact_binary_encoding_preserves_precision_and_context():
     with mp.workdps(100):
         recovered = (-1)**encoded['sign'] * mp.ldexp(mp.mpf(int(encoded['mantissa_hex'], 16)), encoded['exponent2'])
         assert recovered == reference.value
-        assert abs(recovered-mp.mpf(encoded['decimal'])) < mp.mpf('1e-67')
+        assert abs(recovered-mp.mpf(encoded['decimal'])) < mp.mpf('1e-60')
+        assert len(encoded['decimal'].split('e')[0].replace('.', '').lstrip('-0')) <= 60
     assert trace['evaluation']['diagnostics']['working_dps'] > 60
 
 

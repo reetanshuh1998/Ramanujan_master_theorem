@@ -24,14 +24,15 @@ def prepare(report_path, output, root=ROOT):
             raise ValueError(f'audit source mismatch: {name}; rerun the audit on the final source')
     output.mkdir(parents=True, exist_ok=False)
     files = set()
-    for folder in ('ramanujan_qft', 'tools', 'tests', 'docs', 'examples', 'notebooks', '.github'):
+    for folder in ('ramanujan_qft', 'tools', 'tests', 'docs', 'examples', 'notebooks', '.github', 'benchmarks'):
         for p in (root/folder).rglob('*'):
             if p.is_file() and p.suffix in ('.py', '.md', '.json', '.csv', '.txt', '.js',
                                           '.css', '.html', '.rst', '.ipynb', '.yml') and not any(
                     part in ('__pycache__', '_build', 'auto_examples') for part in p.parts):
                 files.add(p)
     for name in ('pyproject.toml', 'README.md', 'LICENSE', 'CHANGELOG.md', 'CITATION.cff',
-                 'MANIFEST.in', 'CONTRIBUTING.md', 'AUDIT.md', 'THIRD_PARTY_NOTICES.md'):
+                 'MANIFEST.in', 'CONTRIBUTING.md', 'AUDIT.md', 'THIRD_PARTY_NOTICES.md',
+                 'setup.py', 'requirements.txt', '.gitignore'):
         files.add(root/name)
     for source in sorted(files):
         target = output/'source'/source.relative_to(root)
@@ -68,6 +69,10 @@ Record reviewer identity, methods, source hashes, findings, severities and
 reproduction inputs in a separate report. State explicitly which mathematics
 and domains were examined. Keep the supplied audit and source unchanged.
 ''')
+    if report.get('summary', {}).get('hybrid_coverage_requires_review'):
+        with (output/'REVIEW_REQUEST.md').open('a') as request:
+            request.write('\nHybrid coverage alerts require explicit review; this packet is not a release approval.\n')
+            request.write('See summary.hybrid_outliers and summary.hybrid_failures in stability-audit.json.\n')
     manifest = []
     for p in sorted(output.rglob('*')):
         if p.is_file():

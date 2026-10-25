@@ -31,7 +31,7 @@ def _number(value, digits):
 def _diagnostics(result, dps):
     if result is None:
         return None
-    return dict(value=_number(result.value, dps+8),
+    return dict(value=_number(result.value, dps),
                 error_estimate=_number(result.error_estimate, dps+8),
                 truncation_bound=_number(result.truncation_bound, dps+8),
                 convergence_ratio=_number(result.convergence_ratio, dps+8),

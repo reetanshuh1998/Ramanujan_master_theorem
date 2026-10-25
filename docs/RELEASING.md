@@ -114,6 +114,9 @@ files. PyPI can activate a pending publisher and create its empty project during
 token exchange. Credentials remain in memory and are not logged or archived.
 
 For each new release, use an unused version and freeze its matching tag.
+TestPyPI upload requires a `refs/tags/v*` ref, and validation checks that the
+ref and tag both match package metadata. A branch named like a version is
+still rejected before upload.
 For the 0.3.0a5 correction:
 
 ```bash

@@ -1,6 +1,14 @@
 # Changelog
 
-## Unreleased — 0.3.0rc1.dev1
+## 0.3.0rc1 — release candidate (qualification pending)
+
+- Address the supplementary Claude review: include benchmark dependencies in
+  reviewer packets, enforce matching tag refs for TestPyPI, display values at
+  requested precision, and preserve input mass order in domain errors.
+- Separate hybrid accuracy and coverage in schema-v2 audits, retain every
+  coverage alert, and export exact binary evidence for numerical comparisons.
+- Correct the unverified Colab claim; preserve the review and pending release
+  qualifications explicitly.
 
 - Retry only the selected index's exact missing-version response, with bounded
   attempts. Other install failures and smoke checks fail immediately.

@@ -6,7 +6,7 @@ import re
 import tomllib
 
 
-def check(root, tag=None):
+def check(root, tag=None, ref=None):
     root = Path(root)
     project = tomllib.loads((root/'pyproject.toml').read_text(encoding='utf-8'))['project']
     version = project['version']
@@ -19,6 +19,8 @@ def check(root, tag=None):
         raise ValueError('pyproject, __version__ and CITATION.cff must have the same version')
     if tag is not None and tag != 'v'+version:
         raise ValueError(f'release tag must be v{version}, got {tag!r}')
+    if ref is not None and (tag is None or ref != 'refs/tags/'+tag):
+        raise ValueError('publication requires the matching refs/tags/v* ref, not a branch')
     print(version)
     return version
 
@@ -27,5 +29,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument('--tag')
+    parser.add_argument('--ref', help='Require this Git ref to be the matching version tag')
     args = parser.parse_args()
-    check(args.root, args.tag)
+    check(args.root, args.tag, args.ref)

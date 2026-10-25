@@ -272,7 +272,8 @@ def compile_sunset_rmt(graph, D=2, *, chart="auto"):
     else:
         raise RMTDomainError("no certified RMT chart: require p_E > m1+m2+m3, or "
                              "M > m_a+m_b+p_E; boundaries and equal-mass vacuum are not covered. "
-                             f"Received squared masses={masses}, p_E^2={q2}, chart={chart!r}. "
+                             f"Received squared masses={tuple(e.mass_squared for e in graph.edges)}, "
+                             f"p_E^2={q2}, chart={chart!r}. "
                              "For equal masses use integrate_sunset_taylor; otherwise consider "
                              "integrate_graph with the multiloop extra as a numerical reference")
     rho, digits = proof
