@@ -58,7 +58,7 @@ source take effect without reinstalling.
 ```pycon
 >>> import ramanujan_qft
 >>> ramanujan_qft.__version__
-'0.3.0rc1'
+'0.3.0rc2'
 >>> from ramanujan_qft import B0
 >>> B0(5, 1, 1)
 mpc(real='1.5695910590359961', imag='1.4049629462081452')
@@ -111,5 +111,5 @@ examples that did not change. To skip running the examples, add
 Next: the [quickstart](quickstart.md), a ten-minute tour of the package.
 
 The output above identifies this development checkout. The published alpha is
-still 0.3.0a5; candidate 0.3.0rc1 is undergoing qualification and is not a stable release.
+still 0.3.0a5; candidate 0.3.0rc2 is undergoing qualification and is not a stable release.
 Dependency combinations exercised in CI are listed in {doc}`../RELEASING`.

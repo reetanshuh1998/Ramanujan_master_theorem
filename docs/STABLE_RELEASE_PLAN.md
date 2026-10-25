@@ -1,7 +1,7 @@
 # Plan for the first stable release
 
-Target: **0.3.0**, following a tested **0.3.0rc1** candidate. The published
-baseline is 0.3.0a5; the next candidate is 0.3.0rc1. This page tracks development; it does not announce a new
+Target: **0.3.0**, following a tested **0.3.0rc2** candidate. The published
+baseline is 0.3.0a5; the next candidate is 0.3.0rc2. This page tracks development; it does not announce a new
 release or promote experimental calculations to stable status.
 
 The goal is a reproducible, documented interface for the calculations already
@@ -19,7 +19,7 @@ flowchart TD
     D[4. First-use implementation checked]
     E[5. Hardening implemented; qualification pending]
     A --> B --> C --> D --> E
-    E --> R[0.3.0rc1: feedback and blocker review]
+    E --> R[0.3.0rc2: feedback and blocker review]
     R --> S[0.3.0: publish when gates pass]
     classDef done fill:#d8f3dc,stroke:#2d6a4f,color:#102a1b
     classDef next fill:#fff3cd,stroke:#856404,color:#332701
@@ -145,7 +145,7 @@ example, and a new user can identify supported methods and their limitations.
 - [x] Test a clean installation and an upgrade from 0.3.0a5 outside the checkout,
   including optional dependencies and legacy imports.
 - [ ] Run the complete test, audit, documentation, browser and platform/artifact
-  checks on the frozen 0.3.0rc1 candidate. Rehearse on TestPyPI and verify hashes.
+  checks on the frozen 0.3.0rc2 candidate. Rehearse on TestPyPI and verify hashes.
 - [ ] Collect feedback from users on their own integrals; record inputs,
   conventions, results and any unresolved blockers.
 - [ ] Update the version, citation, development-status classifier and release
@@ -285,3 +285,9 @@ pins the walkthrough installation to `v0.3.0rc1`; version, citation and release
 metadata agree. Stable publication remains conditional on the outstanding
 qualification decisions. The corrected candidate's tests, packet reproduction
 and TestPyPI results will be recorded with its frozen commit and artifact hashes.
+
+
+Candidate rc1 was frozen before an additional source-archive support-file gap
+was found. Its TestPyPI rehearsal was stopped before upload. Candidate rc2
+includes the root review-support files and workflow definitions, with an
+artifact-content check in the build job. The rc1 tag is retained unchanged.

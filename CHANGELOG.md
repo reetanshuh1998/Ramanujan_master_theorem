@@ -1,7 +1,10 @@
 # Changelog
 
-## 0.3.0rc1 — release candidate (qualification pending)
+## 0.3.0rc2 — release candidate (qualification pending)
 
+- Include root review files and workflow definitions in the source distribution;
+  validate its review-support contents during every artifact build. The rc1
+  rehearsal was stopped before upload; its frozen tag remains unchanged.
 - Address the supplementary Claude review: include benchmark dependencies in
   reviewer packets, enforce matching tag refs for TestPyPI, display values at
   requested precision, and preserve input mass order in domain errors.

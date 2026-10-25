@@ -43,6 +43,14 @@ a calibrated sampling model for a general coverage probability. The report's
 Student-t calculation is a heuristic explanation, not a calibrated confidence
 claim for the adaptive estimator.
 
+## Source-archive follow-up
+
+The corrected checkout packet contains the missing benchmarks. A further check
+found that the sdist also needed the root requirements/setup/ignore files and
+workflow definitions now read by release tests. Candidate rc2 explicitly ships
+these, and `tools/check_sdist_contents.py` checks the built archive's review
+support files. The rc1 rehearsal was stopped before upload; its tag is unchanged.
+
 ## Validation and remaining decisions
 
 Forty focused correction checks passed. Both default (32 samples) and additional

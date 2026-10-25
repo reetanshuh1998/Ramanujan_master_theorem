@@ -5,6 +5,10 @@ include CITATION.cff
 include CONTRIBUTING.md
 include AUDIT.md
 include THIRD_PARTY_NOTICES.md
+include setup.py
+include requirements.txt
+include .gitignore
+recursive-include .github/workflows *.yml
 recursive-include ramanujan_qft *.py
 recursive-include tests *.py *.csv *.json *.txt
 recursive-include tools *.py

@@ -29,3 +29,20 @@ def test_angular_reference_against_oscillatory_representation(frequency):
             lambda x: mp.exp(-2*x-x*x/2)*mp.besselj(1, frequency*x),
             [0, mp.inf], omega=frequency)
         assert abs(angular-oscillatory) < mp.mpf('1e-35')*abs(angular)
+
+
+def test_sdist_guard_rejects_missing_review_imports(tmp_path):
+    import io
+    import tarfile
+    from tools.check_sdist_contents import check
+    root = tmp_path/'source'
+    (root/'benchmarks').mkdir(parents=True)
+    (root/'benchmarks/bench_release.py').write_text('# required test import\n')
+    archive = tmp_path/'incomplete.tar.gz'
+    with tarfile.open(archive, 'w:gz') as package:
+        member = tarfile.TarInfo('package/pyproject.toml')
+        content = b'[project]\n'
+        member.size = len(content)
+        package.addfile(member, io.BytesIO(content))
+    with pytest.raises(ValueError, match='benchmarks/bench_release.py'):
+        check(archive, root)

@@ -186,7 +186,9 @@ open. The supplementary review and its limitations are recorded in the review pa
 
 ## Development checks for the first stable release
 
-The working version is **0.3.0rc1.dev1**, not a published release candidate.
+The current candidate is **0.3.0rc2**; stable qualification remains pending.
+The rc1 rehearsal was stopped before upload after the source-archive review
+support files were found to be incomplete. Its frozen tag is unchanged.
 The stable milestones and remaining external gates are in {doc}`STABLE_RELEASE_PLAN`.
 Do not upload a changed artifact under the already published 0.3.0a5 name.
 
@@ -225,7 +227,7 @@ checks run once after installation. No retry uploads or rebuilds a package.
 The selected index is fixed to PyPI or TestPyPI, and dependencies are installed
 separately from production PyPI.
 
-Before freezing 0.3.0rc1, bind a fresh audit and review packet to the final source,
+Before qualifying the candidate, bind a fresh audit and review packet to the final source,
 replace the development notebook's branch reference with the candidate tag,
 collect review findings and user feedback, and resolve their blockers. Rehearse
 that frozen candidate on TestPyPI and verify artifact hashes. Those external
