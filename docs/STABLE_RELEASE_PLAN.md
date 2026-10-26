@@ -20,7 +20,8 @@ flowchart TD
     D[4. First-use implementation checked]
     E[5. Hardening implemented; qualification pending]
     A --> B --> C --> D --> E
-    E --> R[0.3.0rc2: feedback and blocker review]
+    E --> B5[0.3.0b5: beta published]
+    B5 --> R[Human review and outside-user feedback]
     R --> S[0.3.0: publish when gates pass]
     classDef done fill:#d8f3dc,stroke:#2d6a4f,color:#102a1b
     classDef next fill:#fff3cd,stroke:#856404,color:#332701
@@ -314,9 +315,10 @@ misses remain explicit coverage alerts; the hybrid API remains experimental.
 
 The maintainer chose to **keep** qualified-human scientific review and
 outside-user/interactive-Colab feedback as gates. These remain pending. No
-production stable release was created; PyPI remains at 0.3.0a5. The next action
-is review and feedback on `/home/reet/ramanujan-qft-0.3.0rc2-review`, not another
-unfrozen upload or an automatic promotion from green CI.
+production stable release was created; PyPI was at 0.3.0a5 when rc2 was rehearsed.
+The subsequent b5 beta publication is recorded below. Review and feedback now
+use the frozen `/home/reet/ramanujan-qft-0.3.0b5-review` packet; passing CI does
+not automatically qualify the stable release.
 
 
 ### Beta 0.3.0b5 publication
@@ -328,3 +330,12 @@ numerical algorithms are unchanged from the validated rc2 candidate.
 Version metadata, citation, installation examples and the walkthrough tag now
 identify b5. The beta's own frozen-tag validation, TestPyPI rehearsal and
 production verification are recorded in {doc}`RELEASING`.
+
+
+On 2026-10-26, **0.3.0b5 was published to production PyPI as a beta** after
+both its TestPyPI rehearsal and production workflow passed. The frozen tag is
+`v0.3.0b5` at `a519de91038f77d001c930a4547365a394bc6f51`. Both indexes' downloaded
+artifacts matched their validated builds and fresh installation checks passed.
+The release record links the workflows, hashes and downloadable review evidence.
+All five engineering implementations are included; the human scientific review,
+outside-user feedback and interactive hosted-Colab gates above remain open.

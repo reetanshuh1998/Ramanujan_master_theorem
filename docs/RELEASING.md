@@ -1,5 +1,8 @@
 # Release record and checklist
 
+Current production beta: **[0.3.0b5](https://pypi.org/project/ramanujan-qft/0.3.0b5/)**, published on 2026-10-26.
+All five engineering objectives are included; stable qualification remains pending.
+
 Previous production release: **[0.3.0a5](https://pypi.org/project/ramanujan-qft/0.3.0a5/)**
 on 2026-10-24, correcting the author metadata and documentation.
 Version 0.3.0a4 addressed the six nonblocking review findings.
@@ -264,7 +267,7 @@ The preceding rc1 rehearsal was cancelled before upload after discovering
 missing source-archive review-support files. Its frozen tag is unchanged;
 rc2 includes those files and validates archive contents in CI.
 
-**Production remains 0.3.0a5.** The maintainer explicitly retained the human
+**At the rc2 rehearsal, production remained 0.3.0a5.** The maintainer explicitly retained the human
 scientific-review and outside-user/interactive-Colab gates on 2026-10-25.
 The successful rehearsal does not mark them complete or authorize stable
 publication. See {doc}`REVIEW_DISPOSITION` and {doc}`STABLE_RELEASE_PLAN`.
@@ -277,7 +280,43 @@ including all five implemented engineering objectives and the rc2 review
 corrections. Human scientific review and outside-user/hosted-Colab feedback
 remain gates for stable 0.3.0, not completed claims for this beta.
 
-The beta has its own matching version tag, full validation, TestPyPI rehearsal
-and production upload/install checks. Final workflow and artifact-verification
-records are added here after publication; the earlier rc2 hashes do not identify
-b5 artifacts. The scientific algorithms are unchanged from rc2.
+On 2026-10-26, frozen tag `v0.3.0b5`, commit
+`a519de91038f77d001c930a4547365a394bc6f51`, passed the
+[TestPyPI rehearsal](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40263665125)
+and [production workflow](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40264282189).
+Both workflows passed all 14 validation jobs, uploaded the validated artifacts,
+and installed the exact published version outside the checkout. Validation
+covered 538 tests (513 fast and 25 slow), dependency minima, Linux/macOS/Windows
+wheel and source installs, upgrades from a5, audits, notebooks and documentation.
+The [frozen commit's documentation/browser run](https://github.com/reetanshuh1998/Ramanujan_master_theorem/actions/runs/40220404576)
+also passed.
+
+Both indexes' published hashes and independently downloaded bytes matched their
+respective validated builds. All 20 wheel source/schema files matched the frozen
+source. Production artifacts:
+
+| Artifact | SHA-256 |
+|---|---|
+| `ramanujan_qft-0.3.0b5-py3-none-any.whl` | `69813200d187cdbfa8ac3fdaa7acc9674840f4d69dc75c69365fa1ddfe2316da` |
+| `ramanujan_qft-0.3.0b5.tar.gz` | `3583ccac62974aed27eae3854f0c9051b41798abe6a12c0036cadf5bcb48aa8e` |
+
+The [GitHub prerelease assets](https://github.com/reetanshuh1998/Ramanujan_master_theorem/releases/tag/v0.3.0b5)
+retain the production distributions, per-index verification records, automated
+review and dispositions, audits and source-bound review packet. Local evidence
+is retained at `/home/reet/ramanujan-qft-0.3.0b5-release-evidence` and the human-review
+packet at `/home/reet/ramanujan-qft-0.3.0b5-review`.
+
+The extended audit met all 128 hybrid accuracy targets, with 125/128 reported
+error estimates covering the reference difference. Three coverage alerts remain
+explicit; the hybrid evaluator remains experimental. Scientific algorithms and
+supported domains are unchanged from rc2.
+
+Install this production beta explicitly:
+
+```bash
+python -m pip install --upgrade "ramanujan-qft==0.3.0b5"
+```
+
+Stable 0.3.0 still requires qualified human scientific review, outside-user and
+hosted-Colab feedback, and validation of its own final frozen artifacts. The beta
+publication does not mark these gates complete.
